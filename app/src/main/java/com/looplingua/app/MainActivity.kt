@@ -1,47 +1,39 @@
 package com.looplingua.app
 
+import android.util.Log
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.looplingua.app.ui.theme.LoopLinguaandroidTheme
+import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
+import com.looplingua.app.service.playback.SimpleSegmentPlayer
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var segmentPlayer: SimpleSegmentPlayer
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            LoopLinguaandroidTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
+
+        Log.d("TEST", "MainActivity started")
+
+        val button = Button(this).apply {
+            text = "Play Segment 1"
+        }
+
+        setContentView(button)
+
+        segmentPlayer = SimpleSegmentPlayer(this)
+
+        button.setOnClickListener {
+            segmentPlayer.playSegment(
+                resId = R.raw.greetings_uk,
+                startMs = 0,
+                endMs = 2000
+            )
         }
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    LoopLinguaandroidTheme {
-        Greeting("Android")
+    override fun onDestroy() {
+        super.onDestroy()
+        segmentPlayer.release()
     }
 }
