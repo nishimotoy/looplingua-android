@@ -25,36 +25,11 @@ class PlaybackEngine {
             val shadowPause =
                 (segmentDuration * config.shadowingPauseMultiplier).toLong()
 
-            // 1. Translation
-            steps.add(
-                PlaybackStep.PlayTranslation(segment)
-            )
-
-            // 2. Short boundary pause
-            steps.add(
-                PlaybackStep.Pause(config.shortPauseMs)
-            )
-
-            // 3. Original (first)
-            steps.add(
-                PlaybackStep.PlayOriginal(
-                    segment = segment,
-                    repeatIndex = 0
-                )
-            )
-
-            // 4. Shadowing pause
-            steps.add(
-                PlaybackStep.Pause(shadowPause)
-            )
-
-            // 5. Original (second)
-            steps.add(
-                PlaybackStep.PlayOriginal(
-                    segment = segment,
-                    repeatIndex = 1
-                )
-            )
+            steps.add(PlaybackStep.PlayTranslation(segment))
+            steps.add(PlaybackStep.Pause(config.shortPauseMs))
+            steps.add(PlaybackStep.PlayOriginal(segment, 0))
+            steps.add(PlaybackStep.Pause(shadowPause))
+            steps.add(PlaybackStep.PlayOriginal(segment, 1))
         }
 
         return steps
