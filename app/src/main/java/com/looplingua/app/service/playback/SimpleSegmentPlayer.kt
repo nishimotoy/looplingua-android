@@ -44,28 +44,30 @@ class SimpleSegmentPlayer(
         })
     }
 
+    private var monitorRunnable: Runnable? = null
+
     private fun startPositionMonitoring(
         endMs: Long,
         onFinished: () -> Unit
     ) {
+        monitorRunnable?.let { handler.removeCallbacks(it) }
 
-        val checkRunnable = object : Runnable {
+        monitorRunnable = object : Runnable {
             override fun run() {
-
                 if (player.currentPosition >= endMs) {
                     player.pause()
                     onFinished()
                 } else {
-                    handler.postDelayed(this, 10)
+                    handler.postDelayed(this, 50)
                 }
             }
         }
 
-        handler.post(checkRunnable)
+        handler.post(monitorRunnable!!)
     }
-
     fun release() {
         player.release()
+        monitorRunnable?.let { handler.removeCallbacks(it) }
     }
 
     fun playSteps(
