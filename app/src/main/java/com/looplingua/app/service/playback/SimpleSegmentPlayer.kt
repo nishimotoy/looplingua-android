@@ -7,6 +7,7 @@ import androidx.annotation.RawRes
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.common.Player
+import android.util.Log
 import com.looplingua.app.domain.playback.PlaybackStep
 
 class SimpleSegmentPlayer(
@@ -94,6 +95,8 @@ class SimpleSegmentPlayer(
     }
 
     private fun executeNextStep() {
+
+        Log.d("PLAYER", "Step: $currentStepIndex -> ${steps[currentStepIndex]}")
 
         if (currentStepIndex >= steps.size) {
             return

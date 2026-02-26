@@ -45,9 +45,15 @@ class MainActivity : AppCompatActivity() {
             val steps = listOf(
                 PlaybackStep.PlayOriginal(segment1, 0),
                 PlaybackStep.Pause(500),
+                PlaybackStep.PlayTranslation(segment1),
+                PlaybackStep.Pause(500),
+                PlaybackStep.PlayOriginal(segment1, 1),
+
+                PlaybackStep.PlayOriginal(segment2, 0),
+                PlaybackStep.Pause(500),
                 PlaybackStep.PlayTranslation(segment2),
                 PlaybackStep.Pause(500),
-                PlaybackStep.PlayOriginal(segment2, 1)
+                PlaybackStep.PlayOriginal(segment2, 1),
             )
 
             segmentPlayer.playSteps(
