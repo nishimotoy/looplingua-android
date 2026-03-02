@@ -98,13 +98,13 @@ class SimpleSegmentPlayer(
 
     private fun executeNextStep() {
 
-        Log.d("PLAYER", "Step: $currentStepIndex -> ${steps[currentStepIndex]}")
-
         if (currentStepIndex >= steps.size) {
+            Log.d("PLAYER", "All steps finished")
             return
         }
 
         val step = steps[currentStepIndex]
+        Log.d("PLAYER", "Step: $currentStepIndex -> $step")
 
         when (step) {
 
