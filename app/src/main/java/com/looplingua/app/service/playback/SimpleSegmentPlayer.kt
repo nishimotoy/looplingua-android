@@ -17,35 +17,9 @@ class SimpleSegmentPlayer(
 
         private val player = ExoPlayer.Builder(context).build()
         private val handler = Handler(Looper.getMainLooper())
-        private var isMonitoring = false
         private var steps: List<PlaybackStep> = emptyList()
         private var currentStepIndex = 0
         var onSegmentChanged: ((Segment) -> Unit)? = null
-    fun playSegment(
-        @RawRes resId: Int,
-        startMs: Long,
-        endMs: Long
-    ) {
-        val uri = "android.resource://${context.packageName}/$resId"
-        val mediaItem = MediaItem.fromUri(uri)
-
-        player.setMediaItem(mediaItem)
-        player.prepare()
-
-        player.addListener(object : Player.Listener {
-            override fun onPlaybackStateChanged(state: Int) {
-                if (state == Player.STATE_READY) {
-                    player.seekTo(startMs)
-                    player.play()
-                    startPositionMonitoring(endMs) {
-                        currentStepIndex++
-                        executeNextStep()
-                    }
-                    player.removeListener(this)
-                }
-            }
-        })
-    }
 
     private var monitorRunnable: Runnable? = null
 
