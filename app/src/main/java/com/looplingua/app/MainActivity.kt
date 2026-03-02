@@ -2,27 +2,37 @@ package com.looplingua.app
 
 import android.os.Bundle
 import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.looplingua.app.domain.playback.PlaybackStep
 import com.looplingua.app.domain.model.Segment
+import com.looplingua.app.domain.playback.PlaybackStep
 import com.looplingua.app.service.playback.SimpleSegmentPlayer
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var segmentPlayer: SimpleSegmentPlayer
 
+    private lateinit var textOriginal: TextView
+    private lateinit var textTranslation: TextView
+    private lateinit var btnPlay: Button
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
 
-        val button = Button(this).apply {
-            text = "Play Steps"
-        }
-
-        setContentView(button)
+        textOriginal = findViewById(R.id.textOriginal)
+        textTranslation = findViewById(R.id.textTranslation)
+        btnPlay = findViewById(R.id.btnPlay)
 
         segmentPlayer = SimpleSegmentPlayer(this)
+        segmentPlayer.onSegmentChanged = { segment ->
+            runOnUiThread {
+                textOriginal.text = segment.originalText
+                textTranslation.text = segment.translationText
+            }
+        }
 
-        button.setOnClickListener {
+        btnPlay.setOnClickListener {
 
             val segment1 = Segment(
                 id = "1",
@@ -55,6 +65,10 @@ class MainActivity : AppCompatActivity() {
                 PlaybackStep.Pause(500),
                 PlaybackStep.PlayOriginal(segment2, 1),
             )
+
+            // 表示更新（最初の文だけ表示例）
+            textOriginal.text = segment1.originalText
+            textTranslation.text = segment1.translationText
 
             segmentPlayer.playSteps(
                 R.raw.greetings_uk,

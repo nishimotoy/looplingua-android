@@ -8,17 +8,19 @@ import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.common.Player
 import android.util.Log
+import com.looplingua.app.domain.model.Segment
 import com.looplingua.app.domain.playback.PlaybackStep
 
 class SimpleSegmentPlayer(
-    private val context: Context
-) {
+        private val context: Context
+    ) {
 
-    private val player = ExoPlayer.Builder(context).build()
-    private val handler = Handler(Looper.getMainLooper())
-    private var isMonitoring = false
-    private var steps: List<PlaybackStep> = emptyList()
-    private var currentStepIndex = 0
+        private val player = ExoPlayer.Builder(context).build()
+        private val handler = Handler(Looper.getMainLooper())
+        private var isMonitoring = false
+        private var steps: List<PlaybackStep> = emptyList()
+        private var currentStepIndex = 0
+        var onSegmentChanged: ((Segment) -> Unit)? = null
     fun playSegment(
         @RawRes resId: Int,
         startMs: Long,
@@ -107,6 +109,7 @@ class SimpleSegmentPlayer(
         when (step) {
 
             is PlaybackStep.PlayOriginal -> {
+                onSegmentChanged?.invoke(step.segment)
                 playSegmentInternal(
                     step.segment.startTimeMs,
                     step.segment.endTimeMs
@@ -114,6 +117,7 @@ class SimpleSegmentPlayer(
             }
 
             is PlaybackStep.PlayTranslation -> {
+                onSegmentChanged?.invoke(step.segment)
                 playSegmentInternal(
                     step.segment.startTimeMs,
                     step.segment.endTimeMs
