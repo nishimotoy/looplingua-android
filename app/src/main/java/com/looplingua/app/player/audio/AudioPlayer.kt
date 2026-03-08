@@ -9,15 +9,26 @@ class AudioPlayer(private val context: Context) {
 
     private val player = ExoPlayer.Builder(context).build()
 
+    // MediaItem キャッシュ
+    private val mediaItemCache = mutableMapOf<Int, MediaItem>()
+
+    private fun getMediaItem(audioRes: Int): MediaItem {
+
+        return mediaItemCache.getOrPut(audioRes) {
+
+            val uri = "android.resource://${context.packageName}/$audioRes"
+
+            MediaItem.fromUri(uri)
+        }
+    }
+
     fun playSegment(
         audioRes: Int,
         startMs: Int,
         endMs: Int
     ) {
 
-        val uri = "android.resource://${context.packageName}/$audioRes"
-
-        val mediaItem = MediaItem.fromUri(uri)
+        val mediaItem = getMediaItem(audioRes)
 
         player.setMediaItem(mediaItem)
 
