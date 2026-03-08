@@ -1,41 +1,53 @@
 package com.looplingua.app.player.audio
 
 import android.content.Context
-import android.net.Uri
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
+import kotlinx.coroutines.delay
 
-class AudioPlayer(context: Context) {
+class AudioPlayer(private val context: Context) {
 
-    private val player: ExoPlayer = ExoPlayer.Builder(context).build()
+    private val player = ExoPlayer.Builder(context).build()
 
-    fun load(uri: String) {
-        val mediaItem = MediaItem.fromUri(Uri.parse(uri))
+    fun playSegment(
+        audioRes: Int,
+        startMs: Int,
+        endMs: Int
+    ) {
+
+        val uri = "android.resource://${context.packageName}/$audioRes"
+
+        val mediaItem = MediaItem.fromUri(uri)
+
         player.setMediaItem(mediaItem)
-        player.prepare()
-    }
 
-    fun play() {
+        player.prepare()
+
+        player.seekTo(startMs.toLong())
+
         player.play()
     }
 
-    fun pause() {
+    suspend fun waitUntil(endMs: Int) {
+
+        while (player.currentPosition < endMs) {
+
+            delay(20)
+
+        }
+
         player.pause()
     }
 
-    fun seekTo(positionMs: Long) {
-        player.seekTo(positionMs)
-    }
+    suspend fun pause(ms: Long) {
 
-    fun currentPosition(): Long {
-        return player.currentPosition
-    }
+        delay(ms)
 
-    fun isPlaying(): Boolean {
-        return player.isPlaying
     }
 
     fun release() {
+
         player.release()
+
     }
 }

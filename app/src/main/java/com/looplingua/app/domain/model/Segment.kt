@@ -1,14 +1,14 @@
 package com.looplingua.app.domain.model
 
 data class Segment(
-    val id: String,
-    val startMs: Long,
-    val endMs: Long,
-    val originalText: String,
-    val translationAutoText: String?,
-    val translationUserText: String?
-) {
 
-    val durationMs: Long
-        get() = endMs - startMs
-}
+    val id: String,
+
+    val startMs: Int,
+
+    val endMs: Int,
+
+    val translation: String? = null,
+
+    val memo: String? = null
+)

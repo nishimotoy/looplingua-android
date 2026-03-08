@@ -1,78 +1,47 @@
-package com.example.audio.engine
+package com.looplingua.app.player.track
 
-import com.example.audio.model.Track
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import com.looplingua.app.domain.model.Track
+import com.looplingua.app.playback.StepType
+import com.looplingua.app.player.audio.AudioPlayer
+import com.looplingua.app.player.resolver.StepResolver
 
 class TrackPlayer(
-    private val stepResolver: StepResolver,
-    private val audioPlayer: AudioPlayer
+
+    private val audioPlayer: AudioPlayer,
+    private val resolver: StepResolver
+
 ) {
 
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    suspend fun play(track: Track) {
 
-    private var job: Job? = null
+        for (segment in track.segments) {
 
-    private val _isPlaying = MutableStateFlow(false)
-    val isPlaying: StateFlow<Boolean> = _isPlaying
-
-    /**
-     * Track 再生開始
-     */
-    fun play(track: Track) {
-        stop()
-
-        job = scope.launch {
-
-            _isPlaying.value = true
-
-            val steps = stepResolver.resolve(track)
+            val steps = resolver.resolve(track, segment)
 
             for (step in steps) {
 
-                ensureActive()
-
                 when (step.type) {
 
-                    StepType.PLAY -> {
-                        audioPlayer.play(step.source)
-                        audioPlayer.awaitCompletion()
+                    StepType.ORIGINAL -> {
+
+                        audioPlayer.playSegment(
+                            step.audioRes!!,
+                            step.startMs!!,
+                            step.endMs!!
+                        )
+
+                        audioPlayer.waitUntil(step.endMs)
                     }
 
-                    StepType.SILENCE -> {
-                        delay(step.durationMs)
+                    StepType.PAUSE -> {
+
+                        audioPlayer.pause(step.pauseMs)
+
                     }
+
+                    else -> {}
                 }
             }
-
-            _isPlaying.value = false
         }
-    }
-
-    /**
-     * 停止
-     */
-    fun stop() {
-        job?.cancel()
-        job = null
-        audioPlayer.stop()
-        _isPlaying.value = false
-    }
-
-    /**
-     * 一時停止
-     */
-    fun pause() {
-        audioPlayer.pause()
-        _isPlaying.value = false
-    }
-
-    /**
-     * 再開
-     */
-    fun resume() {
-        audioPlayer.resume()
-        _isPlaying.value = true
     }
 }

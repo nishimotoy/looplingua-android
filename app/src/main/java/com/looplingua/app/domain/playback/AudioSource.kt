@@ -1,7 +1,6 @@
 package com.looplingua.app.domain.playback
 
-enum class AudioSource {
-    ORIGINAL,
-    TRANSLATION,
-    MEMO
+sealed class AudioSource {
+    data class Resource(val resId: Int) : AudioSource()
+    data class File(val filePath: String) : AudioSource()
 }

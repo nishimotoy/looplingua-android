@@ -2,83 +2,110 @@ package com.looplingua.app
 
 import android.os.Bundle
 import android.widget.Button
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.looplingua.app.domain.model.Segment
-import com.looplingua.app.domain.playback.PlaybackStep
-import com.looplingua.app.service.playback.SimpleSegmentPlayer
+import com.looplingua.app.domain.model.Track
+import com.looplingua.app.player.audio.AudioPlayer
+import com.looplingua.app.player.resolver.StepResolver
+import com.looplingua.app.player.track.TrackPlayer
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var segmentPlayer: SimpleSegmentPlayer
-
-    private lateinit var textOriginal: TextView
-    private lateinit var textTranslation: TextView
-    private lateinit var btnPlay: Button
+    private lateinit var audioPlayer: AudioPlayer
+    private lateinit var trackPlayer: TrackPlayer
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
 
-        textOriginal = findViewById(R.id.textOriginal)
-        textTranslation = findViewById(R.id.textTranslation)
-        btnPlay = findViewById(R.id.btnPlay)
+        // AudioPlayer (ExoPlayer wrapper)
+        audioPlayer = AudioPlayer(this)
 
-        segmentPlayer = SimpleSegmentPlayer(this)
-        segmentPlayer.onSegmentChanged = { segment ->
-            runOnUiThread {
-                textOriginal.text = segment.originalText
-                textTranslation.text = segment.translationText
+        // StepResolver
+        val resolver = StepResolver()
+
+        // TrackPlayer
+        trackPlayer = TrackPlayer(
+            audioPlayer,
+            resolver
+        )
+
+        // テスト用トラック作成
+        val track = createTestTrack()
+
+        val playButton = findViewById<Button>(R.id.playButton)
+
+        playButton.setOnClickListener {
+
+            lifecycleScope.launch {
+
+                trackPlayer.play(track)
+
             }
-        }
-
-        btnPlay.setOnClickListener {
-
-            val segment1 = Segment(
-                id = "1",
-                startTimeMs = 0,
-                endTimeMs = 2000,
-                sourceMediaId = "",
-                originalText = "Добрий день",
-                translationText = "Hello"
-            )
-
-            val segment2 = Segment(
-                id = "2",
-                startTimeMs = 2000,
-                endTimeMs = 4000,
-                sourceMediaId = "",
-                originalText = "Доброго ранку",
-                translationText = "Good morning"
-            )
-
-            val steps = listOf(
-                PlaybackStep.PlayOriginal(segment1, 0),
-                PlaybackStep.Pause(500),
-                PlaybackStep.PlayTranslation(segment1),
-                PlaybackStep.Pause(500),
-                PlaybackStep.PlayOriginal(segment1, 1),
-
-                PlaybackStep.PlayOriginal(segment2, 0),
-                PlaybackStep.Pause(500),
-                PlaybackStep.PlayTranslation(segment2),
-                PlaybackStep.Pause(500),
-                PlaybackStep.PlayOriginal(segment2, 1),
-            )
-
-            // 表示更新（最初の文だけ表示例）
-            textOriginal.text = segment1.originalText
-            textTranslation.text = segment1.translationText
-
-            segmentPlayer.playSteps(
-                R.raw.greetings_uk,
-                steps
-            )
         }
     }
 
+    /**
+     * greetings_uk.mp3 のタイムコードに合わせた
+     * テスト用 Segment データ
+     */
+    private fun createTestTrack(): Track {
+
+        val segments = listOf(
+
+            Segment(
+                id = "1",
+                startMs = 0,
+                endMs = 2000,
+                translation = "Good afternoon"
+            ),
+
+            Segment(
+                id = "2",
+                startMs = 2000,
+                endMs = 5000,
+                translation = "Good morning"
+            ),
+
+            Segment(
+                id = "3",
+                startMs = 5000,
+                endMs = 7000,
+                translation = "Good evening"
+            ),
+
+            Segment(
+                id = "4",
+                startMs = 7000,
+                endMs = 10000,
+                translation = "Goodbye"
+            ),
+
+            Segment(
+                id = "5",
+                startMs = 10000,
+                endMs = 14000,
+                translation = "Good night"
+            )
+        )
+
+        return Track(
+            id = "greetings",
+            title = "Greetings",
+            audioRes = R.raw.greetings_uk,
+            segments = segments
+        )
+    }
+
     override fun onDestroy() {
+
         super.onDestroy()
-        segmentPlayer.release()
+
+        audioPlayer.release()
+
     }
 }
