@@ -1,19 +1,13 @@
 package com.looplingua.app.domain.playback
 
-import com.looplingua.app.domain.model.Segment
+data class PlaybackStep(
 
-sealed class PlaybackStep {
+    val stepType: StepType,
 
-    data class PlayOriginal(
-        val segment: Segment,
-        val repeatIndex: Int
-    ) : PlaybackStep()
+    val audioResId: Int?,
 
-    data class PlayTranslation(
-        val segment: Segment
-    ) : PlaybackStep()
+    val startMs: Long?,
+    val endMs: Long?,
 
-    data class Pause(
-        val durationMs: Long
-    ) : PlaybackStep()
-}
+    val pauseMs: Long
+)

@@ -1,7 +1,10 @@
 package com.looplingua.app.domain.model
 
 data class Track(
-    val id: String,
-    val name: String,
-    val segmentIds: List<String>
+
+    val id: Long,
+
+    val originalResId: Int,
+    val translationResId: Int?,
+    val memoResId: Int?
 )

@@ -1,10 +1,19 @@
 package com.looplingua.app.domain.model
 
 data class Segment(
-    val id: String,
-    val sourceMediaId: String,
-    val startTimeMs: Long,
-    val endTimeMs: Long,
+
+    val id: Long,
+
+    val originalStartMs: Long,
+    val originalEndMs: Long,
+
+    val translationStartMs: Long?,
+    val translationEndMs: Long?,
+
+    val memoStartMs: Long?,
+    val memoEndMs: Long?,
+
     val originalText: String,
-    val translationText: String? = null
+    val translationText: String?,
+    val memoText: String?
 )

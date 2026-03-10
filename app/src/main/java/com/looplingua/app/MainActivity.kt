@@ -1,84 +1,97 @@
 package com.looplingua.app
 
 import android.os.Bundle
-import android.widget.Button
-import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+
+import com.looplingua.app.domain.model.Track
 import com.looplingua.app.domain.model.Segment
-import com.looplingua.app.domain.playback.PlaybackStep
-import com.looplingua.app.service.playback.SimpleSegmentPlayer
 
-class MainActivity : AppCompatActivity() {
+import com.looplingua.app.player.audio.AudioPlayer
+import com.looplingua.app.player.segment.SegmentPlayer
+import com.looplingua.app.player.segment.SegmentQueue
+import com.looplingua.app.player.sequence.SequenceBuilder
+import com.looplingua.app.player.track.TrackPlayer
 
-    private lateinit var segmentPlayer: SimpleSegmentPlayer
+class MainActivity : ComponentActivity() {
 
-    private lateinit var textOriginal: TextView
-    private lateinit var textTranslation: TextView
-    private lateinit var btnPlay: Button
+    private lateinit var trackPlayer: TrackPlayer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-        textOriginal = findViewById(R.id.textOriginal)
-        textTranslation = findViewById(R.id.textTranslation)
-        btnPlay = findViewById(R.id.btnPlay)
+        val audioPlayer = AudioPlayer(this)
+        val segmentPlayer = SegmentPlayer(audioPlayer)
+        val segmentQueue = SegmentQueue(segmentPlayer)
+        val sequenceBuilder = SequenceBuilder()
 
-        segmentPlayer = SimpleSegmentPlayer(this)
-        segmentPlayer.onSegmentChanged = { segment ->
-            runOnUiThread {
-                textOriginal.text = segment.originalText
-                textTranslation.text = segment.translationText
+        trackPlayer = TrackPlayer(
+            sequenceBuilder = sequenceBuilder,
+            segmentQueue = segmentQueue
+        )
+
+        val track = Track(
+
+            id = 1,
+
+            originalResId = R.raw.greetings_uk,
+
+            translationResId = R.raw.greetings_en,
+
+            memoResId = R.raw.greetings_memo
+        )
+
+        val segment = Segment(
+
+            id = 1,
+
+            originalStartMs = 0,
+            originalEndMs = 2500,
+
+            translationStartMs = 0,
+            translationEndMs = 2500,
+
+            memoStartMs = 0,
+            memoEndMs = 1500,
+
+            originalText = "Добрий день",
+            translationText = "Good afternoon",
+            memoText = "formal greeting"
+        )
+
+        trackPlayer.setTrack(track)
+        trackPlayer.setSegments(listOf(segment))
+
+        setContent {
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(32.dp),
+                verticalArrangement = Arrangement.Center
+            ) {
+
+                Button(
+                    onClick = { trackPlayer.start() },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("PLAY")
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Button(
+                    onClick = { trackPlayer.stop() },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("STOP")
+                }
             }
         }
-
-        btnPlay.setOnClickListener {
-
-            val segment1 = Segment(
-                id = "1",
-                startTimeMs = 0,
-                endTimeMs = 2000,
-                sourceMediaId = "",
-                originalText = "Добрий день",
-                translationText = "Hello"
-            )
-
-            val segment2 = Segment(
-                id = "2",
-                startTimeMs = 2000,
-                endTimeMs = 4000,
-                sourceMediaId = "",
-                originalText = "Доброго ранку",
-                translationText = "Good morning"
-            )
-
-            val steps = listOf(
-                PlaybackStep.PlayOriginal(segment1, 0),
-                PlaybackStep.Pause(500),
-                PlaybackStep.PlayTranslation(segment1),
-                PlaybackStep.Pause(500),
-                PlaybackStep.PlayOriginal(segment1, 1),
-
-                PlaybackStep.PlayOriginal(segment2, 0),
-                PlaybackStep.Pause(500),
-                PlaybackStep.PlayTranslation(segment2),
-                PlaybackStep.Pause(500),
-                PlaybackStep.PlayOriginal(segment2, 1),
-            )
-
-            // 表示更新（最初の文だけ表示例）
-            textOriginal.text = segment1.originalText
-            textTranslation.text = segment1.translationText
-
-            segmentPlayer.playSteps(
-                R.raw.greetings_uk,
-                steps
-            )
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        segmentPlayer.release()
     }
 }
