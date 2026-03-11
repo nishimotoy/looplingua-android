@@ -17,18 +17,25 @@ class SegmentQueue(
 
     private var onFinished: (() -> Unit)? = null
 
+
     fun setSteps(stepList: List<PlaybackStep>) {
 
         steps = stepList
         currentIndex = 0
     }
 
-    fun start(onFinished: () -> Unit) {
 
-        this.onFinished = onFinished
+    fun setOnFinishedListener(listener: () -> Unit) {
+
+        onFinished = listener
+    }
+
+
+    fun start() {
 
         playNext()
     }
+
 
     private fun playNext() {
 
@@ -58,6 +65,7 @@ class SegmentQueue(
 
         }, delay)
     }
+
 
     fun stop() {
 
