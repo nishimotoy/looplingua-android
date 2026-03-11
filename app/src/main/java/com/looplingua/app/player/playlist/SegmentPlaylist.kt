@@ -1,66 +1,52 @@
-package com.looplingua.app.player.playlist
+package com.looplingua.app.player.segment
 
 import com.looplingua.app.domain.model.Segment
 
 class SegmentPlaylist(
-    private val segments: List<Segment>
+    private val segmentQueue: SegmentQueue
 ) {
 
-    private var currentSegmentIndex: Int = 0
+    private var segments: List<Segment> = emptyList()
 
-    /**
-     * 現在のセグメントを取得
-     */
-    fun currentSegment(): Segment? {
-        if (segments.isEmpty()) return null
-        return segments.getOrNull(currentSegmentIndex)
-    }
+    private var currentSegmentIndex = 0
 
-    /**
-     * 次のセグメントへ進む
-     */
-    fun nextSegment(): Segment? {
-        if (!hasNext()) return null
+    fun setSegments(segmentList: List<Segment>) {
 
-        currentSegmentIndex++
-        return segments.getOrNull(currentSegmentIndex)
-    }
-
-    /**
-     * 次のセグメントが存在するか
-     */
-    fun hasNext(): Boolean {
-        return currentSegmentIndex < segments.size - 1
-    }
-
-    /**
-     * 先頭に戻る
-     */
-    fun reset() {
+        segments = segmentList
         currentSegmentIndex = 0
     }
 
-    /**
-     * 現在のインデックス取得
-     */
-    fun getCurrentIndex(): Int {
-        return currentSegmentIndex
+    fun start(playSegment: (Segment) -> Unit) {
+
+        if (segments.isEmpty()) return
+
+        currentSegmentIndex = 0
+
+        playSegment(segments[currentSegmentIndex])
     }
 
-    /**
-     * 総セグメント数
-     */
-    fun size(): Int {
-        return segments.size
+    fun next(playSegment: (Segment) -> Unit) {
+
+        currentSegmentIndex++
+
+        if (currentSegmentIndex >= segments.size) {
+            return
+        }
+
+        playSegment(segments[currentSegmentIndex])
     }
 
-    /**
-     * 任意のセグメントへジャンプ
-     */
-    fun seekTo(index: Int): Segment? {
-        if (index < 0 || index >= segments.size) return null
+    fun stop() {
 
-        currentSegmentIndex = index
+        segmentQueue.stop()
+
+        currentSegmentIndex = 0
+    }
+
+    fun getCurrentSegment(): Segment? {
+
+        if (segments.isEmpty()) return null
+
         return segments[currentSegmentIndex]
     }
 }
