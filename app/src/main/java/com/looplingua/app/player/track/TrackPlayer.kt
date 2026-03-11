@@ -3,6 +3,7 @@ package com.looplingua.app.player.track
 import com.looplingua.app.domain.model.Track
 import com.looplingua.app.domain.model.Segment
 import com.looplingua.app.domain.playback.StepType
+import com.looplingua.app.domain.playback.Pattern
 import com.looplingua.app.player.sequence.SequenceBuilder
 import com.looplingua.app.player.segment.SegmentQueue
 
@@ -17,19 +18,6 @@ class TrackPlayer(
 
     private var currentSegmentIndex = 0
 
-    private val listenPattern = listOf(
-
-        StepType.TRANSLATION,
-        StepType.PAUSE_SHORT,
-
-        StepType.ORIGINAL,
-        StepType.PAUSE_SHORT,
-
-        StepType.ORIGINAL,
-        StepType.PAUSE_SHORT,
-
-        StepType.MEMO
-    )
 
     fun setTrack(track: Track) {
 
@@ -55,7 +43,7 @@ class TrackPlayer(
         val steps = sequenceBuilder.build(
             track = currentTrack,
             segment = segment,
-            pattern = listenPattern
+            pattern = Pattern.BASIC
         )
 
         segmentQueue.setSteps(steps)
