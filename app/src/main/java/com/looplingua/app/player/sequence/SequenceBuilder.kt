@@ -8,9 +8,6 @@ import com.looplingua.app.domain.playback.StepType
 
 class SequenceBuilder {
 
-    private val PAUSE_SHORT = 400L
-    private val PAUSE_LONG = 1200L
-
     fun build(
         track: Track,
         segment: Segment,
@@ -24,7 +21,7 @@ class SequenceBuilder {
             when (type) {
 
                 StepType.TRANSLATION -> {
-                    if (segment.translationStartMs != null && segment.translationEndMs != null) {
+                    if (segment.translationStartMs != segment.translationEndMs) {
                         steps.add(
                             PlaybackStep(
                                 stepType = StepType.TRANSLATION,
@@ -50,7 +47,7 @@ class SequenceBuilder {
                 }
 
                 StepType.MEMO -> {
-                    if (segment.memoStartMs != null && segment.memoEndMs != null) {
+                    if (segment.memoStartMs != segment.memoEndMs) {
                         steps.add(
                             PlaybackStep(
                                 stepType = StepType.MEMO,

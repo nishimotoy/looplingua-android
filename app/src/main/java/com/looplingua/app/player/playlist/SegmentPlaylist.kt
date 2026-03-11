@@ -2,9 +2,7 @@ package com.looplingua.app.player.segment
 
 import com.looplingua.app.domain.model.Segment
 
-class SegmentPlaylist(
-    private val segmentQueue: SegmentQueue
-) {
+class SegmentPlaylist {
 
     private var segments: List<Segment> = emptyList()
 
@@ -37,8 +35,6 @@ class SegmentPlaylist(
     }
 
     fun stop() {
-
-        segmentQueue.stop()
 
         currentSegmentIndex = 0
     }

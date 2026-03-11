@@ -7,13 +7,13 @@ data class Segment(
     val originalStartMs: Long,
     val originalEndMs: Long,
 
-    val translationStartMs: Long?,
-    val translationEndMs: Long?,
+    val translationStartMs: Long = 0,
+    val translationEndMs: Long = 0,
 
-    val memoStartMs: Long?,
-    val memoEndMs: Long?,
+    val memoStartMs: Long = 0,
+    val memoEndMs: Long = 0,
 
     val originalText: String,
-    val translationText: String?,
-    val memoText: String?
+    val translationText: String? = null,
+    val memoText: String? = null
 )

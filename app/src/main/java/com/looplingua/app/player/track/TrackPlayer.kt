@@ -2,14 +2,11 @@ package com.looplingua.app.player.track
 
 import com.looplingua.app.domain.model.Track
 import com.looplingua.app.domain.model.Segment
-import com.looplingua.app.domain.playback.StepType
 import com.looplingua.app.domain.playback.Pattern
 import com.looplingua.app.player.sequence.SequenceBuilder
-import com.looplingua.app.player.segment.SegmentQueue
 
 class TrackPlayer(
-    private val sequenceBuilder: SequenceBuilder,
-    private val segmentQueue: SegmentQueue
+    private val sequenceBuilder: SequenceBuilder
 ) {
 
     private var track: Track? = null
@@ -46,14 +43,10 @@ class TrackPlayer(
             pattern = Pattern.BASIC
         )
 
-        segmentQueue.setSteps(steps)
-
-        segmentQueue.start()
+        // TODO SegmentPlayerで再生
     }
 
     fun stop() {
-
-        segmentQueue.stop()
 
     }
 }

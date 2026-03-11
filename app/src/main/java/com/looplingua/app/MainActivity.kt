@@ -2,96 +2,89 @@ package com.looplingua.app
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 
-import com.looplingua.app.domain.model.Track
 import com.looplingua.app.domain.model.Segment
-
 import com.looplingua.app.player.audio.AudioPlayer
-import com.looplingua.app.player.segment.SegmentPlayer
-import com.looplingua.app.player.segment.SegmentQueue
-import com.looplingua.app.player.sequence.SequenceBuilder
-import com.looplingua.app.player.track.TrackPlayer
+import com.looplingua.app.player.controller.TestPlayerController
 
 class MainActivity : ComponentActivity() {
-
-    private lateinit var trackPlayer: TrackPlayer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val audioPlayer = AudioPlayer(this)
-        val segmentPlayer = SegmentPlayer(audioPlayer)
-        val segmentQueue = SegmentQueue(segmentPlayer)
-        val sequenceBuilder = SequenceBuilder()
+        val controller = TestPlayerController(audioPlayer)
 
-        trackPlayer = TrackPlayer(
-            sequenceBuilder = sequenceBuilder,
-            segmentQueue = segmentQueue
+        val segments = listOf(
+
+            Segment(
+                id = 1L,
+                originalStartMs = 0,
+                originalEndMs = 2000,
+                translationStartMs = 0,
+                translationEndMs = 2000,
+                memoStartMs = 0,
+                memoEndMs = 0,
+                originalText = "Добрий день",
+                translationText = "Hello",
+                memoText = ""
+            ),
+
+            Segment(
+                id = 2L,
+                originalStartMs = 2000,
+                originalEndMs = 5000,
+                translationStartMs = 2000,
+                translationEndMs = 5000,
+                memoStartMs = 0,
+                memoEndMs = 0,
+                originalText = "Доброго ранку",
+                translationText = "Good morning",
+                memoText = ""
+            ),
+
+            Segment(
+                id = 3L,
+                originalStartMs = 5000,
+                originalEndMs = 7000,
+                translationStartMs = 5000,
+                translationEndMs = 7000,
+                memoStartMs = 0,
+                memoEndMs = 0,
+                originalText = "Добрий вечір",
+                translationText = "Good evening",
+                memoText = ""
+            ),
+
+            Segment(
+                id = 4L,
+                originalStartMs = 7000,
+                originalEndMs = 10000,
+                translationStartMs = 7000,
+                translationEndMs = 10000,
+                memoStartMs = 0,
+                memoEndMs = 0,
+                originalText = "До побачення",
+                translationText = "Goodbye",
+                memoText = ""
+            ),
+
+            Segment(
+                id = 5L,
+                originalStartMs = 10000,
+                originalEndMs = 14000,
+                translationStartMs = 10000,
+                translationEndMs = 14000,
+                memoStartMs = 0,
+                memoEndMs = 0,
+                originalText = "Доброї ночі",
+                translationText = "Good night",
+                memoText = ""
+            )
         )
 
-        val track = Track(
+        controller.setSegments(segments)
 
-            id = 1,
-
-            originalResId = R.raw.greetings_uk,
-
-            translationResId = R.raw.greetings_en,
-
-            memoResId = R.raw.greetings_memo
-        )
-
-        val segment = Segment(
-
-            id = 1,
-
-            originalStartMs = 0,
-            originalEndMs = 2500,
-
-            translationStartMs = 0,
-            translationEndMs = 2500,
-
-            memoStartMs = 0,
-            memoEndMs = 1500,
-
-            originalText = "Добрий день",
-            translationText = "Good afternoon",
-            memoText = "formal greeting"
-        )
-
-        trackPlayer.setTrack(track)
-        trackPlayer.setSegments(listOf(segment))
-
-        setContent {
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(32.dp),
-                verticalArrangement = Arrangement.Center
-            ) {
-
-                Button(
-                    onClick = { trackPlayer.start() },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("PLAY")
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Button(
-                    onClick = { trackPlayer.stop() },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("STOP")
-                }
-            }
-        }
+        controller.play() // 起動と同時に再生
     }
 }
