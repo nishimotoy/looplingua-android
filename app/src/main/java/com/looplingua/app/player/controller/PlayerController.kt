@@ -6,6 +6,8 @@ import com.looplingua.app.domain.playback.Pattern
 import com.looplingua.app.player.segment.SegmentPlaylist
 import com.looplingua.app.player.segment.SegmentQueue
 import com.looplingua.app.player.sequence.SequenceBuilder
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 class PlayerController(
 
@@ -17,6 +19,10 @@ class PlayerController(
 ) {
 
     private var pattern: Pattern = Pattern.BASIC
+
+    // UI通知用
+    private val _currentSegment = MutableStateFlow<Segment?>(null)
+    val currentSegment: StateFlow<Segment?> = _currentSegment
 
 
     init {
@@ -57,13 +63,17 @@ class PlayerController(
     fun stop() {
 
         segmentQueue.stop()
+
+        _currentSegment.value = null
     }
 
 
     private fun playSegment(segment: Segment) {
 
-        val steps = sequenceBuilder.build(
+        // ★ UIへ通知
+        _currentSegment.value = segment
 
+        val steps = sequenceBuilder.build(
             track = track,
             segment = segment,
             pattern = pattern
