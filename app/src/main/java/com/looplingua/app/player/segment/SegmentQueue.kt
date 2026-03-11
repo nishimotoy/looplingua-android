@@ -15,20 +15,28 @@ class SegmentQueue(
 
     private val handler = Handler(Looper.getMainLooper())
 
+    private var onFinished: (() -> Unit)? = null
+
     fun setSteps(stepList: List<PlaybackStep>) {
 
         steps = stepList
         currentIndex = 0
     }
 
-    fun start() {
+    fun start(onFinished: () -> Unit) {
+
+        this.onFinished = onFinished
 
         playNext()
     }
 
     private fun playNext() {
 
-        if (currentIndex >= steps.size) return
+        if (currentIndex >= steps.size) {
+
+            onFinished?.invoke()
+            return
+        }
 
         val step = steps[currentIndex]
 
