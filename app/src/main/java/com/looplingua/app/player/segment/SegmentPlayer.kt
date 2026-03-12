@@ -12,11 +12,13 @@ class SegmentPlayer(
 ) {
 
     private val handler = Handler(Looper.getMainLooper())
+    private var isStopped = false
 
     fun play(
         steps: List<PlaybackStep>,
         onComplete: () -> Unit
     ) {
+        isStopped = false
         playStep(steps, 0, onComplete)
     }
 
@@ -25,6 +27,7 @@ class SegmentPlayer(
         index: Int,
         onComplete: () -> Unit
     ) {
+        if (isStopped) return
 
         if (index >= steps.size) {
             onComplete()
@@ -32,7 +35,7 @@ class SegmentPlayer(
         }
 
         val step = steps[index]
-        Log.d("PLAYER", "Step $index ${step.stepType}")
+        Log.d("PLAYER", "Step $index ${step.stepType} start=${step.startMs} end=${step.endMs} pause=${step.pauseMs}")
 
         when (step.stepType) {
 
@@ -40,31 +43,35 @@ class SegmentPlayer(
             StepType.TRANSLATION,
             StepType.MEMO -> {
 
-                audioPlayer.play(
-                    resId = step.audioResId!!,
-                    startMs = step.startMs!!,
-                    endMs = step.endMs!!
-                ) {
-                    // 再生が終わったら次のステップ
+                val resId = step.audioResId
+                val start = step.startMs
+                val end = step.endMs
+
+                if (resId == null || start == null || end == null) {
+                    Log.w("PLAYER", "Skipping step with null audio: $step")
                     playStep(steps, index + 1, onComplete)
+                    return
+                }
+
+                audioPlayer.play(resId, start, end) {
+                    if (!isStopped) playStep(steps, index + 1, onComplete)
                 }
             }
 
-            StepType.PAUSE_SHORT -> {
-                handler.postDelayed({
-                    playStep(steps, index + 1, onComplete)
-                }, 800)
-            }
-
+            StepType.PAUSE_SHORT,
             StepType.PAUSE_LONG -> {
+                val pauseDuration = step.pauseMs.takeIf { it > 0 } ?: if (step.stepType == StepType.PAUSE_SHORT) 500 else 1500
+
+                // Pause を currentPosition 監視で扱う場合、AudioPlayer に playPause() を追加するとより安全
                 handler.postDelayed({
-                    playStep(steps, index + 1, onComplete)
-                }, 1500)
+                    if (!isStopped) playStep(steps, index + 1, onComplete)
+                }, pauseDuration)
             }
         }
     }
 
     fun stop() {
+        isStopped = true
         audioPlayer.stop()
         handler.removeCallbacksAndMessages(null)
     }
