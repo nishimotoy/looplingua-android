@@ -44,24 +44,19 @@ class SegmentPlayer(
                     resId = step.audioResId!!,
                     startMs = step.startMs!!,
                     endMs = step.endMs!!
-                )
-
-                val duration = step.endMs - step.startMs
-
-                handler.postDelayed({
+                ) {
+                    // 再生が終わったら次のステップ
                     playStep(steps, index + 1, onComplete)
-                }, duration)
+                }
             }
 
             StepType.PAUSE_SHORT -> {
-
                 handler.postDelayed({
                     playStep(steps, index + 1, onComplete)
                 }, 800)
             }
 
             StepType.PAUSE_LONG -> {
-
                 handler.postDelayed({
                     playStep(steps, index + 1, onComplete)
                 }, 1500)
