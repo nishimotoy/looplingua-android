@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 
 class AudioPlayer(private val context: Context) {
@@ -18,18 +19,21 @@ class AudioPlayer(private val context: Context) {
         endMs: Long
     ) {
 
-        // 前の再生を完全停止
         handler.removeCallbacksAndMessages(null)
+
         player.stop()
+        player.clearMediaItems()
 
         val uri = Uri.parse("android.resource://${context.packageName}/$resId")
         val mediaItem = MediaItem.fromUri(uri)
 
         player.setMediaItem(mediaItem)
+
         player.prepare()
 
         player.seekTo(startMs)
-        player.play()
+
+        player.playWhenReady = true
 
         scheduleStop(endMs - startMs)
     }

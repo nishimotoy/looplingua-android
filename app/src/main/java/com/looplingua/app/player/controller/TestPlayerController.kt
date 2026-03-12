@@ -110,8 +110,11 @@ class TestPlayerController(
             Log.d("TEST_PLAYER", "Segment finished")
         }
 
+        Log.d("TEST_PLAYER", "Segment started: ${segment.originalText}")
         // Stepごとのログを追加
-        Log.d("TEST_PLAYER", "Started segment: ${segment.originalText}")
+        steps.forEach {
+            Log.d("STEP_DEBUG", "Step: ${it.stepType}")
+        }
     }
 }
 
