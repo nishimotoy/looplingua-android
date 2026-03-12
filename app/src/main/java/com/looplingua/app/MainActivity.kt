@@ -19,9 +19,9 @@ class MainActivity : ComponentActivity() {
 
             Segment(
                 id = 1L,
-                originalStartMs = 0,
+                originalStartMs = 100,
                 originalEndMs = 2000,
-                translationStartMs = 0,
+                translationStartMs = 100,
                 translationEndMs = 2000,
                 memoStartMs = 0,
                 memoEndMs = 0,
