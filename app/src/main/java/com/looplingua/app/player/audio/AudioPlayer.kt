@@ -25,13 +25,12 @@ class AudioPlayer(private val context: Context) {
         player.clearMediaItems()
 
         val uri = Uri.parse("android.resource://${context.packageName}/$resId")
+
         val mediaItem = MediaItem.fromUri(uri)
 
-        player.setMediaItem(mediaItem)
+        player.setMediaItem(mediaItem, startMs)
 
         player.prepare()
-
-        player.seekTo(startMs)
 
         player.playWhenReady = true
 
