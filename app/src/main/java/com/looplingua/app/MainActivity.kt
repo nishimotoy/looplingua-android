@@ -1,4 +1,5 @@
 package com.looplingua.app
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -9,9 +10,7 @@ import com.looplingua.app.player.controller.PlayerController
 import com.looplingua.app.player.segment.SegmentPlaylist
 import com.looplingua.app.player.segment.SegmentPlayer
 import com.looplingua.app.player.sequence.SequenceBuilder
-import com.looplingua.app.ui.SegmentScreen
-import com.looplingua.app.ui.track.TrackScreen
-import androidx.compose.runtime.collectAsState
+import com.looplingua.app.ui.MainScreen
 
 class MainActivity : ComponentActivity() {
 
@@ -37,7 +36,21 @@ class MainActivity : ComponentActivity() {
             segmentPlayer = segmentPlayer
         )
 
-        val segments = listOf(
+        val segments = createTestSegments()
+
+        controller.setSegments(segments)
+
+        setContent {
+            MainScreen(
+                controller = controller,
+                segments = segments
+            )
+        }
+    }
+
+    private fun createTestSegments(): List<Segment> {
+
+        return listOf(
             Segment(
                 id = 1L,
                 originalStartMs = 100,
@@ -99,25 +112,5 @@ class MainActivity : ComponentActivity() {
                 memoText = ""
             )
         )
-
-        setContent {
-
-            val currentSegment = controller.currentSegment.collectAsState().value
-
-            val currentIndex = segments.indexOfFirst {
-                it.id == currentSegment?.id
-            }
-
-            TrackScreen(
-                segments = segments,
-                currentIndex = currentIndex,
-                onSegmentClick = { index ->
-                    controller.playFrom(index)
-                }
-            )
-        }
-
-        controller.setSegments(segments)
-        controller.play()
     }
 }
