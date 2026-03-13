@@ -60,4 +60,14 @@ class SegmentPlaylist {
 
         return segments[currentSegmentIndex]
     }
+
+    fun getCurrentIndex(): Int {
+        return currentSegmentIndex
+    }
+
+    fun jumpTo(index: Int, playSegment: (Segment) -> Unit) {
+        if (index < 0 || index >= segments.size) return
+        currentSegmentIndex = index
+        playSegment(segments[currentSegmentIndex])
+    }
 }

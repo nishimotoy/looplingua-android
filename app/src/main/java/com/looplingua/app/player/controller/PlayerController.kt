@@ -25,26 +25,20 @@ class PlayerController(
 
 
     fun setSegments(segments: List<Segment>) {
-
         playlist.setSegments(segments)
     }
 
 
     fun setPattern(newPattern: Pattern) {
-
         pattern = newPattern
     }
 
 
     fun play() {
-
         playlist.start { segment ->
-
             playSegment(segment)
-
         }
     }
-
 
     fun stop() {
         segmentPlayer.stop()
@@ -58,6 +52,16 @@ class PlayerController(
 
     fun prev() {
         playlist.prev { segment ->
+            playSegment(segment)
+        }
+    }
+
+    fun getCurrentIndex(): Int {
+        return playlist.getCurrentIndex()
+    }
+
+    fun playFrom(index: Int) {
+        playlist.jumpTo(index) { segment ->
             playSegment(segment)
         }
     }
