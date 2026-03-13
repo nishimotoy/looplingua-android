@@ -1,53 +1,44 @@
 package com.looplingua.app.ui
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.looplingua.app.player.controller.PlayerController
 
 @Composable
-fun SegmentScreen(
-    controller: PlayerController
-) {
+fun SegmentScreen(controller: PlayerController) {
+
     val segment by controller.currentSegment.collectAsState()
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .fillMaxWidth()
+            .padding(16.dp)
     ) {
-
-        Spacer(Modifier.height(80.dp))
 
         Text(
             text = segment?.originalText ?: "",
-            fontSize = 32.sp,
-            fontWeight = FontWeight.Bold
+            style = MaterialTheme.typography.headlineMedium
         )
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         Text(
             text = segment?.translationText ?: "",
-            fontSize = 22.sp,
-            color = Color.Gray
+            style = MaterialTheme.typography.bodyLarge
         )
 
-        Spacer(Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        Text(
-            text = segment?.memoText ?: "",
-            fontSize = 18.sp,
-            color = Color.DarkGray
-        )
-
-        PlayerControls(controller)
+        SegmentControls(controller)
     }
 }

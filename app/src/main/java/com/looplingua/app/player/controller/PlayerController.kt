@@ -8,40 +8,46 @@ import com.looplingua.app.player.sequence.SequenceBuilder
 import com.looplingua.app.player.segment.SegmentPlayer
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class PlayerController(
-
     private val track: Track,
     private val playlist: SegmentPlaylist,
     private val sequenceBuilder: SequenceBuilder,
     private val segmentPlayer: SegmentPlayer
-
 ) {
 
     private var pattern: Pattern = Pattern.BASIC
 
     private val _currentSegment = MutableStateFlow<Segment?>(null)
-    val currentSegment: StateFlow<Segment?> = _currentSegment
+    val currentSegment: StateFlow<Segment?> = _currentSegment.asStateFlow()
 
+    private val _isPlaying = MutableStateFlow(false)
+    val isPlaying: StateFlow<Boolean> = _isPlaying.asStateFlow()
 
     fun setSegments(segments: List<Segment>) {
         playlist.setSegments(segments)
     }
 
-
-    fun setPattern(newPattern: Pattern) {
-        pattern = newPattern
-    }
-
-
     fun play() {
+        if (_isPlaying.value) return
+
+        _isPlaying.value = true
+
         playlist.start { segment ->
             playSegment(segment)
         }
     }
 
     fun stop() {
+        if (!_isPlaying.value) return
+
+        _isPlaying.value = false
         segmentPlayer.stop()
+    }
+
+    fun togglePlay() {
+        if (_isPlaying.value) stop() else play()
     }
 
     fun next() {
@@ -66,20 +72,10 @@ class PlayerController(
         }
     }
 
-    fun togglePlay() {
-        if (_currentSegment.value == null) {
-            play()
-        } else {
-            stop()
-        }
-    }
-
     private fun playSegment(segment: Segment) {
 
-        // ★ 二重再生防止
         segmentPlayer.stop()
 
-        // ★ UIへ通知
         _currentSegment.value = segment
 
         val steps = sequenceBuilder.build(
@@ -89,6 +85,9 @@ class PlayerController(
         )
 
         segmentPlayer.play(steps) {
+
+            if (!_isPlaying.value) return@play
+
             playlist.next { nextSegment ->
                 playSegment(nextSegment)
             }
