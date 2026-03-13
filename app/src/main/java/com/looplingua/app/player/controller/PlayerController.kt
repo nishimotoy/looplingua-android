@@ -47,10 +47,7 @@ class PlayerController(
 
 
     fun stop() {
-
         segmentPlayer.stop()
-
-        _currentSegment.value = null
     }
 
     fun next() {
