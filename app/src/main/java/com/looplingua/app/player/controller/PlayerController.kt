@@ -53,6 +53,25 @@ class PlayerController(
         _currentSegment.value = null
     }
 
+    fun next() {
+        playlist.next { segment ->
+            playSegment(segment)
+        }
+    }
+
+    fun prev() {
+        playlist.prev { segment ->
+            playSegment(segment)
+        }
+    }
+
+    fun togglePlay() {
+        if (_currentSegment.value == null) {
+            play()
+        } else {
+            stop()
+        }
+    }
 
     private fun playSegment(segment: Segment) {
 

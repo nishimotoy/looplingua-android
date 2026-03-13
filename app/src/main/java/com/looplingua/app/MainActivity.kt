@@ -1,11 +1,15 @@
 package com.looplingua.app
-
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-
+import androidx.activity.compose.setContent
 import com.looplingua.app.domain.model.Segment
+import com.looplingua.app.domain.model.Track
 import com.looplingua.app.player.audio.AudioPlayer
-import com.looplingua.app.player.controller.TestPlayerController
+import com.looplingua.app.player.controller.PlayerController
+import com.looplingua.app.player.segment.SegmentPlaylist
+import com.looplingua.app.player.segment.SegmentPlayer
+import com.looplingua.app.player.sequence.SequenceBuilder
+import com.looplingua.app.ui.SegmentScreen
 
 class MainActivity : ComponentActivity() {
 
@@ -13,10 +17,25 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val audioPlayer = AudioPlayer(this)
-        val controller = TestPlayerController(audioPlayer)
+        val segmentPlayer = SegmentPlayer(audioPlayer)
+        val playlist = SegmentPlaylist()
+        val sequenceBuilder = SequenceBuilder()
+
+        val track = Track(
+            id = 1L,
+            originalResId = R.raw.greetings_uk,
+            translationResId = R.raw.greetings_en,
+            memoResId = R.raw.greetings_memo
+        )
+
+        val controller = PlayerController(
+            track = track,
+            playlist = playlist,
+            sequenceBuilder = sequenceBuilder,
+            segmentPlayer = segmentPlayer
+        )
 
         val segments = listOf(
-
             Segment(
                 id = 1L,
                 originalStartMs = 100,
@@ -29,7 +48,6 @@ class MainActivity : ComponentActivity() {
                 translationText = "Hello",
                 memoText = ""
             ),
-
             Segment(
                 id = 2L,
                 originalStartMs = 2000,
@@ -42,7 +60,6 @@ class MainActivity : ComponentActivity() {
                 translationText = "Good morning",
                 memoText = ""
             ),
-
             Segment(
                 id = 3L,
                 originalStartMs = 5000,
@@ -55,7 +72,6 @@ class MainActivity : ComponentActivity() {
                 translationText = "Good evening",
                 memoText = ""
             ),
-
             Segment(
                 id = 4L,
                 originalStartMs = 7000,
@@ -68,7 +84,6 @@ class MainActivity : ComponentActivity() {
                 translationText = "Goodbye",
                 memoText = ""
             ),
-
             Segment(
                 id = 5L,
                 originalStartMs = 10000,
@@ -83,8 +98,10 @@ class MainActivity : ComponentActivity() {
             )
         )
 
+        setContent {
+            SegmentScreen(controller = controller)
+        }
         controller.setSegments(segments)
-
-        controller.play() // 起動と同時に再生
+        controller.play()
     }
 }

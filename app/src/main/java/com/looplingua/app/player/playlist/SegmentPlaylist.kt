@@ -25,15 +25,30 @@ class SegmentPlaylist {
 
     fun next(playSegment: (Segment) -> Unit) {
 
-        currentSegmentIndex++
+        if (segments.isEmpty()) return
 
-        if (currentSegmentIndex >= segments.size) {
+        if (currentSegmentIndex >= segments.size - 1) {
             return
         }
 
+        currentSegmentIndex++
+
         playSegment(segments[currentSegmentIndex])
     }
+    fun prev(playSegment: (Segment) -> Unit) {
 
+        if (segments.isEmpty()) return
+
+        if (currentSegmentIndex <= 0) {
+            currentSegmentIndex = 0
+            playSegment(segments[currentSegmentIndex])
+            return
+        }
+
+        currentSegmentIndex--
+
+        playSegment(segments[currentSegmentIndex])
+    }
     fun stop() {
 
         currentSegmentIndex = 0
