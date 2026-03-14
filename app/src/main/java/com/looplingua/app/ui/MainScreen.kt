@@ -32,7 +32,7 @@ fun MainScreen(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f)
+                .weight(0.5f)
         ) {
             SegmentScreen(controller = controller)
         }
@@ -41,7 +41,7 @@ fun MainScreen(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f)
+                .weight(0.5f)
         ) {
             TrackScreen(
                 segments = segments,
