@@ -2,9 +2,9 @@ package com.looplingua.app.domain.model
 
 data class Track(
 
-    val originalAudioPath: String,
-    val translationAudioPath: String,
-    val memoAudioPath: String,
+    val id: Long,
 
-    val segments: List<Segment>
+    val originalResId: Int,
+    val translationResId: Int?,
+    val memoResId: Int?
 )

@@ -1,0 +1,39 @@
+[33m31aa1cf[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mrebuild-player[m[33m, [m[1;31morigin/rebuild-player[m[33m)[m Center current segment in TrackScreen auto-scroll
+[33mdd957ae[m Add currentIndex StateFlow to PlayerController for track highlight sync
+[33m2f6ce8e[m Add test data
+[33m025a60b[m Refine SegmentScreen layout with centered text and bottom controls
+[33m5a8c61e[m Add playback state handling to SegmentControls
+[33m8961fea[m Add MainScreen combining player and track list
+[33m290b1a0[m Add Navigation Compose dependency to Gradle configuration
+[33mab018ee[m Add TrackScreen with segment list and playback navigation
+[33mc01d438[m Keep current segment visible after STOP
+[33m61f991a[m Add SegmentScreen UI and player controls (PREV / PLAY-STOP / NEXT)
+[33m9a6deca[m Update .gitignore
+[33m6610cfa[m Refine SegmentPlayer playback flow
+[33m41ece56[m Refactor AudioPlayer to currentPosition monitoring
+[33mf7ce369[m Tried to Stabilize Player
+[33m11733ae[m Tried to Stabilize AudioPlayer
+[33m84a28d5[m Tried to Stabilize AudioPlayer and add log output to TestPlayerController
+[33m4db9b0f[m Refactor player: remove SegmentQueue and stabilize audio playback
+[33mdd39d23[m Add StateFlow to PlayerController to expose currently playing segment to UI
+[33m5c2a2d9[m Implement PlayerController to manage segment playback using SegmentPlaylist and SegmentQueue
+[33m34ac8f6[m Add completion callback to SegmentQueue for segment chaining
+[33m4375aa1[m Add SegmentPlaylist to manage sequential segment playback
+[33mccdf9fd[m Add PlayerController and Pattern
+[33me9a38f9[m Add SegmentPlaylist
+[33mbf79203[m Refactor playback engine for segment-based LoopLingua player
+[33m138ebdd[m[33m ([m[1;33mtag: [m[1;33mstable-audio[m[33m, [m[1;31morigin/detached2[m[33m)[m Add sample audio files for player development
+[33mac08cdb[m[33m ([m[1;31morigin/detached[m[33m)[m git tag stable-audio
+[33md4f29ad[m Remove unused code and clean up warnings
+[33m11e5133[m Fix playback sequence stopping logic at last step
+[33m228f3fe[m Update UI to switch displayed text based on currently playing segment
+[33m484d81a[m Update deployment target configuration for physical device testing
+[33mb33cca5[m Add debug log to executeNextStep() to trace playback step progression
+[33m5be2c9d[m fix(playback): prevent ANR by stabilizing position monitoring loop
+[33mcc66b16[m Implement segmented playback with PlaybackEngine and SimpleSegmentPlayer
+[33mef8e9ed[m Refactor segment playback to use position-based monitoring for accurate stopping
+[33m41df3ad[m Enable verified segment-based playback with ExoPlayer
+[33m4ba230e[m Introduce core playback domain and shadowing engine
+[33m877b237[m Add core domain models
+[33m7ab72f2[m Add initial playback and architecture design documents
+[33m21927d9[m Initial project setup (minSdk 26, Compose base)

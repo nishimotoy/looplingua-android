@@ -1,11 +1,14 @@
-package com.looplingua.app.service.playback
+package com.looplingua.app.domain.playback
 
 enum class StepType {
 
-    ORIGINAL,
     TRANSLATION,
+
+    ORIGINAL,
+
     MEMO,
 
-    SHORT_PAUSE,
-    LONG_PAUSE
+    PAUSE_SHORT,
+
+    PAUSE_LONG
 }
