@@ -19,11 +19,17 @@ class PlayerController(
 
     private var pattern: Pattern = Pattern.BASIC
 
+    // 現在セグメント
     private val _currentSegment = MutableStateFlow<Segment?>(null)
     val currentSegment: StateFlow<Segment?> = _currentSegment.asStateFlow()
 
+    // 再生状態
     private val _isPlaying = MutableStateFlow(false)
     val isPlaying: StateFlow<Boolean> = _isPlaying.asStateFlow()
+
+    // ★ 追加：現在インデックス
+    private val _currentIndex = MutableStateFlow(0)
+    val currentIndex: StateFlow<Int> = _currentIndex.asStateFlow()
 
     fun setSegments(segments: List<Segment>) {
         playlist.setSegments(segments)
@@ -52,12 +58,14 @@ class PlayerController(
 
     fun next() {
         playlist.next { segment ->
+            _currentIndex.value = playlist.getCurrentIndex()
             playSegment(segment)
         }
     }
 
     fun prev() {
         playlist.prev { segment ->
+            _currentIndex.value = playlist.getCurrentIndex()
             playSegment(segment)
         }
     }
@@ -68,6 +76,7 @@ class PlayerController(
 
     fun playFrom(index: Int) {
         playlist.jumpTo(index) { segment ->
+            _currentIndex.value = index
             playSegment(segment)
         }
     }
@@ -76,7 +85,9 @@ class PlayerController(
 
         segmentPlayer.stop()
 
+        // UI更新
         _currentSegment.value = segment
+        _currentIndex.value = playlist.getCurrentIndex()
 
         val steps = sequenceBuilder.build(
             track = track,

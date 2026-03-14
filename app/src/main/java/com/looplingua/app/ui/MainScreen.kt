@@ -44,12 +44,8 @@ fun MainScreen(
                 .weight(0.5f)
         ) {
             TrackScreen(
-                segments = segments,
-                currentIndex = currentIndex,
-                onSegmentClick = { index ->
-                    controller.playFrom(index)
-                }
-            )
+                controller = controller,
+                segments = segments)
         }
     }
 }
