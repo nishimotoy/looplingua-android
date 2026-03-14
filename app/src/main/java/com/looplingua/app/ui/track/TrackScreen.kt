@@ -57,6 +57,15 @@ fun TrackScreen(
 
     // 自動スクロール
     LaunchedEffect(currentIndex) {
-        listState.animateScrollToItem(currentIndex)
-    }
-}
+
+        val visibleItems = listState.layoutInfo.visibleItemsInfo
+        val itemHeight = visibleItems.firstOrNull()?.size ?: 0
+        val viewportHeight = listState.layoutInfo.viewportSize.height
+
+        val offset = (viewportHeight / 2) - (itemHeight / 2)
+
+        listState.animateScrollToItem(
+            index = currentIndex,
+            scrollOffset = -offset
+        )
+    }}
