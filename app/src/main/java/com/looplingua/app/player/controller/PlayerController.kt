@@ -33,14 +33,15 @@ class PlayerController(
 
     fun setSegments(segments: List<Segment>) {
         playlist.setSegments(segments)
+        _currentIndex.value = 0
     }
 
     fun play() {
         if (_isPlaying.value) return
 
-        _isPlaying.value = true
-
         val index = playlist.getCurrentIndex()
+
+        _isPlaying.value = true
 
         playlist.jumpTo(index) { segment ->
             playSegment(segment)
