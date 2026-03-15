@@ -1,0 +1,71 @@
+{
+"track": {
+"id": 1,
+"title": "Ukrainian Greetings",
+"originalAudioPath": "asset:///testdata/tracks/1/audio/greetings_uk.mp3",
+"translationAudioPath": "asset:///testdata/tracks/1/audio/greetings_en.mp3",
+"memoAudioPath": "asset:///testdata/tracks/1/audio/greetings_memo.mp3"
+},
+"segments": [
+{
+"id": 1,
+"originalStartMs": 100,
+"originalEndMs": 2000,
+"translationStartMs": 100,
+"translationEndMs": 2000,
+"memoStartMs": 0,
+"memoEndMs": 0,
+"originalText": "Добрий день",
+"translationText": "Hello",
+"memoText": ""
+},
+{
+"id": 2,
+"originalStartMs": 2000,
+"originalEndMs": 5000,
+"translationStartMs": 2000,
+"translationEndMs": 5000,
+"memoStartMs": 0,
+"memoEndMs": 0,
+"originalText": "Доброго ранку",
+"translationText": "Good morning",
+"memoText": ""
+},
+{
+"id": 3,
+"originalStartMs": 5000,
+"originalEndMs": 7000,
+"translationStartMs": 5000,
+"translationEndMs": 7000,
+"memoStartMs": 0,
+"memoEndMs": 0,
+"originalText": "Добрий вечір",
+"translationText": "Good evening",
+"memoText": ""
+},
+{
+"id": 4,
+"originalStartMs": 7000,
+"originalEndMs": 10000,
+"translationStartMs": 7000,
+"translationEndMs": 10000,
+"memoStartMs": 0,
+"memoEndMs": 0,
+"originalText": "До побачення",
+"translationText": "Goodbye",
+"memoText": ""
+},
+{
+"id": 5,
+"originalStartMs": 10000,
+"originalEndMs": 14000,
+"translationStartMs": 10000,
+"translationEndMs": 14000,
+"memoStartMs": 0,
+"memoEndMs": 0,
+"originalText": "Доброї ночі",
+"translationText": "Good night",
+"memoText": ""
+}
+]
+}
