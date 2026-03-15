@@ -59,7 +59,7 @@ captures/
 # Ignore audio test files
 app/src/main/res/raw/*
 testdata/*
-app/src/main/aseets/testdata/*
+app/src/main/assets/testdata/*
 
 # keep directory
 !app/src/main/res/raw/.gitkeep
