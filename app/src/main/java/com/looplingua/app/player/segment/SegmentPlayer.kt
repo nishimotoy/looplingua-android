@@ -18,6 +18,7 @@ class SegmentPlayer(
         steps: List<PlaybackStep>,
         onComplete: () -> Unit
     ) {
+        handler.removeCallbacksAndMessages(null) // ★追加
         isStopped = false
         playStep(steps, 0, onComplete)
     }
