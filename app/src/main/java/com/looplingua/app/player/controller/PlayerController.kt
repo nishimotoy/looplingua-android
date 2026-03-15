@@ -40,7 +40,9 @@ class PlayerController(
 
         _isPlaying.value = true
 
-        playlist.start { segment ->
+        val index = playlist.getCurrentIndex()
+
+        playlist.jumpTo(index) { segment ->
             playSegment(segment)
         }
     }
@@ -57,9 +59,9 @@ class PlayerController(
     }
 
     fun next() {
-        playlist.next { segment ->
+        playlist.next { nextSegment ->
             _currentIndex.value = playlist.getCurrentIndex()
-            playSegment(segment)
+            playSegment(nextSegment)
         }
     }
 
