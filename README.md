@@ -1,35 +1,93 @@
-LoopLingua
+# LoopLingua
 
-Your Language. On Loop.
+**Your language. On loop.**
 
-LoopLingua is a passive-listening focused language learning app.
-Users provide their own audio materials and the app builds structured repetition sequences.
+LoopLingua is a language learning app focused on **passive listening and structured repetition**.
 
+LoopLingua turns any audio into structured listening material.
 
-Core Concept
+The goal is simple:
+**make long-term listening practice effortless.**
 
-- Local-first design
+---
 
-- Structured repetition playback
+## Core Ideas
 
-- Translation + original audio loop
+* **Local-first learning**
+  Users provide their own audio files.
 
-- Fully controllable pause ratio
+* **Structured repetition playback**
+  Sentences or segments can be repeated automatically.
 
-- Background playback support
+* **Original + translation loop**
+  Alternate between original audio and translation.
 
+* **Adjustable pause ratio**
+  Pause timing optimized for shadowing practice.
 
-Architecture
+* **Background playback**
+  Designed for long passive listening sessions.
 
-- MVVM
+---
 
-- StateFlow-based state management
+## Architecture
 
-- Playback sequence engine
+The app is designed as a modular playback engine for language learning.
 
-- ExoPlayer
+* MVVM architecture
+* StateFlow-based state management
+* Playback sequence engine
+* ExoPlayer-based audio system
 
+```
+UI (Jetpack Compose)
+        ↓
+PlayerController
+        ↓
+TrackPlayer
+        ↓
+SegmentPlayer
+        ↓
+AudioPlayer (ExoPlayer)
+```
 
-Status
+---
 
-- In development
+## Screenshots
+
+(coming soon)
+
+---
+
+## Planned Features
+
+* Sentence-based audio segmentation
+* Custom repetition patterns
+* Shadowing-friendly timing control
+* Multiple playback modes for listening practice
+
+---
+
+## Status
+
+🚧 **Currently in development**
+
+This repository is an early-stage implementation of the playback engine and UI architecture.
+
+---
+
+## Vision
+
+Most language learning apps focus on **active study**.
+
+LoopLingua explores another approach:
+
+> **Continuous passive listening with structured repetition.**
+
+The aim is to support **long-term language exposure** through a simple, flexible playback system.
+
+---
+
+## License
+
+MIT License
