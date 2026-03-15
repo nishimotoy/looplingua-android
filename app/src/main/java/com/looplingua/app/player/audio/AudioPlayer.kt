@@ -16,7 +16,7 @@ class AudioPlayer(private val context: Context) {
     private var isMonitoring = false
 
     fun play(
-        resId: Int,
+        path: String,
         startMs: Long,
         endMs: Long,
         onComplete: () -> Unit
@@ -24,7 +24,7 @@ class AudioPlayer(private val context: Context) {
 
         stop()
 
-        val uri = "android.resource://${context.packageName}/$resId"
+        val uri = Uri.parse(path)
         val mediaItem = MediaItem.fromUri(uri)
 
         player.setMediaItem(mediaItem)

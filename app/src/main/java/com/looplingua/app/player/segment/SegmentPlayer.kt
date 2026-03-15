@@ -43,17 +43,17 @@ class SegmentPlayer(
             StepType.TRANSLATION,
             StepType.MEMO -> {
 
-                val resId = step.audioResId
+                val path = step.audioPath
                 val start = step.startMs
                 val end = step.endMs
 
-                if (resId == null || start == null || end == null) {
+                if (path == null || start == null || end == null) {
                     Log.w("PLAYER", "Skipping step with null audio: $step")
                     playStep(steps, index + 1, onComplete)
                     return
                 }
 
-                audioPlayer.play(resId, start, end) {
+                audioPlayer.play(path, start, end) {
                     if (!isStopped) playStep(steps, index + 1, onComplete)
                 }
             }

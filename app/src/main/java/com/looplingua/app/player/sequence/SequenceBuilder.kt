@@ -25,7 +25,7 @@ class SequenceBuilder {
                         steps.add(
                             PlaybackStep(
                                 stepType = StepType.TRANSLATION,
-                                audioResId = track.translationResId,
+                                audioPath = track.translationAudioPath,
                                 startMs = segment.translationStartMs,
                                 endMs = segment.translationEndMs,
                                 pauseMs = 0
@@ -38,7 +38,7 @@ class SequenceBuilder {
                     steps.add(
                         PlaybackStep(
                             stepType = StepType.ORIGINAL,
-                            audioResId = track.originalResId,
+                            audioPath = track.originalAudioPath,
                             startMs = segment.originalStartMs,
                             endMs = segment.originalEndMs,
                             pauseMs = 0
@@ -51,7 +51,7 @@ class SequenceBuilder {
                         steps.add(
                             PlaybackStep(
                                 stepType = StepType.MEMO,
-                                audioResId = track.memoResId,
+                                audioPath = track.memoAudioPath,
                                 startMs = segment.memoStartMs,
                                 endMs = segment.memoEndMs,
                                 pauseMs = 0
@@ -64,7 +64,7 @@ class SequenceBuilder {
                     steps.add(
                         PlaybackStep(
                             stepType = StepType.PAUSE_SHORT,
-                            audioResId = null,
+                            audioPath = null,
                             startMs = null,
                             endMs = null,
                             pauseMs = 800
@@ -76,7 +76,7 @@ class SequenceBuilder {
                     steps.add(
                         PlaybackStep(
                             stepType = StepType.PAUSE_LONG,
-                            audioResId = null,
+                            audioPath = null,
                             startMs = null,
                             endMs = null,
                             pauseMs = 2000

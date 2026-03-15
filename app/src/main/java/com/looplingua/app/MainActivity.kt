@@ -24,9 +24,9 @@ class MainActivity : ComponentActivity() {
 
         val track = Track(
             id = 1L,
-            originalResId = R.raw.greetings_uk,
-            translationResId = R.raw.greetings_en,
-            memoResId = R.raw.greetings_memo
+            originalAudioPath = "asset:///testdata/audio/greetings_uk.mp3",
+            translationAudioPath = "asset:///testdata/audio/greetings_en.mp3",
+            memoAudioPath = "asset:///testdata/audio/greetings_memo.mp3"
         )
 
         val controller = PlayerController(
