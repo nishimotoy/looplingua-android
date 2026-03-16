@@ -22,7 +22,7 @@ class AudioPlayer(private val context: Context) {
         onComplete: () -> Unit
     ) {
 
-        stop()
+        stop() // to ensure clean ExoPlayer state
 
         val uri = Uri.parse(path)
         val mediaItem = MediaItem.fromUri(uri)
@@ -89,6 +89,7 @@ class AudioPlayer(private val context: Context) {
     }
 
     fun release() {
+        stop() // to ensure clean ExoPlayer state
         player.release()
     }
 }
