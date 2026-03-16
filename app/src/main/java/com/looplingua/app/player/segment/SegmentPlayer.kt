@@ -36,7 +36,7 @@ class SegmentPlayer(
         }
 
         val step = steps[index]
-        Log.d("PLAYER", "Step $index ${step.stepType} start=${step.startMs} end=${step.endMs} pause=${step.pauseMs}")
+        Log.d("PLAYER_STEP", "Step $index ${step.stepType} start=${step.startMs} end=${step.endMs} pause=${step.pauseMs}")
 
         when (step.stepType) {
 
@@ -49,7 +49,7 @@ class SegmentPlayer(
                 val end = step.endMs
 
                 if (path == null || start == null || end == null) {
-                    Log.w("PLAYER", "Skipping step with null audio: $step")
+                    Log.w("PLAYER_STEP", "Skipping step with null audio: $step")
                     playStep(steps, index + 1, onComplete)
                     return
                 }
