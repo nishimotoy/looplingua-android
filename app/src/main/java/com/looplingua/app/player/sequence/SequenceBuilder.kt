@@ -81,7 +81,7 @@ class SequenceBuilder {
                         PlaybackStep(
                             stepType = StepType.PAUSE_SHORT,
                             slice = null,
-                            pauseMs = 800
+                            pauseMs = 400
                         )
                     )
                 }
@@ -91,7 +91,7 @@ class SequenceBuilder {
                         PlaybackStep(
                             stepType = StepType.PAUSE_LONG,
                             slice = null,
-                            pauseMs = 2000
+                            pauseMs = 1000
                         )
                     )
                 }
