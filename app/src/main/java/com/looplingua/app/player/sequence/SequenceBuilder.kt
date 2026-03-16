@@ -5,6 +5,7 @@ import com.looplingua.app.domain.model.Segment
 import com.looplingua.app.domain.playback.Pattern
 import com.looplingua.app.domain.playback.PlaybackStep
 import com.looplingua.app.domain.playback.StepType
+import com.looplingua.app.domain.model.AudioSlice
 
 class SequenceBuilder {
 
@@ -21,13 +22,18 @@ class SequenceBuilder {
             when (type) {
 
                 StepType.TRANSLATION -> {
-                    if (segment.translationStartMs != segment.translationEndMs) {
+                    if (hasAudio(segment.translationStartMs, segment.translationEndMs)) {
+
+                        val slice = AudioSlice(
+                            audioPath = track.translationAudioPath!!,
+                            startMs = segment.translationStartMs,
+                            endMs = segment.translationEndMs
+                        )
+
                         steps.add(
                             PlaybackStep(
                                 stepType = StepType.TRANSLATION,
-                                audioPath = track.translationAudioPath,
-                                startMs = segment.translationStartMs,
-                                endMs = segment.translationEndMs,
+                                slice = slice,
                                 pauseMs = 0
                             )
                         )
@@ -35,25 +41,35 @@ class SequenceBuilder {
                 }
 
                 StepType.ORIGINAL -> {
+
+                    val slice = AudioSlice(
+                        audioPath = track.originalAudioPath,
+                        startMs = segment.originalStartMs,
+                        endMs = segment.originalEndMs
+                    )
+
                     steps.add(
                         PlaybackStep(
                             stepType = StepType.ORIGINAL,
-                            audioPath = track.originalAudioPath,
-                            startMs = segment.originalStartMs,
-                            endMs = segment.originalEndMs,
+                            slice = slice,
                             pauseMs = 0
                         )
                     )
                 }
 
                 StepType.MEMO -> {
-                    if (segment.memoStartMs != segment.memoEndMs) {
+                    if (hasAudio(segment.memoStartMs, segment.memoEndMs)) {
+
+                        val slice = AudioSlice(
+                            audioPath = track.memoAudioPath!!,
+                            startMs = segment.memoStartMs,
+                            endMs = segment.memoEndMs
+                        )
+
                         steps.add(
                             PlaybackStep(
                                 stepType = StepType.MEMO,
-                                audioPath = track.memoAudioPath,
-                                startMs = segment.memoStartMs,
-                                endMs = segment.memoEndMs,
+                                slice = slice,
                                 pauseMs = 0
                             )
                         )
@@ -64,9 +80,7 @@ class SequenceBuilder {
                     steps.add(
                         PlaybackStep(
                             stepType = StepType.PAUSE_SHORT,
-                            audioPath = null,
-                            startMs = null,
-                            endMs = null,
+                            slice = null,
                             pauseMs = 800
                         )
                     )
@@ -76,9 +90,7 @@ class SequenceBuilder {
                     steps.add(
                         PlaybackStep(
                             stepType = StepType.PAUSE_LONG,
-                            audioPath = null,
-                            startMs = null,
-                            endMs = null,
+                            slice = null,
                             pauseMs = 2000
                         )
                     )
@@ -87,5 +99,10 @@ class SequenceBuilder {
         }
 
         return steps
+    }
+
+    private fun hasAudio(start: Long?, end: Long?): Boolean {
+        if (start == null || end == null) return false
+        return end > start
     }
 }
