@@ -11,12 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
 import com.looplingua.app.player.controller.PlayerController
-import com.looplingua.app.domain.model.Segment
 
 @Composable
 fun TrackScreen(
     controller: PlayerController,
-    segments: List<Segment>
+    items: List<TrackListItem>
 ) {
 
     val listState = rememberLazyListState()
@@ -28,44 +27,58 @@ fun TrackScreen(
         modifier = Modifier.fillMaxSize()
     ) {
 
-        itemsIndexed(segments) { index, segment ->
+        itemsIndexed(items) { index, item ->
 
-            val isCurrent = index == currentIndex
+            when (item) {
 
-            Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            controller.playFrom(index)
-                        }
-                        .background(
-                            if (isCurrent) Color(0xFFE0E0E0) else Color.Transparent
-                        )
-                        .padding(12.dp)
+                is TrackListItem.TrackHeader -> {
+
+                    Text(
+                        text = "------ ${item.title} ------",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color.LightGray)
+                            .padding(8.dp),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+
+                is TrackListItem.SegmentItem -> {
+
+                    val isCurrent = item.segmentIndex == currentIndex
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                controller.playFrom(item.segmentIndex)
+                            }
+                            .background(
+                                if (isCurrent) Color(0xFFE0E0E0) else Color.Transparent
+                            )
+                            .padding(12.dp)
                     ) {
-                Text(
-                    text = if (isCurrent) "▼ ${segment.originalText}" else segment.originalText,
-                    style = MaterialTheme.typography.bodyLarge
-                )
+                        Text(
+                            text = if (isCurrent)
+                                "▼ ${item.segment.originalText}"
+                            else
+                                item.segment.originalText,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
 
-                Text(
-                    text = segment.translationText ?: "",
-                    style = MaterialTheme.typography.bodySmall
-                )            }
+                        Text(
+                            text = item.segment.translationText ?: "",
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
+            }
         }
     }
 
     // 自動スクロール
     LaunchedEffect(currentIndex) {
 
-        val visibleItems = listState.layoutInfo.visibleItemsInfo
-        val itemHeight = visibleItems.firstOrNull()?.size ?: 0
-        val viewportHeight = listState.layoutInfo.viewportSize.height
-
-        val offset = (viewportHeight / 2) - (itemHeight / 2)
-
-        listState.animateScrollToItem(
-            index = currentIndex,
-            scrollOffset = -offset
-        )
-    }}
+        listState.animateScrollToItem(currentIndex)
+    }
+}

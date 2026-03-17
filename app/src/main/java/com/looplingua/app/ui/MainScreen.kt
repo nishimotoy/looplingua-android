@@ -6,21 +6,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.looplingua.app.domain.model.Segment
 import com.looplingua.app.player.controller.PlayerController
 import com.looplingua.app.ui.track.TrackScreen
+import com.looplingua.app.ui.track.TrackListItem
 
 @Composable
 fun MainScreen(
     controller: PlayerController,
-    segments: List<Segment>
+    items: List<TrackListItem>
 ) {
 
     val currentSegment = controller.currentSegment.collectAsState().value
-
-    val currentIndex = segments.indexOfFirst {
-        it.id == currentSegment?.id
-    }
 
     Column(
         modifier = Modifier
@@ -45,7 +41,8 @@ fun MainScreen(
         ) {
             TrackScreen(
                 controller = controller,
-                segments = segments)
+                items = items
+            )
         }
     }
 }

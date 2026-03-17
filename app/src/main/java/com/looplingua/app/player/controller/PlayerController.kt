@@ -100,7 +100,7 @@ class PlayerController(
 
         segmentPlayer.play(steps) {
 
-            if (!_isPlaying.value) return@play
+            // if (!_isPlaying.value) return@play // 複数Track対応時に、一旦止める
 
             playlist.next { nextSegment ->
                 playSegment(nextSegment)
