@@ -19,7 +19,6 @@ fun TrackScreen(
 ) {
 
     val listState = rememberLazyListState()
-
     val currentIndex by controller.currentIndex.collectAsState()
 
     LazyColumn(
@@ -27,12 +26,11 @@ fun TrackScreen(
         modifier = Modifier.fillMaxSize()
     ) {
 
-        itemsIndexed(items) { index, item ->
+        itemsIndexed(items) { _, item ->
 
             when (item) {
 
                 is TrackListItem.TrackHeader -> {
-
                     Text(
                         text = "------ ${item.title} ------",
                         modifier = Modifier
@@ -58,6 +56,7 @@ fun TrackScreen(
                             )
                             .padding(12.dp)
                     ) {
+
                         Text(
                             text = if (isCurrent)
                                 "▼ ${item.segment.originalText}"
@@ -79,6 +78,13 @@ fun TrackScreen(
     // 自動スクロール
     LaunchedEffect(currentIndex) {
 
-        listState.animateScrollToItem(currentIndex)
+        val targetIndex = items.indexOfFirst {
+            it is TrackListItem.SegmentItem &&
+                    it.segmentIndex == currentIndex
+        }
+
+        if (targetIndex >= 0) {
+            listState.animateScrollToItem(targetIndex)
+        }
     }
 }
