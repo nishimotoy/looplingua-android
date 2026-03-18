@@ -33,7 +33,13 @@ class PlayerController(
 
     fun setPattern(newPattern: Pattern) {
         pattern = newPattern
+
+        if (_isPlaying.value) {
+            stop()
+            play()
+        }
     }
+
     fun setSegments(segments: List<Segment>) {
         playlist.setSegments(segments)
         _currentIndex.value = 0

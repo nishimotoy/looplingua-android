@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
             )
         }
 
-        controller.setPattern(Pattern.SHADOWING)
+        controller.setPattern(Pattern.ORIGINAL_ONLY)
         controller.play() // 起動時に再生　デバッグ用
     }
 }
