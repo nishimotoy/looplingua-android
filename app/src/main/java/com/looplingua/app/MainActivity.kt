@@ -3,7 +3,7 @@ package com.looplingua.app
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.looplingua.app.data.SegmentFileLoader
+import com.looplingua.app.data.repository.TrackRepository
 import com.looplingua.app.domain.model.Track
 import com.looplingua.app.player.audio.AudioPlayer
 import com.looplingua.app.player.controller.PlayerController
@@ -19,10 +19,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val trackDataList = listOf(
-            SegmentFileLoader.loadFromAssets(this, "testdata/tracks/1/track.json"),
-            SegmentFileLoader.loadFromAssets(this, "testdata/tracks/2/track.json")
-        )
+        val repository = TrackRepository(this)
+        val trackDataList = repository.loadInitialTracks()
 
         val controller = createPlayerController(trackDataList.first().track)
 
