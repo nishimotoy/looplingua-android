@@ -4,15 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.looplingua.app.data.repository.TrackRepository
-import com.looplingua.app.domain.model.Track
-import com.looplingua.app.player.audio.AudioPlayer
-import com.looplingua.app.player.controller.PlayerController
-import com.looplingua.app.player.segment.SegmentPlaylist
-import com.looplingua.app.player.segment.SegmentPlayer
-import com.looplingua.app.player.sequence.SequenceBuilder
+import com.looplingua.app.player.factory.PlayerFactory
 import com.looplingua.app.ui.MainScreen
 import com.looplingua.app.ui.mapper.TrackUiMapper
-
 
 class MainActivity : ComponentActivity() {
 
@@ -22,7 +16,10 @@ class MainActivity : ComponentActivity() {
         val repository = TrackRepository(this)
         val trackDataList = repository.loadInitialTracks()
 
-        val controller = createPlayerController(trackDataList.first().track)
+        val controller = PlayerFactory.create(
+            this,
+            trackDataList.first().track
+        )
 
         // 再生用
         val allSegments = trackDataList.flatMap { it.segments }
@@ -36,20 +33,5 @@ class MainActivity : ComponentActivity() {
                 items = items
             )
         }
-    }
-
-    private fun createPlayerController(track: Track): PlayerController {
-
-        val audioPlayer = AudioPlayer(this)
-        val segmentPlayer = SegmentPlayer(audioPlayer)
-        val playlist = SegmentPlaylist()
-        val sequenceBuilder = SequenceBuilder()
-
-        return PlayerController(
-            track = track,
-            playlist = playlist,
-            sequenceBuilder = sequenceBuilder,
-            segmentPlayer = segmentPlayer
-        )
     }
 }

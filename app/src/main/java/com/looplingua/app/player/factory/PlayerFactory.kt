@@ -1,0 +1,30 @@
+package com.looplingua.app.player.factory
+
+import android.content.Context
+import com.looplingua.app.domain.model.Track
+import com.looplingua.app.player.audio.AudioPlayer
+import com.looplingua.app.player.controller.PlayerController
+import com.looplingua.app.player.segment.SegmentPlaylist
+import com.looplingua.app.player.segment.SegmentPlayer
+import com.looplingua.app.player.sequence.SequenceBuilder
+
+object PlayerFactory {
+
+    fun create(
+        context: Context,
+        track: Track
+    ): PlayerController {
+
+        val audioPlayer = AudioPlayer(context)
+        val segmentPlayer = SegmentPlayer(audioPlayer)
+        val playlist = SegmentPlaylist()
+        val sequenceBuilder = SequenceBuilder()
+
+        return PlayerController(
+            track = track,
+            playlist = playlist,
+            sequenceBuilder = sequenceBuilder,
+            segmentPlayer = segmentPlayer
+        )
+    }
+}
