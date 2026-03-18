@@ -1,25 +1,25 @@
 package com.looplingua.app.player.sequence
 
-import android.content.Context
 import com.looplingua.app.domain.model.Track
 import com.looplingua.app.domain.model.Segment
 import com.looplingua.app.domain.playback.Pattern
 import com.looplingua.app.domain.playback.PlaybackStep
 import com.looplingua.app.domain.playback.StepType
 import com.looplingua.app.domain.model.AudioSlice
-import com.looplingua.app.domain.playback.PatternRepository
+import com.looplingua.app.domain.playback.PatternProvider
 
-class SequenceBuilder {
+class SequenceBuilder(
+    private val patternProvider: PatternProvider
+) {
 
     fun build(
         track: Track,
         segment: Segment,
-        context: Context,
         pattern: Pattern
     ): List<PlaybackStep> {
 
         val steps = mutableListOf<PlaybackStep>()
-        val definition = PatternRepository.get(context, pattern)
+        val definition = patternProvider.get(pattern)
 
 
         for (type in definition.steps) {
