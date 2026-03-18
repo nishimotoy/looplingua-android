@@ -33,5 +33,7 @@ class MainActivity : ComponentActivity() {
                 items = items
             )
         }
+
+        controller.play() // 起動時に再生　デバッグ用
     }
 }
