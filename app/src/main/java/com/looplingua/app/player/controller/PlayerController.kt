@@ -31,6 +31,9 @@ class PlayerController(
     private val _currentIndex = MutableStateFlow(0)
     val currentIndex: StateFlow<Int> = _currentIndex.asStateFlow()
 
+    fun setPattern(newPattern: Pattern) {
+        pattern = newPattern
+    }
     fun setSegments(segments: List<Segment>) {
         playlist.setSegments(segments)
         _currentIndex.value = 0

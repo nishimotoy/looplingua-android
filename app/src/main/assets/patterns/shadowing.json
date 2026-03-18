@@ -1,0 +1,11 @@
+{
+  "name": "SHADOWING",
+  "steps": [
+    "TRANSLATION",
+    "PAUSE_SHORT",
+    "ORIGINAL",
+    "PAUSE_LONG",
+    "ORIGINAL",
+    "PAUSE_LONG"
+  ]
+}

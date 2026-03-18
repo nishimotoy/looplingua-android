@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.looplingua.app.data.repository.TrackRepository
+import com.looplingua.app.domain.playback.Pattern
 import com.looplingua.app.player.factory.PlayerFactory
 import com.looplingua.app.ui.MainScreen
 import com.looplingua.app.ui.mapper.TrackUiMapper
@@ -34,6 +35,7 @@ class MainActivity : ComponentActivity() {
             )
         }
 
+        controller.setPattern(Pattern.SHADOWING)
         controller.play() // 起動時に再生　デバッグ用
     }
 }
