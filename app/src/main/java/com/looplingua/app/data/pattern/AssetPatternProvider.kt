@@ -16,7 +16,7 @@ class AssetPatternProvider(
             Pattern.SHADOWING -> "patterns/shadowing.json"
             Pattern.ORIGINAL_ONLY -> "patterns/original_only.json"
         }
-        Log.d("PATTERN", "Loading pattern: $fileName")
+        Log.d("PLAYER_PATTERN", "Loading pattern: $fileName")
         return PatternLoader.load(context, fileName)
     }
 }
