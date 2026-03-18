@@ -21,6 +21,7 @@ object PlayerFactory {
         val sequenceBuilder = SequenceBuilder()
 
         return PlayerController(
+            context = context,
             track = track,
             playlist = playlist,
             sequenceBuilder = sequenceBuilder,

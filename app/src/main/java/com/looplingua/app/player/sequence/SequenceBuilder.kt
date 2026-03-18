@@ -1,5 +1,6 @@
 package com.looplingua.app.player.sequence
 
+import android.content.Context
 import com.looplingua.app.domain.model.Track
 import com.looplingua.app.domain.model.Segment
 import com.looplingua.app.domain.playback.Pattern
@@ -13,11 +14,12 @@ class SequenceBuilder {
     fun build(
         track: Track,
         segment: Segment,
+        context: Context,
         pattern: Pattern
     ): List<PlaybackStep> {
 
         val steps = mutableListOf<PlaybackStep>()
-        val definition = PatternRepository.get(pattern)
+        val definition = PatternRepository.get(context, pattern)
 
 
         for (type in definition.steps) {

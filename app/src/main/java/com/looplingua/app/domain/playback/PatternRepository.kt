@@ -1,22 +1,14 @@
 package com.looplingua.app.domain.playback
 
+import android.content.Context
+import com.looplingua.app.data.pattern.PatternLoader
+
 object PatternRepository {
 
-    fun get(pattern: Pattern): PatternDefinition {
+    fun get(context: Context, pattern: Pattern): PatternDefinition {
         return when (pattern) {
 
-            Pattern.BASIC -> PatternDefinition(
-                name = "BASIC",
-                steps = listOf(
-                    StepType.TRANSLATION,
-                    StepType.PAUSE_SHORT,
-                    StepType.ORIGINAL,
-                    StepType.PAUSE_SHORT,
-                    StepType.ORIGINAL,
-                    StepType.PAUSE_SHORT,
-                    StepType.MEMO
-                )
-            )
+            Pattern.BASIC -> PatternLoader.load(context, "patterns/basic.json")
 
             Pattern.SHADOWING -> PatternDefinition(
                 name = "SHADOWING",

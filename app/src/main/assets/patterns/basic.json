@@ -1,0 +1,12 @@
+{
+  "name": "BASIC",
+  "steps": [
+    "TRANSLATION",
+    "PAUSE_SHORT",
+    "ORIGINAL",
+    "PAUSE_SHORT",
+    "ORIGINAL",
+    "PAUSE_SHORT",
+    "MEMO"
+  ]
+}

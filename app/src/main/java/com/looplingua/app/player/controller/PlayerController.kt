@@ -1,5 +1,6 @@
 package com.looplingua.app.player.controller
 
+import android.content.Context
 import com.looplingua.app.domain.model.Segment
 import com.looplingua.app.domain.model.Track
 import com.looplingua.app.domain.playback.Pattern
@@ -11,6 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class PlayerController(
+    private val context: Context,   // ← 追加
     private val track: Track,
     private val playlist: SegmentPlaylist,
     private val sequenceBuilder: SequenceBuilder,
@@ -95,6 +97,7 @@ class PlayerController(
         val steps = sequenceBuilder.build(
             track = track,
             segment = segment,
+            context = context,
             pattern = pattern
         )
 

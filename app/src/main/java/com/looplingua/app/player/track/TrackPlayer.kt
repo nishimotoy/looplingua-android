@@ -1,5 +1,6 @@
 package com.looplingua.app.player.track
 
+import android.content.Context
 import com.looplingua.app.domain.model.Track
 import com.looplingua.app.domain.model.Segment
 import com.looplingua.app.player.sequence.SequenceBuilder
@@ -7,6 +8,7 @@ import com.looplingua.app.player.segment.SegmentPlayer
 import com.looplingua.app.domain.playback.Pattern
 
 class TrackPlayer(
+    private val context: Context,
     private val sequenceBuilder: SequenceBuilder,
     private val segmentPlayer: SegmentPlayer
 ) {
@@ -34,6 +36,7 @@ class TrackPlayer(
 
         val segment = segments[currentIndex]
         val steps = sequenceBuilder.build(
+            context = context,
             track = track!!,
             segment = segment,
             pattern = Pattern.BASIC
