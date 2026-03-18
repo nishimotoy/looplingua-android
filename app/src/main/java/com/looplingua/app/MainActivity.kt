@@ -11,8 +11,8 @@ import com.looplingua.app.player.segment.SegmentPlaylist
 import com.looplingua.app.player.segment.SegmentPlayer
 import com.looplingua.app.player.sequence.SequenceBuilder
 import com.looplingua.app.ui.MainScreen
-import com.looplingua.app.ui.track.TrackListItem
-import com.looplingua.app.ui.track.TrackScreen
+import com.looplingua.app.ui.mapper.TrackUiMapper
+
 
 class MainActivity : ComponentActivity() {
 
@@ -30,28 +30,7 @@ class MainActivity : ComponentActivity() {
         val allSegments = trackDataList.flatMap { it.segments }
         controller.setSegments(allSegments)
 
-        // UI用 items（ここで直接作る）
-        val items = mutableListOf<TrackListItem>()
-        var index = 0
-
-        trackDataList.forEach { data ->
-
-            items.add(
-                TrackListItem.TrackHeader(
-                    data.track.title ?: "Track"
-                )
-            )
-
-            data.segments.forEach { segment ->
-                items.add(
-                    TrackListItem.SegmentItem(
-                        segment = segment,
-                        segmentIndex = index
-                    )
-                )
-                index++
-            }
-        }
+        val items = TrackUiMapper.buildItems(trackDataList)
 
         setContent {
             MainScreen(
