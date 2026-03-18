@@ -6,6 +6,7 @@ import com.looplingua.app.domain.playback.Pattern
 import com.looplingua.app.domain.playback.PlaybackStep
 import com.looplingua.app.domain.playback.StepType
 import com.looplingua.app.domain.model.AudioSlice
+import com.looplingua.app.domain.playback.PatternRepository
 
 class SequenceBuilder {
 
@@ -16,8 +17,10 @@ class SequenceBuilder {
     ): List<PlaybackStep> {
 
         val steps = mutableListOf<PlaybackStep>()
+        val definition = PatternRepository.get(pattern)
 
-        for (type in pattern.steps()) {
+
+        for (type in definition.steps) {
 
             when (type) {
 
