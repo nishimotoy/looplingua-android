@@ -18,13 +18,13 @@ object PlayerFactory {
 
         val audioPlayer = AudioPlayer(context)
         val segmentPlayer = SegmentPlayer(audioPlayer)
-        val playlist = SegmentQueue()
+        val queue = SegmentQueue()
         val provider = AssetPatternProvider(context)
         val sequenceBuilder = SequenceBuilder(provider)
 
         return PlayerController(
             track = track,
-            playlist = playlist,
+            queue = queue,
             sequenceBuilder = sequenceBuilder,
             segmentPlayer = segmentPlayer
         )

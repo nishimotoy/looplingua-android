@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class PlayerController(
     private val track: Track,
-    private val playlist: SegmentQueue,
+    private val queue: SegmentQueue,
     private val sequenceBuilder: SequenceBuilder,
     private val segmentPlayer: SegmentPlayer
 ) {
@@ -41,18 +41,18 @@ class PlayerController(
     }
 
     fun setSegments(segments: List<Segment>) {
-        playlist.setSegments(segments)
+        queue.setSegments(segments)
         _currentIndex.value = 0
     }
 
     fun play() {
         if (_isPlaying.value) return
 
-        val index = playlist.getCurrentIndex()
+        val index = queue.getCurrentIndex()
 
         _isPlaying.value = true
 
-        playlist.jumpTo(index) { segment ->
+        queue.jumpTo(index) { segment ->
             playSegment(segment)
         }
     }
@@ -69,25 +69,25 @@ class PlayerController(
     }
 
     fun next() {
-        playlist.next { nextSegment ->
-            _currentIndex.value = playlist.getCurrentIndex()
+        queue.next { nextSegment ->
+            _currentIndex.value = queue.getCurrentIndex()
             playSegment(nextSegment)
         }
     }
 
     fun prev() {
-        playlist.prev { segment ->
-            _currentIndex.value = playlist.getCurrentIndex()
+        queue.prev { segment ->
+            _currentIndex.value = queue.getCurrentIndex()
             playSegment(segment)
         }
     }
 
     fun getCurrentIndex(): Int {
-        return playlist.getCurrentIndex()
+        return queue.getCurrentIndex()
     }
 
     fun playFrom(index: Int) {
-        playlist.jumpTo(index) { segment ->
+        queue.jumpTo(index) { segment ->
             _currentIndex.value = index
             playSegment(segment)
         }
@@ -99,7 +99,7 @@ class PlayerController(
 
         // UI更新
         _currentSegment.value = segment
-        _currentIndex.value = playlist.getCurrentIndex()
+        _currentIndex.value = queue.getCurrentIndex()
 
         val steps = sequenceBuilder.build(
             track = track,
@@ -111,7 +111,7 @@ class PlayerController(
 
             // if (!_isPlaying.value) return@play // 複数Track対応時に、一旦止める
 
-            playlist.next { nextSegment ->
+            queue.next { nextSegment ->
                 playSegment(nextSegment)
             }
         }
