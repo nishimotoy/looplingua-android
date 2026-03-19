@@ -27,7 +27,7 @@ class PlayerController(
     private val _isPlaying = MutableStateFlow(false)
     val isPlaying: StateFlow<Boolean> = _isPlaying.asStateFlow()
 
-    // ★ 追加：現在インデックス
+    // 現在インデックス
     private val _currentIndex = MutableStateFlow(0)
     val currentIndex: StateFlow<Int> = _currentIndex.asStateFlow()
 
@@ -48,13 +48,10 @@ class PlayerController(
     fun play() {
         if (_isPlaying.value) return
 
-        val index = queue.getCurrentIndex()
+        val segment = queue.current() ?: return
 
         _isPlaying.value = true
-
-        queue.jumpTo(index) { segment ->
-            playSegment(segment)
-        }
+        playSegment(segment)
     }
 
     fun stop() {
@@ -69,17 +66,15 @@ class PlayerController(
     }
 
     fun next() {
-        queue.next { nextSegment ->
-            _currentIndex.value = queue.getCurrentIndex()
-            playSegment(nextSegment)
-        }
+        val nextSegment = queue.next() ?: return
+        _currentIndex.value = queue.getCurrentIndex()
+        playSegment(nextSegment)
     }
 
     fun prev() {
-        queue.prev { segment ->
-            _currentIndex.value = queue.getCurrentIndex()
-            playSegment(segment)
-        }
+        val segment = queue.prev() ?: return
+        _currentIndex.value = queue.getCurrentIndex()
+        playSegment(segment)
     }
 
     fun getCurrentIndex(): Int {
@@ -87,10 +82,9 @@ class PlayerController(
     }
 
     fun playFrom(index: Int) {
-        queue.jumpTo(index) { segment ->
-            _currentIndex.value = index
-            playSegment(segment)
-        }
+        val segment = queue.jumpTo(index) ?: return
+        _currentIndex.value = index
+        playSegment(segment)
     }
 
     private fun playSegment(segment: Segment) {
@@ -109,10 +103,14 @@ class PlayerController(
 
         segmentPlayer.play(steps) {
 
-            // if (!_isPlaying.value) return@play // 複数Track対応時に、一旦止める
+            if (!_isPlaying.value) return@play
 
-            queue.next { nextSegment ->
+            val nextSegment = queue.next()
+
+            if (nextSegment != null) {
                 playSegment(nextSegment)
+            } else {
+                _isPlaying.value = false
             }
         }
     }
