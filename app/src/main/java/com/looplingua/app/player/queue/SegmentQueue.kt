@@ -1,4 +1,4 @@
-package com.looplingua.app.player.segment
+package com.looplingua.app.player.queue
 
 import com.looplingua.app.domain.model.Segment
 
