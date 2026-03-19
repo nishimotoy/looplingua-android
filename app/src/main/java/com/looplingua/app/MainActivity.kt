@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.looplingua.app.data.repository.TrackRepository
+import com.looplingua.app.domain.model.TrackWithSegments
 import com.looplingua.app.domain.playback.Pattern
 import com.looplingua.app.player.factory.PlayerFactory
 import com.looplingua.app.ui.MainScreen
@@ -23,8 +24,11 @@ class MainActivity : ComponentActivity() {
         )
 
         // 再生用
-        val allSegments = trackDataList.flatMap { it.segments }
-        controller.setSegments(allSegments)
+        val tracks = trackDataList.map {
+            TrackWithSegments(it.track, it.segments)
+        }
+
+        controller.setTracks(tracks)
 
         val items = TrackUiMapper.buildItems(trackDataList)
 
