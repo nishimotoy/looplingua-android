@@ -71,4 +71,8 @@ class TrackQueue {
     fun getCurrentTrackIndex(): Int = currentTrackIndex
 
     fun getCurrentSegmentIndex(): Int = segmentQueue.getCurrentIndex()
+
+    fun currentTrack(): TrackWithSegments? {
+        return tracks.getOrNull(currentTrackIndex)
+    }
 }

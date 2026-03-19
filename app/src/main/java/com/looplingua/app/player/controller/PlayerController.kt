@@ -1,9 +1,9 @@
 package com.looplingua.app.player.controller
 
 import com.looplingua.app.domain.model.Segment
-import com.looplingua.app.domain.model.Track
+import com.looplingua.app.domain.model.TrackWithSegments
 import com.looplingua.app.domain.playback.Pattern
-import com.looplingua.app.player.queue.SegmentQueue
+import com.looplingua.app.player.queue.TrackQueue
 import com.looplingua.app.player.sequence.SequenceBuilder
 import com.looplingua.app.player.segment.SegmentPlayer
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,8 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class PlayerController(
-    private val track: Track,
-    private val queue: SegmentQueue,
+    private val queue: TrackQueue,
     private val sequenceBuilder: SequenceBuilder,
     private val segmentPlayer: SegmentPlayer
 ) {
@@ -23,13 +22,20 @@ class PlayerController(
     private val _currentSegment = MutableStateFlow<Segment?>(null)
     val currentSegment: StateFlow<Segment?> = _currentSegment.asStateFlow()
 
+    // 現在トラック
+    private val _currentTrack = MutableStateFlow<TrackWithSegments?>(null)
+    val currentTrack: StateFlow<TrackWithSegments?> = _currentTrack.asStateFlow()
+
     // 再生状態
     private val _isPlaying = MutableStateFlow(false)
     val isPlaying: StateFlow<Boolean> = _isPlaying.asStateFlow()
 
-    // 現在インデックス
-    private val _currentIndex = MutableStateFlow(0)
-    val currentIndex: StateFlow<Int> = _currentIndex.asStateFlow()
+    // インデックス
+    private val _currentTrackIndex = MutableStateFlow(0)
+    val currentTrackIndex: StateFlow<Int> = _currentTrackIndex.asStateFlow()
+
+    private val _currentSegmentIndex = MutableStateFlow(0)
+    val currentSegmentIndex: StateFlow<Int> = _currentSegmentIndex.asStateFlow()
 
     fun setPattern(newPattern: Pattern) {
         pattern = newPattern
@@ -40,15 +46,15 @@ class PlayerController(
         }
     }
 
-    fun setSegments(segments: List<Segment>) {
-        queue.setSegments(segments)
-        _currentIndex.value = 0
+    fun setTracks(tracks: List<TrackWithSegments>) {
+        queue.setTracks(tracks)
+        updateState()
     }
 
     fun play() {
         if (_isPlaying.value) return
 
-        val segment = queue.current() ?: return
+        val segment = queue.currentSegment() ?: return
 
         _isPlaying.value = true
         playSegment(segment)
@@ -66,24 +72,20 @@ class PlayerController(
     }
 
     fun next() {
-        val nextSegment = queue.next() ?: return
-        _currentIndex.value = queue.getCurrentIndex()
-        playSegment(nextSegment)
+        val next = queue.nextSegment() ?: return
+        updateState()
+        playSegment(next)
     }
 
     fun prev() {
-        val segment = queue.prev() ?: return
-        _currentIndex.value = queue.getCurrentIndex()
-        playSegment(segment)
+        val prev = queue.prevSegment() ?: return
+        updateState()
+        playSegment(prev)
     }
 
-    fun getCurrentIndex(): Int {
-        return queue.getCurrentIndex()
-    }
-
-    fun playFrom(index: Int) {
-        val segment = queue.jumpTo(index) ?: return
-        _currentIndex.value = index
+    fun playFrom(trackIndex: Int, segmentIndex: Int) {
+        val segment = queue.jumpTo(trackIndex, segmentIndex) ?: return
+        updateState()
         playSegment(segment)
     }
 
@@ -91,12 +93,12 @@ class PlayerController(
 
         segmentPlayer.stop()
 
-        // UI更新
-        _currentSegment.value = segment
-        _currentIndex.value = queue.getCurrentIndex()
+        updateState()
+
+        val currentTrack = queue.currentTrack() ?: return
 
         val steps = sequenceBuilder.build(
-            track = track,
+            track = currentTrack.track,
             segment = segment,
             pattern = pattern
         )
@@ -105,13 +107,20 @@ class PlayerController(
 
             if (!_isPlaying.value) return@play
 
-            val nextSegment = queue.next()
+            val next = queue.nextSegment()
 
-            if (nextSegment != null) {
-                playSegment(nextSegment)
+            if (next != null) {
+                playSegment(next)
             } else {
                 _isPlaying.value = false
             }
         }
+    }
+
+    private fun updateState() {
+        _currentSegment.value = queue.currentSegment()
+        _currentTrack.value = queue.currentTrack()
+        _currentTrackIndex.value = queue.getCurrentTrackIndex()
+        _currentSegmentIndex.value = queue.getCurrentSegmentIndex()
     }
 }
