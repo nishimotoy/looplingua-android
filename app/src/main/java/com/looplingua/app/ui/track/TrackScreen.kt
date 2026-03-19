@@ -3,13 +3,18 @@ package com.looplingua.app.ui.track
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.*
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.lazy.rememberLazyListState
+import kotlinx.coroutines.launch
 import com.looplingua.app.player.controller.PlayerController
 
 @Composable
@@ -18,8 +23,25 @@ fun TrackScreen(
     items: List<TrackListItem>
 ) {
 
+    val currentSegment by controller.currentSegment.collectAsState()
+
     val listState = rememberLazyListState()
-    val currentIndex by controller.currentIndex.collectAsState()
+    val scope = rememberCoroutineScope()
+
+    // 🔥 currentSegment → LazyColumn index変換
+    val currentIndex = remember(currentSegment, items) {
+        items.indexOfFirst {
+            it is TrackListItem.SegmentItem &&
+                    it.segment == currentSegment
+        }
+    }
+
+    // 🔥 自動スクロール
+    LaunchedEffect(currentIndex) {
+        if (currentIndex >= 0) {
+            listState.animateScrollToItem(currentIndex)
+        }
+    }
 
     LazyColumn(
         state = listState,
@@ -32,59 +54,47 @@ fun TrackScreen(
 
                 is TrackListItem.TrackHeader -> {
                     Text(
-                        text = "------ ${item.title} ------",
+                        text = item.title,
+                        style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(Color.LightGray)
-                            .padding(8.dp),
-                        style = MaterialTheme.typography.bodyMedium
+                            .padding(8.dp)
                     )
                 }
 
                 is TrackListItem.SegmentItem -> {
 
-                    val isCurrent = item.segmentIndex == currentIndex
+                    val isCurrent = item.segment == currentSegment
 
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable {
-                                controller.playFrom(item.segmentIndex)
-                            }
                             .background(
-                                if (isCurrent) Color(0xFFE0E0E0) else Color.Transparent
+                                if (isCurrent) Color(0xFFBBDEFB)
+                                else Color.Transparent
                             )
+                            .clickable {
+                                controller.playFrom(item.segment)
+                            }
                             .padding(12.dp)
                     ) {
 
                         Text(
-                            text = if (isCurrent)
-                                "▼ ${item.segment.originalText}"
-                            else
-                                item.segment.originalText,
+                            text = item.segment.originalText,
                             style = MaterialTheme.typography.bodyLarge
                         )
 
+                        Spacer(modifier = Modifier.height(4.dp))
+
                         Text(
                             text = item.segment.translationText ?: "",
-                            style = MaterialTheme.typography.bodySmall
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.Gray
                         )
                     }
                 }
             }
-        }
-    }
-
-    // 自動スクロール
-    LaunchedEffect(currentIndex) {
-
-        val targetIndex = items.indexOfFirst {
-            it is TrackListItem.SegmentItem &&
-                    it.segmentIndex == currentIndex
-        }
-
-        if (targetIndex >= 0) {
-            listState.animateScrollToItem(targetIndex)
         }
     }
 }

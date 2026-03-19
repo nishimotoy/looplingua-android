@@ -83,10 +83,13 @@ class PlayerController(
         playSegment(prev)
     }
 
-    fun playFrom(trackIndex: Int, segmentIndex: Int) {
-        val segment = queue.jumpTo(trackIndex, segmentIndex) ?: return
+    fun playFrom(segment: Segment) {
+
+        val found = queue.find(segment) ?: return
+
+        _isPlaying.value = true
         updateState()
-        playSegment(segment)
+        playSegment(found)
     }
 
     private fun playSegment(segment: Segment) {

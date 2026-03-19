@@ -75,4 +75,22 @@ class TrackQueue {
     fun currentTrack(): TrackWithSegments? {
         return tracks.getOrNull(currentTrackIndex)
     }
+
+    fun find(target: Segment): Segment? {
+
+        tracks.forEachIndexed { trackIndex, track ->
+
+            val segmentIndex = track.segments.indexOfFirst {
+                it.id == target.id
+            }
+
+            if (segmentIndex != -1) {
+                currentTrackIndex = trackIndex
+                loadCurrentTrack()
+                return segmentQueue.jumpTo(segmentIndex)
+            }
+        }
+
+        return null
+    }
 }
