@@ -2,7 +2,7 @@ package com.looplingua.app.player.segment
 
 import com.looplingua.app.domain.model.Segment
 
-class SegmentPlaylist {
+class SegmentQueue {
 
     private var segments: List<Segment> = emptyList()
 

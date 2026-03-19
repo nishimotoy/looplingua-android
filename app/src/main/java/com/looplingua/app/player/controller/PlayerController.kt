@@ -3,7 +3,7 @@ package com.looplingua.app.player.controller
 import com.looplingua.app.domain.model.Segment
 import com.looplingua.app.domain.model.Track
 import com.looplingua.app.domain.playback.Pattern
-import com.looplingua.app.player.segment.SegmentPlaylist
+import com.looplingua.app.player.segment.SegmentQueue
 import com.looplingua.app.player.sequence.SequenceBuilder
 import com.looplingua.app.player.segment.SegmentPlayer
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class PlayerController(
     private val track: Track,
-    private val playlist: SegmentPlaylist,
+    private val playlist: SegmentQueue,
     private val sequenceBuilder: SequenceBuilder,
     private val segmentPlayer: SegmentPlayer
 ) {
