@@ -73,7 +73,7 @@ fun TrackScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(
-                                if (isCurrent) Color(0xFFBBDEFB)
+                                if (isCurrent) Color(0xFFE0E0E0)
                                 else Color.Transparent
                             )
                             .clickable {
