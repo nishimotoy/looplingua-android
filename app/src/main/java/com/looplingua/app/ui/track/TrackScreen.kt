@@ -22,8 +22,6 @@ fun TrackScreen(
     items: List<TrackListItem>
 ) {
 
-    val currentSegment by controller.currentSegment.collectAsState()
-    val currentTrack by controller.currentTrack.collectAsState()
     val currentKey by controller.currentKey.collectAsState()
 
     val listState = rememberLazyListState()
