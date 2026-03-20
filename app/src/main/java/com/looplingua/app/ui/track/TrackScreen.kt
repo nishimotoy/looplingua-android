@@ -24,15 +24,15 @@ fun TrackScreen(
 
     val currentSegment by controller.currentSegment.collectAsState()
     val currentTrack by controller.currentTrack.collectAsState()
+    val currentKey by controller.currentKey.collectAsState()
 
     val listState = rememberLazyListState()
 
-    //  現在位置（trackId + segmentIdで特定）
-    val currentIndex = remember(currentSegment, currentTrack, items) {
+    //  現在位置（Key ＝ <trackId + segmentId> で特定）
+    val currentIndex = remember(currentKey, items) {
         items.indexOfFirst {
             it is TrackListItem.SegmentItem &&
-                    it.trackId == currentTrack?.track?.id &&
-                    it.segment.id == currentSegment?.id
+                    it.key == currentKey
         }
     }
 
@@ -65,9 +65,7 @@ fun TrackScreen(
 
                 is TrackListItem.SegmentItem -> {
 
-                    val isCurrent =
-                        item.trackId == currentTrack?.track?.id &&
-                                item.segment.id == currentSegment?.id
+                    val isCurrent = item.key == currentKey
 
                     Column(
                         modifier = Modifier

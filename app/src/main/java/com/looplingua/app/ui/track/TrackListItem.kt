@@ -1,6 +1,7 @@
 package com.looplingua.app.ui.track
 
 import com.looplingua.app.domain.model.Segment
+import com.looplingua.app.domain.model.SegmentKey
 
 sealed class TrackListItem {
 
@@ -11,6 +12,6 @@ sealed class TrackListItem {
     data class SegmentItem(
         val segment: Segment,
         val segmentIndex: Int,
-        val trackId: Long
+        val key: SegmentKey
     ) : TrackListItem()
 }

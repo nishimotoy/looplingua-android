@@ -1,6 +1,7 @@
 package com.looplingua.app.ui.mapper
 
 import com.looplingua.app.data.SegmentFile
+import com.looplingua.app.domain.model.SegmentKey
 import com.looplingua.app.ui.track.TrackListItem
 
 object TrackUiMapper {
@@ -23,7 +24,10 @@ object TrackUiMapper {
                     TrackListItem.SegmentItem(
                         segment = segment,
                         segmentIndex = index,
-                        trackId = data.track.id
+                        key = SegmentKey(
+                            trackId = data.track.id,
+                            segmentId = segment.id
+                        )
                     )
                 )
                 index++

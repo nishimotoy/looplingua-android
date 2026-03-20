@@ -1,6 +1,7 @@
 package com.looplingua.app.player.controller
 
 import com.looplingua.app.domain.model.Segment
+import com.looplingua.app.domain.model.SegmentKey
 import com.looplingua.app.domain.model.TrackWithSegments
 import com.looplingua.app.domain.playback.Pattern
 import com.looplingua.app.player.queue.TrackQueue
@@ -31,11 +32,8 @@ class PlayerController(
     val isPlaying: StateFlow<Boolean> = _isPlaying.asStateFlow()
 
     // インデックス
-    private val _currentTrackIndex = MutableStateFlow(0)
-    val currentTrackIndex: StateFlow<Int> = _currentTrackIndex.asStateFlow()
-
-    private val _currentSegmentIndex = MutableStateFlow(0)
-    val currentSegmentIndex: StateFlow<Int> = _currentSegmentIndex.asStateFlow()
+    private val _currentKey = MutableStateFlow<SegmentKey?>(null)
+    val currentKey: StateFlow<SegmentKey?> = _currentKey.asStateFlow()
 
     fun setPattern(newPattern: Pattern) {
         pattern = newPattern
@@ -121,9 +119,16 @@ class PlayerController(
     }
 
     private fun updateState() {
-        _currentSegment.value = queue.currentSegment()
-        _currentTrack.value = queue.currentTrack()
-        _currentTrackIndex.value = queue.getCurrentTrackIndex()
-        _currentSegmentIndex.value = queue.getCurrentSegmentIndex()
+        val track = queue.currentTrack()
+        val segment = queue.currentSegment()
+
+        _currentTrack.value = track
+        _currentSegment.value = segment
+
+        _currentKey.value = if (track != null && segment != null) {
+            SegmentKey(track.track.id, segment.id)
+        } else {
+            null
+        }
     }
 }
