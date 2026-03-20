@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.lazy.rememberLazyListState
-import kotlinx.coroutines.launch
 import com.looplingua.app.player.controller.PlayerController
 
 @Composable
@@ -24,19 +23,20 @@ fun TrackScreen(
 ) {
 
     val currentSegment by controller.currentSegment.collectAsState()
+    val currentTrack by controller.currentTrack.collectAsState()
 
     val listState = rememberLazyListState()
-    val scope = rememberCoroutineScope()
 
-    // 🔥 currentSegment → LazyColumn index変換
-    val currentIndex = remember(currentSegment, items) {
+    //  現在位置（trackId + segmentIdで特定）
+    val currentIndex = remember(currentSegment, currentTrack, items) {
         items.indexOfFirst {
             it is TrackListItem.SegmentItem &&
-                    it.segment == currentSegment
+                    it.trackId == currentTrack?.track?.id &&
+                    it.segment.id == currentSegment?.id
         }
     }
 
-    // 🔥 自動スクロール
+    //  自動スクロール
     LaunchedEffect(currentIndex) {
         if (currentIndex >= 0) {
             listState.animateScrollToItem(currentIndex)
@@ -65,7 +65,9 @@ fun TrackScreen(
 
                 is TrackListItem.SegmentItem -> {
 
-                    val isCurrent = item.segment == currentSegment
+                    val isCurrent =
+                        item.trackId == currentTrack?.track?.id &&
+                                item.segment.id == currentSegment?.id
 
                     Column(
                         modifier = Modifier

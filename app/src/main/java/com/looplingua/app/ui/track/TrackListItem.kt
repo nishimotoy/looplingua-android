@@ -10,6 +10,7 @@ sealed class TrackListItem {
 
     data class SegmentItem(
         val segment: Segment,
-        val segmentIndex: Int
+        val segmentIndex: Int,
+        val trackId: Long
     ) : TrackListItem()
 }

@@ -22,7 +22,8 @@ object TrackUiMapper {
                 items.add(
                     TrackListItem.SegmentItem(
                         segment = segment,
-                        segmentIndex = index
+                        segmentIndex = index,
+                        trackId = data.track.id
                     )
                 )
                 index++
