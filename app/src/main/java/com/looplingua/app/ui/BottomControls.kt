@@ -3,9 +3,8 @@ package com.looplingua.app.ui
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.Color
 import com.looplingua.app.player.controller.PlayerController
 
 @Composable
@@ -15,36 +14,25 @@ fun BottomControls(
     modifier: Modifier = Modifier
 ) {
 
+    val colors = ButtonDefaults.buttonColors(
+        containerColor = MaterialTheme.colorScheme.primary,
+        contentColor = Color.White   // ← 強制
+    )
+
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 16.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly
     ) {
 
-        // PREV（サブ）
-        OutlinedButton(
-            onClick = { controller.prev() }
-        ) {
+        Button(onClick = { controller.prev() }, colors = colors) {
             Text("PREV")
         }
 
-        // PLAY / STOP（メイン）
-        Button(
-            onClick = { controller.togglePlay() },
-            modifier = Modifier.height(56.dp)
-        ) {
-            Text(
-                text = if (isPlaying) "STOP" else "PLAY",
-                style = MaterialTheme.typography.titleMedium
-            )
+        Button(onClick = { controller.togglePlay() }, colors = colors) {
+            Text(if (isPlaying) "STOP" else "PLAY")
         }
 
-        // NEXT（サブ）
-        OutlinedButton(
-            onClick = { controller.next() }
-        ) {
+        Button(onClick = { controller.next() }, colors = colors) {
             Text("NEXT")
         }
     }

@@ -7,6 +7,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.looplingua.app.domain.playback.Pattern
 import com.looplingua.app.player.controller.PlayerController
@@ -30,13 +31,14 @@ fun TopBar(
 
         // ===== MODE（主役化） =====
         Surface(
+            color = MaterialTheme.colorScheme.primary,
+            contentColor = Color.White,   // ← これ追加
             shape = RoundedCornerShape(20.dp),
             tonalElevation = 2.dp,
             onClick = { expanded = true }
         ) {
             Text(
                 text = currentPattern.name,
-                style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             )
         }
