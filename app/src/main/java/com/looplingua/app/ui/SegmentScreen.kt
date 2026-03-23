@@ -1,9 +1,7 @@
 package com.looplingua.app.ui
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Text
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -15,37 +13,40 @@ import com.looplingua.app.player.controller.PlayerController
 fun SegmentScreen(controller: PlayerController) {
 
     val segment by controller.currentSegment.collectAsState()
+    val isPlaying by controller.isPlaying.collectAsState()
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
 
-        // 中央テキストエリア
+        // ===== 中央コンテンツ =====
         Column(
             modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
+                .fillMaxSize()
+                .padding(bottom = 80.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Text(
-                text = segment?.originalText ?: "",
-                style = MaterialTheme.typography.displaySmall
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = segment?.translationText ?: "",
-                style = MaterialTheme.typography.headlineMedium
+            SegmentContent(
+                original = segment?.originalText ?: "",
+                translation = segment?.translationText ?: ""
             )
         }
 
-        // 下部コントロール
-        SegmentControls(controller)
-        Spacer(modifier = Modifier.height(48.dp))
+        // ===== 上部バー =====
+        TopBar(
+            controller = controller,
+            modifier = Modifier.align(Alignment.TopCenter)
+        )
+
+        // ===== 下部コントロール =====
+        BottomControls(
+            controller = controller,
+            isPlaying = isPlaying,
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
     }
 }
