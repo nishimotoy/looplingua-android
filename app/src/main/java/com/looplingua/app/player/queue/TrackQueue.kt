@@ -33,7 +33,7 @@ class TrackQueue {
         if (currentTrackIndex < tracks.size - 1) {
             currentTrackIndex++
             loadCurrentTrack()
-            return segmentQueue.current()
+            return segmentQueue.jumpTo(0)
         }
 
         return null
