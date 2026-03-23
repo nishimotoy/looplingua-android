@@ -1,10 +1,8 @@
 package com.looplingua.app.ui
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -20,33 +18,34 @@ fun BottomControls(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 12.dp),
+            .padding(vertical = 16.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
 
-        Text(
-            text = "◀",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.clickable {
-                controller.prev()
-            }
-        )
+        // PREV（サブ）
+        OutlinedButton(
+            onClick = { controller.prev() }
+        ) {
+            Text("PREV")
+        }
 
-        Text(
-            text = if (isPlaying) "■" else "▶",
-            style = MaterialTheme.typography.headlineLarge,
-            modifier = Modifier.clickable {
-                controller.togglePlay()
-            }
-        )
+        // PLAY / STOP（メイン）
+        Button(
+            onClick = { controller.togglePlay() },
+            modifier = Modifier.height(56.dp)
+        ) {
+            Text(
+                text = if (isPlaying) "STOP" else "PLAY",
+                style = MaterialTheme.typography.titleMedium
+            )
+        }
 
-        Text(
-            text = "▶",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.clickable {
-                controller.next()
-            }
-        )
+        // NEXT（サブ）
+        OutlinedButton(
+            onClick = { controller.next() }
+        ) {
+            Text("NEXT")
+        }
     }
 }

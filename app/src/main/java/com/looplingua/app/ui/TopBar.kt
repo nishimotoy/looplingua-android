@@ -2,11 +2,11 @@ package com.looplingua.app.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.looplingua.app.domain.playback.Pattern
 import com.looplingua.app.player.controller.PlayerController
@@ -22,20 +22,24 @@ fun TopBar(
 
     Row(
         modifier = modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
 
-        // ===== MODE表示 =====
-        Text(
-            text = "MODE: ${currentPattern.name}",
-            style = MaterialTheme.typography.labelLarge,
-            color = Color.Gray,
-            modifier = Modifier
-                .clickable { expanded = true }
-                .padding(8.dp)
-        )
+        // ===== MODE（主役化） =====
+        Surface(
+            shape = RoundedCornerShape(20.dp),
+            tonalElevation = 2.dp,
+            onClick = { expanded = true }
+        ) {
+            Text(
+                text = currentPattern.name,
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            )
+        }
 
         // ===== メニュー =====
         Box {
