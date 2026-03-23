@@ -18,8 +18,6 @@ fun MainScreen(
     items: List<TrackListItem>   // ← ここ変更
 ) {
 
-    var currentPattern by remember { mutableStateOf(Pattern.BASIC) }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -33,18 +31,6 @@ fun MainScreen(
                 .weight(0.4f)
         ) {
             SegmentScreen(controller = controller)
-
-            // 右上に配置
-            PatternSelector(
-                current = currentPattern,
-                onChange = {
-                    currentPattern = it          // ← UI更新
-                    controller.setPattern(it)    // ← 再生変更
-                },
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(16.dp)
-            )
         }
 
 
