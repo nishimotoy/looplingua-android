@@ -12,6 +12,9 @@ class SequenceBuilder(
     private val patternProvider: PatternProvider
 ) {
 
+    private val shortPauseMs = 400L
+    private val longPauseMultiplier = 1.0   // 将来設定可能にする
+
     fun build(
         track: Track,
         segment: Segment,
@@ -20,6 +23,10 @@ class SequenceBuilder(
 
         val steps = mutableListOf<PlaybackStep>()
         val definition = patternProvider.get(pattern)
+
+        // ★ ORIGINAL長さを計算
+        val originalDuration =
+            segment.originalEndMs - segment.originalStartMs
 
         for (type in definition.steps) {
 
@@ -89,17 +96,20 @@ class SequenceBuilder(
                         PlaybackStep(
                             stepType = StepType.PAUSE_SHORT,
                             slice = null,
-                            pauseMs = 400
+                            pauseMs = shortPauseMs
                         )
                     )
                 }
 
                 StepType.PAUSE_LONG -> {
+
+                    val pause = (originalDuration * longPauseMultiplier).toLong()
+
                     steps.add(
                         PlaybackStep(
                             stepType = StepType.PAUSE_LONG,
                             slice = null,
-                            pauseMs = 1000
+                            pauseMs = pause
                         )
                     )
                 }
