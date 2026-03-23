@@ -27,8 +27,9 @@ class SegmentQueue {
     fun prev(): Segment? {
         if (segments.isEmpty()) return null
 
+        // ★ ここが修正ポイント
         if (currentSegmentIndex <= 0) {
-            return segments.getOrNull(currentSegmentIndex)
+            return null
         }
 
         currentSegmentIndex--
