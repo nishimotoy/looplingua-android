@@ -73,7 +73,7 @@ fun TrackScreen(
                                 else Color.Transparent
                             )
                             .clickable {
-                                controller.playFrom(item.segment)
+                                controller.playFrom(item.key)
                             }
                             .padding(12.dp)
                     ) {

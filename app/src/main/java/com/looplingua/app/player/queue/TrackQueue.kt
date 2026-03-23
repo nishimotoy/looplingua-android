@@ -1,6 +1,7 @@
 package com.looplingua.app.player.queue
 
 import com.looplingua.app.domain.model.Segment
+import com.looplingua.app.domain.model.SegmentKey
 import com.looplingua.app.domain.model.TrackWithSegments
 
 class TrackQueue {
@@ -29,7 +30,6 @@ class TrackQueue {
         val next = segmentQueue.next()
         if (next != null) return next
 
-        // 次のTrackへ
         if (currentTrackIndex < tracks.size - 1) {
             currentTrackIndex++
             loadCurrentTrack()
@@ -43,14 +43,12 @@ class TrackQueue {
         val prev = segmentQueue.prev()
         if (prev != null) return prev
 
-        // 前のTrackへ
         if (currentTrackIndex > 0) {
             currentTrackIndex--
             loadCurrentTrack()
 
-            // ★ 前のTrackの最後に行く
             while (segmentQueue.next() != null) {
-                // 最後まで進める
+                // 最後まで移動
             }
 
             return segmentQueue.current()
@@ -76,12 +74,15 @@ class TrackQueue {
         return tracks.getOrNull(currentTrackIndex)
     }
 
-    fun find(target: Segment): Segment? {
+    // ★ 修正：SegmentKeyベース検索
+    fun findByKey(key: SegmentKey): Segment? {
 
         tracks.forEachIndexed { trackIndex, track ->
 
+            if (track.track.id != key.trackId) return@forEachIndexed
+
             val segmentIndex = track.segments.indexOfFirst {
-                it.id == target.id
+                it.id == key.segmentId
             }
 
             if (segmentIndex != -1) {

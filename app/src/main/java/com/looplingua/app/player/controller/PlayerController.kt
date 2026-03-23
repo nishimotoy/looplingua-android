@@ -81,9 +81,9 @@ class PlayerController(
         playSegment(prev)
     }
 
-    fun playFrom(segment: Segment) {
+    fun playFrom(key: SegmentKey) {
 
-        val found = queue.find(segment) ?: return
+        val found = queue.findByKey(key) ?: return
 
         _isPlaying.value = true
         updateState()
