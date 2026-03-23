@@ -19,10 +19,7 @@ class MainActivity : ComponentActivity() {
         val repository = TrackRepository(this)
         val trackDataList = repository.loadInitialTracks()
 
-        val controller = PlayerFactory.create(
-            this,
-            trackDataList.first().track
-        )
+        val controller = PlayerFactory.create(this)
 
         // 再生用
         val tracks = trackDataList.map {

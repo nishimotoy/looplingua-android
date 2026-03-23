@@ -21,16 +21,17 @@ class SequenceBuilder(
         val steps = mutableListOf<PlaybackStep>()
         val definition = patternProvider.get(pattern)
 
-
         for (type in definition.steps) {
 
             when (type) {
 
                 StepType.TRANSLATION -> {
-                    if (hasAudio(segment.translationStartMs, segment.translationEndMs)) {
+
+                    val path = track.translationAudioPath
+                    if (path != null && hasAudio(segment.translationStartMs, segment.translationEndMs)) {
 
                         val slice = AudioSlice(
-                            audioPath = track.translationAudioPath!!,
+                            audioPath = path,
                             startMs = segment.translationStartMs,
                             endMs = segment.translationEndMs
                         )
@@ -63,10 +64,12 @@ class SequenceBuilder(
                 }
 
                 StepType.MEMO -> {
-                    if (hasAudio(segment.memoStartMs, segment.memoEndMs)) {
+
+                    val path = track.memoAudioPath
+                    if (path != null && hasAudio(segment.memoStartMs, segment.memoEndMs)) {
 
                         val slice = AudioSlice(
-                            audioPath = track.memoAudioPath!!,
+                            audioPath = path,
                             startMs = segment.memoStartMs,
                             endMs = segment.memoEndMs
                         )
