@@ -91,7 +91,14 @@ class TrackQueue {
                 return segmentQueue.jumpTo(segmentIndex)
             }
         }
-
         return null
+    }
+
+    fun rewindToStart(): Segment? {
+        if (tracks.isEmpty()) return null
+
+        currentTrackIndex = 0
+        loadCurrentTrack()
+        return segmentQueue.current()
     }
 }

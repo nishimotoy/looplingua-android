@@ -113,7 +113,14 @@ class PlayerController(
             if (next != null) {
                 playSegment(next)
             } else {
-                _isPlaying.value = false
+                // ★ ここが追加
+                val restart = queue.rewindToStart()
+
+                if (restart != null) {
+                    playSegment(restart)
+                } else {
+                    _isPlaying.value = false
+                }
             }
         }
     }
