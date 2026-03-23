@@ -1,8 +1,9 @@
 package com.looplingua.app.ui
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -29,35 +30,30 @@ fun TopBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
 
-        // ===== MODE（主役化） =====
         Surface(
             color = MaterialTheme.colorScheme.primary,
-            contentColor = Color.White,   // ← これ追加
+            contentColor = Color.White,
             shape = RoundedCornerShape(20.dp),
             tonalElevation = 2.dp,
             onClick = { expanded = true }
         ) {
             Text(
-                text = currentPattern.name,
+                text = " ${currentPattern.name}",
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             )
         }
 
-        // ===== メニュー =====
         Box {
-
-            Text(
-                text = "⋯",
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier
-                    .clickable { expanded = true }
-                    .padding(8.dp)
-            )
+            IconButton(onClick = { expanded = true }) {
+                Icon(
+                    imageVector = Icons.Default.MoreVert,
+                    contentDescription = "Menu"
+                )
+            }
 
             DropdownMenu(
                 expanded = expanded,
-                onDismissRequest = { expanded = false },
-                containerColor = MaterialTheme.colorScheme.surface
+                onDismissRequest = { expanded = false }
             ) {
 
                 Pattern.entries.forEach { pattern ->
