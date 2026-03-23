@@ -9,6 +9,7 @@ import com.looplingua.app.domain.playback.Pattern
 import com.looplingua.app.player.factory.PlayerFactory
 import com.looplingua.app.ui.MainScreen
 import com.looplingua.app.ui.mapper.TrackUiMapper
+import com.looplingua.app.ui.theme.LoopLinguaandroidTheme
 
 class MainActivity : ComponentActivity() {
 
@@ -33,10 +34,12 @@ class MainActivity : ComponentActivity() {
         val items = TrackUiMapper.buildItems(trackDataList)
 
         setContent {
-            MainScreen(
-                controller = controller,
-                items = items
-            )
+            LoopLinguaandroidTheme {
+                MainScreen(
+                    controller = controller,
+                    items = items
+                )
+            }
         }
 
         controller.setPattern(Pattern.ORIGINAL_ONLY)
