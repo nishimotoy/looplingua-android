@@ -57,20 +57,7 @@ class TrackQueue {
         return null
     }
 
-    fun jumpTo(trackIndex: Int, segmentIndex: Int): Segment? {
-        if (trackIndex !in tracks.indices) return null
-
-        currentTrackIndex = trackIndex
-        loadCurrentTrack()
-
-        return segmentQueue.jumpTo(segmentIndex)
-    }
-
-    fun getCurrentTrackIndex(): Int = currentTrackIndex
-
-    fun getCurrentSegmentIndex(): Int = segmentQueue.getCurrentIndex()
-
-    fun currentTrack(): TrackWithSegments? {
+        fun currentTrack(): TrackWithSegments? {
         return tracks.getOrNull(currentTrackIndex)
     }
 
