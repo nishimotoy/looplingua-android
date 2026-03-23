@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
         val items = TrackUiMapper.buildItems(trackDataList)
 
         setContent {
-            LoopLinguaandroidTheme {
+            LoopLinguaandroidTheme(darkTheme = false) {
                 MainScreen(
                     controller = controller,
                     items = items

@@ -56,7 +56,8 @@ fun TopBar(
 
             DropdownMenu(
                 expanded = expanded,
-                onDismissRequest = { expanded = false }
+                onDismissRequest = { expanded = false },
+                containerColor = MaterialTheme.colorScheme.surface
             ) {
 
                 Pattern.entries.forEach { pattern ->
