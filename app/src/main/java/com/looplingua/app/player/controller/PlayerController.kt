@@ -108,18 +108,27 @@ class PlayerController(
 
             if (!_isPlaying.value) return@play
 
-            val next = queue.nextSegment()
+            if (pinnedKey != null) {
 
-            if (next != null) {
-                playSegment(next)
+                val pinned = queue.findByKey(pinnedKey!!)
+                if (pinned != null) {
+                    playSegment(pinned)
+                }
+
             } else {
-                // ★ ここが追加
-                val restart = queue.rewindToStart()
 
-                if (restart != null) {
-                    playSegment(restart)
+                val next = queue.nextSegment()
+
+                if (next != null) {
+                    playSegment(next)
                 } else {
-                    _isPlaying.value = false
+                    val restart = queue.rewindToStart()
+
+                    if (restart != null) {
+                        playSegment(restart)
+                    } else {
+                        _isPlaying.value = false
+                    }
                 }
             }
         }
@@ -137,5 +146,22 @@ class PlayerController(
         } else {
             null
         }
+    }
+
+    // pin
+    private var pinnedKey: SegmentKey? = null
+
+    fun togglePin() {
+        val current = _currentKey.value ?: return
+
+        pinnedKey = if (pinnedKey == current) {
+            null // 解除
+        } else {
+            current // 設定
+        }
+    }
+
+    fun isPinned(): Boolean {
+        return pinnedKey != null && pinnedKey == _currentKey.value
     }
 }

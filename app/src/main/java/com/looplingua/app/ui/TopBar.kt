@@ -75,8 +75,11 @@ fun TopBar(
                 )
 
                 DropdownMenuItem(
-                    text = { Text("Pin") },
-                    onClick = { expanded = false }
+                    text = { Text(if (controller.isPinned()) "Unpin" else "Pin") },
+                    onClick = {
+                        controller.togglePin()
+                        expanded = false
+                    }
                 )
 
                 DropdownMenuItem(
