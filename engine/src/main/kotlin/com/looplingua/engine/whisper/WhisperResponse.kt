@@ -1,4 +1,4 @@
-package com.looplingua.app.translation.whisper
+package com.looplingua.engine.whisper
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

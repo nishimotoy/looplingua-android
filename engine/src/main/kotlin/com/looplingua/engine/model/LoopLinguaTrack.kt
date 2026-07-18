@@ -1,4 +1,4 @@
-package com.looplingua.app.translation.model
+package com.looplingua.engine.model
 
 data class LoopLinguaTrack(
     val trackId: Int,

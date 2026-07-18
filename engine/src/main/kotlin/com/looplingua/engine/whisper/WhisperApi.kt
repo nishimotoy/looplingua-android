@@ -1,4 +1,4 @@
-package com.looplingua.app.translation.whisper
+package com.looplingua.engine.whisper
 
 import java.io.File
 import kotlinx.serialization.json.Json
