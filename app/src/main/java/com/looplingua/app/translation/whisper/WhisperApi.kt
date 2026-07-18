@@ -1,11 +1,13 @@
 package com.looplingua.app.translation.whisper
 
+import java.io.File
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.decodeFromString
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.asRequestBody
-import java.io.File
 
 class WhisperApi(
     private val apiKey: String
@@ -13,9 +15,10 @@ class WhisperApi(
 
     private val client = OkHttpClient()
 
-    suspend fun transcribe(
-        inputMp3: File
-    ): String {
+    fun transcribe(
+        inputMp3: File,
+        outputJson: File
+    ): WhisperResponse {
 
         // multipart
         val requestBody = MultipartBody.Builder()
@@ -28,6 +31,10 @@ class WhisperApi(
             .addFormDataPart(
                 "model",
                 "gpt-4o-transcribe"
+            )
+            .addFormDataPart(
+                "response_format",
+                "verbose_json"
             )
             .build()
 
@@ -45,10 +52,11 @@ class WhisperApi(
                 error(response.body?.string() ?: "Unknown error")
             }
 
-            val json = response.body?.string()
-                ?: error("Response body is null")
+            val json = response.body!!.string()
 
-            return json
+            outputJson.writeText(json)
+
+            return Json.decodeFromString<WhisperResponse>(json)
 
         }
     }
