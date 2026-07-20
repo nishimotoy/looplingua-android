@@ -1,6 +1,7 @@
 package com.looplingua.engine.whisper
 
 import java.io.File
+import java.util.concurrent.TimeUnit
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.decodeFromString
 import okhttp3.MediaType.Companion.toMediaType
@@ -13,8 +14,11 @@ class WhisperApi(
     private val apiKey: String
 ) {
 
-    private val client = OkHttpClient()
-
+    private val client = OkHttpClient.Builder()
+        .connectTimeout(30, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
+        .readTimeout(5, TimeUnit.MINUTES)
+        .build()
     fun transcribe(
         inputMp3: File,
         outputJson: File
@@ -30,7 +34,7 @@ class WhisperApi(
             )
             .addFormDataPart(
                 "model",
-                "gpt-4o-transcribe"
+                "whisper-1"
             )
             .addFormDataPart(
                 "response_format",
@@ -56,8 +60,11 @@ class WhisperApi(
 
             outputJson.writeText(json)
 
-            return Json.decodeFromString<WhisperResponse>(json)
+            val parser = Json {
+                ignoreUnknownKeys = true
+            }
 
+            return parser.decodeFromString<WhisperResponse>(json)
         }
     }
 }
