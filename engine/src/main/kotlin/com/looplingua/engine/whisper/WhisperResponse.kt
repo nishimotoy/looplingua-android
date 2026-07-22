@@ -6,8 +6,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class WhisperResponse(
 
+    val language: String,
+    val duration: Double,
     val text: String,
-
     val segments: List<WhisperSegment>
 )
 
