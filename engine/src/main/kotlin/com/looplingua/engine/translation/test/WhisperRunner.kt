@@ -1,8 +1,11 @@
 package com.looplingua.engine.translation.test
 
+import com.looplingua.engine.translation.WhisperProjectConverter
 import com.looplingua.engine.whisper.WhisperApi
 import java.io.File
 import java.util.Properties
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 fun main() {
 
@@ -27,7 +30,25 @@ fun main() {
         outputJson
     )
 
-    println("Transcription completed.")
+    val converter = WhisperProjectConverter()
+
+    val project = converter.convert(
+        response = response,
+        audioPath = inputMp3.path
+    )
+
+    val outputProject = File(
+        "testdata/output/${inputMp3.nameWithoutExtension}.looplingua"
+    )
+
+    val projectJson = Json {
+        prettyPrint = true
+    }.encodeToString(project)
+
+    outputProject.writeText(projectJson)
+
+    println(outputProject.absolutePath)
+    println("LoopLingua project created.")
     println("${response.segments.size} segments")
 
 }

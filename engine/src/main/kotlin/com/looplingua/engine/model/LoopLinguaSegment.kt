@@ -1,5 +1,8 @@
 package com.looplingua.engine.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class LoopLinguaSegment(
     val segmentId: Int,
 
