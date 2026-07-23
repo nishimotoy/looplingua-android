@@ -1,8 +1,10 @@
-package com.looplingua.engine.translation
+package com.looplingua.engine.converter
 
-import java.io.File
-import com.looplingua.engine.model.*
+import com.looplingua.engine.model.LoopLinguaProject
+import com.looplingua.engine.model.LoopLinguaSegment
+import com.looplingua.engine.model.LoopLinguaTrack
 import com.looplingua.engine.whisper.WhisperResponse
+import java.io.File
 
 /**
  * Whisper API のレスポンスを
@@ -39,7 +41,7 @@ class WhisperProjectConverter {
                 // Whisper は秒(Double)で返すので、
                 // LoopLingua のミリ秒(Long)へ変換する
                 originalStartMs = (segment.start * 1000).toLong(),
-                originalEndMs   = (segment.end   * 1000).toLong(),
+                originalEndMs = (segment.end * 1000).toLong(),
 
                 // Whisper が認識した文字列
                 // 編集前のオリジナルとして保存する

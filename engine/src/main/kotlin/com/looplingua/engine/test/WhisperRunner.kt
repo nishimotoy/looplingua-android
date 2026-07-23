@@ -1,6 +1,6 @@
-package com.looplingua.engine.translation.test
+package com.looplingua.engine.test
 
-import com.looplingua.engine.translation.WhisperProjectConverter
+import com.looplingua.engine.converter.WhisperProjectConverter
 import com.looplingua.engine.whisper.WhisperApi
 import java.io.File
 import java.util.Properties
