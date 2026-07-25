@@ -1,6 +1,7 @@
 package com.looplingua.engine.translation
 
 import com.looplingua.engine.translation.Translator
+import kotlinx.serialization.json.Json
 import java.util.concurrent.TimeUnit
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -52,7 +53,19 @@ class OpenAiTranslator (
 
             val json = response.body!!.string()
 
-            return json
+            val parser = Json {
+                ignoreUnknownKeys = true
+            }
+
+            val translationResponse =
+                parser.decodeFromString<TranslationResponse>(json)
+
+            return translationResponse
+                .output
+                .first()
+                .content
+                .first()
+                .text
         }
     }
 }
