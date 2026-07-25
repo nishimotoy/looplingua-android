@@ -78,7 +78,7 @@ class WhisperProjectConverter {
             sourceLanguage = response.language,
 
             // 翻訳先言語はまだ未設定
-            targetLanguage = "",
+            targetLanguage = "Japanese",
 
             // ①で作ったSegment一覧
             segments = segments

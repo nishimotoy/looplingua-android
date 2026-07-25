@@ -1,6 +1,10 @@
 package com.looplingua.engine.test
 
+import com.looplingua.engine.model.LoopLinguaProject
+import com.looplingua.engine.translation.LoopLinguaTranslator
 import com.looplingua.engine.translation.OpenAiTranslator
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import java.io.File
 import java.util.Properties
 
@@ -15,11 +19,27 @@ private fun main() {
 
     val translator = OpenAiTranslator(apiKey)
 
-    val result = translator.translate(
-        text = "Hello",
-        sourceLanguage = "English",
-        targetLanguage = "Japanese"
+    val projectTranslator =
+        LoopLinguaTranslator(translator)
+
+    val inputProject = File(
+        "testdata/output/sample.looplingua"
     )
 
-    println(result)
+    val json = Json {
+        ignoreUnknownKeys = true
+    }
+
+    val project =
+        json.decodeFromString<LoopLinguaProject>(
+            inputProject.readText()
+        )
+
+    val translatedProject =
+        projectTranslator.translate(project)
+
+    println(project.projectName)
+    println(project.tracks.size)
+    println(project.tracks.first().segments.size)
+
 }
