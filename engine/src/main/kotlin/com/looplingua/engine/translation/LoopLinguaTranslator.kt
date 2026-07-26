@@ -13,22 +13,27 @@ class LoopLinguaTranslator(
     ): LoopLinguaProject {
 
         val track = project.tracks.first()
-        val segment = track.segments.first()
-        println(segment.originalAuto)
+        val translatedSegments =
+            track.segments.map { segment ->
 
-        val translated = translator.translate(
-            text = segment.originalAuto,
-            sourceLanguage = track.sourceLanguage,
-            targetLanguage = track.targetLanguage
-        )
+                println("Segment ${segment.segmentId}")
 
-        println(translated)
+                val translated = translator.translate(
+                    text = segment.originalAuto,
+                    sourceLanguage = track.sourceLanguage,
+                    targetLanguage = track.targetLanguage
+                    //  println(requestJson) in OpenAiTranslator
+                )
 
-        val translatedSegment = segment.copy(
-            translationAuto = translated
-        )
+                println(translated)
 
-        println(translatedSegment.translationAuto)
+                segment.copy(
+                    translationAuto = translated
+                )
+            }
+
+        println(translatedSegments.size)
+        println(translatedSegments.first().translationAuto)
 
         return project
     }
