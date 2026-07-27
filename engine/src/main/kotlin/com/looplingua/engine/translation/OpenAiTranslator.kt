@@ -8,6 +8,9 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 
+// OpenAI Responses APIを利用して
+// 1つの文字列を翻訳する。
+
 class OpenAiTranslator (
     private val apiKey: String
 ) : Translator {

@@ -2,6 +2,9 @@ package com.looplingua.engine.translation
 
 import com.looplingua.engine.model.LoopLinguaProject
 
+// Project全体を翻訳する。
+// 各Segmentの翻訳自体は Translator に委譲する。
+
 class LoopLinguaTranslator(
 
     private val translator: Translator
