@@ -38,8 +38,14 @@ private fun main() {
     val translatedProject =
         projectTranslator.translate(project)
 
-    println(project.projectName)
-    println(project.tracks.size)
-    println(project.tracks.first().segments.size)
+    val outputProject = File(
+        "testdata/output/${project.projectName}_ja.looplingua"
+    )
+
+    val projectJson = Json {
+        prettyPrint = true
+    }.encodeToString(translatedProject)
+
+    outputProject.writeText(projectJson)
 
 }
