@@ -6,9 +6,18 @@ import com.looplingua.engine.translation.OpenAiTranslator
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import java.io.File
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Properties
 
 private fun main() {
+
+    val logFile = File("testdata/output/engine.log")
+
+    val now = LocalDateTime.now()
+
+    val formatter =
+        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
     val properties = Properties().apply {
         load(File("local.properties").inputStream())
@@ -48,4 +57,17 @@ private fun main() {
 
     outputProject.writeText(projectJson)
 
+    logFile.appendText(
+        """
+==================================================
+${now.format(formatter)}
+Input file      : ${inputProject.name}
+Output file     : ${outputProject.name}
+Model           : gpt-4.1-mini
+Input Segments  : ${project.tracks.first().segments.size}
+Output Segments : ${translatedProject.tracks.first().segments.size}
+==================================================
+
+""".trimIndent() + "\n"
+    )
 }
