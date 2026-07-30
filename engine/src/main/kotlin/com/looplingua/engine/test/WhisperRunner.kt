@@ -43,10 +43,13 @@ fun main() {
 
     outputProject.writeText(projectJson)
 
-    appendLogWhisper(
-        inputMp3.name,
-        outputProject.name,
-        formatDuration(duration),
-        response.segments.size
+    appendLog(
+        mapOf(
+            "Input file" to inputMp3.name,
+            "Output file" to outputProject.name,
+            "Model" to "whisper-1",
+            "Duration" to formatDuration(duration),
+            "Output Segments" to response.segments.size.toString()
+        )
     )
 }

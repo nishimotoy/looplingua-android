@@ -19,10 +19,6 @@ fun loadApiKey(): String {
     return apiKey
 }
 
-fun prettyJson() = Json {
-    prettyPrint = true
-}
-
 fun toPrettyJson(project: LoopLinguaProject): String =
     Json {
         prettyPrint = true
@@ -32,62 +28,22 @@ fun parserJson() = Json {
     ignoreUnknownKeys = true
 }
 
-fun appendLogWhisper() =  {
-
-}
-
-fun appendLogTranslation(
-    inputFileName: String,
-    outputFileName: String,
-    inputSegmentsSize: Int,
-    outputSegmentsSize: Int
-)  {
+fun appendLog(data: Map<String, String>) {
 
     val logFile = File("testdata/output/engine.log")
 
     val now = LocalDateTime.now()
+        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
 
-    val formatter =
-        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-
-    logFile.appendText(
-        """
-==================================================
-${now.format(formatter)}
-Input file      : ${inputFileName}
-Output file     : ${outputFileName}
-Model           : gpt-4.1-mini
-Input Segments  : ${inputSegmentsSize}
-Output Segments : ${outputSegmentsSize}
-==================================================
-
-""".trimIndent() + "\n"
-    )
-}
-
-fun appendLogWhisper(
-    inputFileName: String,
-    outputFileName: String,
-    duration: String,
-    outputSegmentsSize: Int
-)  {
-
-    val logFile = File("testdata/output/engine.log")
-
-    val now = LocalDateTime.now()
-
-    val formatter =
-        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+    val body = data.entries.joinToString("\n") { (key, value) ->
+        "%-15s : %s".format(key, value)
+    }
 
     logFile.appendText(
         """
 ==================================================
-${now.format(formatter)}
-Input file      : ${inputFileName}
-Output file     : ${outputFileName}
-Model           : gpt-4.1-mini
-Duration        : ${duration}
-Output Segments : ${outputSegmentsSize}
+$now
+$body
 ==================================================
 
 """.trimIndent() + "\n"

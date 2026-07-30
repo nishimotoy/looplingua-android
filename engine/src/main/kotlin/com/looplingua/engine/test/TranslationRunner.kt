@@ -36,10 +36,13 @@ private fun main() {
 
     outputProject.writeText(projectJson)
 
-    appendLogTranslation(
-        inputProject.name,
-        outputProject.name,
-        project.tracks.first().segments.size,
-        translatedProject.tracks.first().segments.size
+    appendLog(
+        mapOf(
+            "Input file" to inputProject.name,
+            "Output file" to outputProject.name,
+            "Model" to "gpt-4.1-mini",
+            "Input Segments" to project.tracks.first().segments.size.toString(),
+            "Output Segments" to translatedProject.tracks.first().segments.size.toString()
+        )
     )
 }
