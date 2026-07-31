@@ -40,6 +40,14 @@ class WhisperApi(
                 "response_format",
                 "verbose_json"
             )
+            .addFormDataPart(
+                "timestamp_granularities[]",
+                "segment"
+            )
+            .addFormDataPart(
+                "timestamp_granularities[]",
+                "word"
+            )
             .build()
 
         // HTTP Request
