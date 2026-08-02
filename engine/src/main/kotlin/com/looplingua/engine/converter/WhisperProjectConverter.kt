@@ -75,10 +75,10 @@ class WhisperProjectConverter {
             fileName = File(audioPath).name,
 
             // Whisper が認識した言語
-            sourceLanguage = response.language,
+            originalLang = response.language,
 
             // 翻訳先言語はまだ未設定
-            targetLanguage = "Japanese",
+            translationLang = "Japanese",
 
             // ①で作ったSegment一覧
             segments = segments

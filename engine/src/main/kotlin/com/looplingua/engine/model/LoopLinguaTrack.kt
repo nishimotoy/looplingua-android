@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class LoopLinguaTrack(
     val trackId: Int,
     val fileName: String,
-    val sourceLanguage: String,
-    val targetLanguage: String,
+    val originalLang: String,
+    val translationLang: String,
     val segments: List<LoopLinguaSegment>
 )

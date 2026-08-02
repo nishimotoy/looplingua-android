@@ -6,7 +6,7 @@ interface Translator {
 
     fun translate(
         text: String,
-        sourceLanguage: String,
-        targetLanguage: String
+        originalLang: String,
+        translationLang: String
     ): String
 }

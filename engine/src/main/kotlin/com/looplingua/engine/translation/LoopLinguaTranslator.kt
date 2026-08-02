@@ -24,8 +24,8 @@ class LoopLinguaTranslator(
 
                 val translated = translator.translate(
                     text = segment.originalAuto,
-                    sourceLanguage = track.sourceLanguage,
-                    targetLanguage = track.targetLanguage
+                    originalLang = track.originalLang,
+                    translationLang = track.translationLang
                 )
 
                 segment.copy(

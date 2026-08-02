@@ -11,7 +11,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 // OpenAI Responses APIを利用して
 // 1つの文字列を翻訳する。
 
-class OpenAiTranslator (
+class OpenAiTranslator(
     private val apiKey: String
 ) : Translator {
 
@@ -20,16 +20,17 @@ class OpenAiTranslator (
         .writeTimeout(30, TimeUnit.SECONDS)
         .readTimeout(5, TimeUnit.MINUTES)
         .build()
+
     override fun translate(
         text: String,
-        sourceLanguage: String,
-        targetLanguage: String
+        originalLang: String,
+        translationLang: String
     ): String {
 
         val requestJson = """
 {
   "model": "gpt-4.1-mini",
-  "input": "Translate the following text from $sourceLanguage to $targetLanguage. Output only the translation. Text: $text"
+  "input": "Translate the following text from $originalLang to $translationLang. Output only the translation. Text: $text"
 }
 """.trimIndent()
 
