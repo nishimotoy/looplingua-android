@@ -4,6 +4,8 @@ import com.looplingua.engine.converter.WhisperProjectConverter
 import com.looplingua.engine.model.LoopLinguaProject
 import com.looplingua.engine.whisper.WhisperApi
 import java.io.File
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 private fun formatDuration(seconds: Double): String {
     val totalSeconds = seconds.toInt()
@@ -24,7 +26,8 @@ fun main() {
     val translationLang = "Japanese"
 
     // Project ID = project creation timestamp
-    val projectId = System.currentTimeMillis().toString()
+    val projectId = LocalDateTime.now()
+        .format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
 
     // Project directory
     val projectDirectory = File(
