@@ -19,12 +19,32 @@ fun main() {
     //------------------------------------------------------------------
 
     val inputDirectory = File("testdata/input/青本ウクライナ語")
-    val outputProject = File(
-        "testdata/output/青本ウクライナ語.looplingua"
-    )
 
     val projectName = "青本ウクライナ語"
     val translationLang = "Japanese"
+
+    // Project ID = project creation timestamp
+    val projectId = System.currentTimeMillis().toString()
+
+    // Project directory
+    val projectDirectory = File(
+        "testdata/project/$projectId-$projectName"
+    )
+
+    // Audio directory
+    val audioDirectory = File(
+        projectDirectory,
+        "Audio"
+    )
+
+    // Project JSON
+    val outputProject = File(
+        projectDirectory,
+        "$projectName.looplingua"
+    )
+
+    projectDirectory.mkdirs()
+    audioDirectory.mkdirs()
 
     //------------------------------------------------------------------
     // Input files
@@ -58,6 +78,16 @@ fun main() {
     //------------------------------------------------------------------
 
     val tracks = inputFiles.mapIndexed { trackId, inputMp3 ->  // リストの全要素に処理
+
+        val destinationMp3 = File(
+            audioDirectory,
+            inputMp3.name
+        )
+
+        inputMp3.copyTo(
+            destinationMp3,
+            overwrite = true
+        )
 
         println("[$trackId] Transcribing: ${inputMp3.name}")
 
@@ -117,6 +147,14 @@ fun main() {
     val projectJson = toPrettyJson(project)
 
     outputProject.writeText(projectJson)
+
+    appendLog(
+        mapOf(
+            "ProjectID" to projectId,
+            "ProjectName" to projectName,
+            "Files" to inputFiles.joinToString(", ") { it.name }
+        )
+    )
 
     println()
     println("Project created:")
