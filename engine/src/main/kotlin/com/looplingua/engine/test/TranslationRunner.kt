@@ -5,7 +5,7 @@ import com.looplingua.engine.translation.LoopLinguaTranslator
 import com.looplingua.engine.translation.OpenAiTranslator
 import java.io.File
 
-private fun main() {
+fun main() {
 
     val apiKey = loadApiKey()
 
@@ -14,8 +14,13 @@ private fun main() {
     val projectTranslator =
         LoopLinguaTranslator(translator)
 
+    val projectDirectory = File(
+        "testdata/project/1785819205167-青本ウクライナ語"
+    )
+
     val inputProject = File(
-        "testdata/output/sample.looplingua"
+        projectDirectory,
+        "青本ウクライナ語.looplingua"
     )
 
     val json = parserJson()
@@ -29,20 +34,29 @@ private fun main() {
         projectTranslator.translate(project)
 
     val outputProject = File(
-        "testdata/output/${project.projectName}_ja.looplingua"
+        projectDirectory,
+        "${project.projectName}.looplingua"
     )
 
     val projectJson = toPrettyJson(translatedProject)
 
     outputProject.writeText(projectJson)
 
+    val inputSegments =
+        project.tracks.sumOf { it.segments.size }
+
+    val outputSegments =
+        translatedProject.tracks.sumOf { it.segments.size }
+
     appendLog(
         mapOf(
             "Input file" to inputProject.name,
             "Output file" to outputProject.name,
             "Model" to "gpt-4.1-mini",
-            "Input Segments" to project.tracks.first().segments.size.toString(),
-            "Output Segments" to translatedProject.tracks.first().segments.size.toString()
+            "Input Tracks" to project.tracks.size.toString(),
+            "Output Tracks" to translatedProject.tracks.size.toString(),
+            "Input Segments" to inputSegments.toString(),
+            "Output Segments" to outputSegments.toString()
         )
     )
 }

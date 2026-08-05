@@ -15,32 +15,34 @@ class LoopLinguaTranslator(
         project: LoopLinguaProject
     ): LoopLinguaProject {
 
-        val track = project.tracks.first()
+        val translatedTracks =
+            project.tracks.map { track ->
 
-        val translatedSegments =
-            track.segments.map { segment ->
+                val translatedSegments =
+                    track.segments.map { segment ->
 
-                println("Segment ${segment.segmentId}")
+                        println(
+                            "Track ${track.trackId} Segment ${segment.segmentId}"
+                        )
 
-                val translated = translator.translate(
-                    text = segment.originalAuto,
-                    originalLang = track.originalLang,
-                    translationLang = track.translationLang
-                )
+                        val translated = translator.translate(
+                            text = segment.originalAuto,
+                            originalLang = track.originalLang,
+                            translationLang = track.translationLang
+                        )
 
-                segment.copy(
-                    translationAuto = translated
+                        segment.copy(
+                            translationAuto = translated
+                        )
+                    }
+
+                track.copy(
+                    segments = translatedSegments
                 )
             }
 
-        val translatedTrack = track.copy(
-            segments = translatedSegments
+        return project.copy(
+            tracks = translatedTracks
         )
-
-        val translatedProject = project.copy(
-            tracks = listOf(translatedTrack)
-        )
-
-        return translatedProject
     }
 }
