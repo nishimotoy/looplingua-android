@@ -2,6 +2,7 @@ package com.looplingua.engine.test
 
 import com.looplingua.engine.model.LoopLinguaProject
 import com.looplingua.engine.translation.LoopLinguaTranslator
+import com.looplingua.engine.translation.OpenAiBatchTranslator
 import com.looplingua.engine.translation.OpenAiTranslator
 import java.io.File
 
@@ -9,7 +10,7 @@ fun main() {
 
     val apiKey = loadApiKey()
 
-    val translator = OpenAiTranslator(apiKey)
+    val translator = OpenAiBatchTranslator(apiKey)
 
     val projectTranslator =
         LoopLinguaTranslator(translator)

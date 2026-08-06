@@ -3,13 +3,18 @@ package com.looplingua.engine.translation
 import com.looplingua.engine.model.LoopLinguaProject
 
 // Project全体を翻訳する。
-// 各Segmentの翻訳自体は Translator に委譲する。
+// 各TrackのSegmentをBatchに分け、
+// BatchTranslatorに翻訳を委譲する。
 
 class LoopLinguaTranslator(
 
-    private val translator: Translator
+    private val translator: BatchTranslator
 
 ) {
+
+    companion object {
+        private const val MAX_SEGMENTS_PER_BATCH = 20
+    }
 
     fun translate(
         project: LoopLinguaProject
@@ -19,22 +24,42 @@ class LoopLinguaTranslator(
             project.tracks.map { track ->
 
                 val translatedSegments =
-                    track.segments.map { segment ->
+                    track.segments
+                        .chunked(MAX_SEGMENTS_PER_BATCH)  // chunked： listをbatchにする
+                        .flatMap { batch ->                     // flatMap： batchごとに繰り返し処理
 
-                        println(
-                            "Track ${track.trackId} Segment ${segment.segmentId}"
-                        )
+                            val texts =
+                                batch.map { segment ->
+                                    segment.originalAuto
+                                }
 
-                        val translated = translator.translate(
-                            text = segment.originalAuto,
-                            originalLang = track.originalLang,
-                            translationLang = track.translationLang
-                        )
+                            println(
+                                "Track ${track.trackId}: " +
+                                        "translating ${batch.size} segments"
+                            )
 
-                        segment.copy(
-                            translationAuto = translated
-                        )
-                    }
+                            val translations =
+                                translator.translate(
+                                    texts = texts,
+                                    originalLang = track.originalLang,
+                                    translationLang = track.translationLang
+                                )
+
+                            if (translations.size != batch.size) {
+                                throw IllegalStateException(
+                                    "Translation count mismatch: " +
+                                            "input=${batch.size}, " +
+                                            "output=${translations.size}"
+                                )
+                            }
+
+                            batch.mapIndexed { index, segment ->
+                                segment.copy(
+                                    translationAuto =
+                                        translations[index]
+                                )
+                            }
+                        }
 
                 track.copy(
                     segments = translatedSegments
