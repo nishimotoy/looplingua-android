@@ -39,13 +39,20 @@ fun appendLog(data: Map<String, String>) {
         "%-15s : %s".format(key, value)
     }
 
-    logFile.appendText(
-        """
+    val newLog = """
 ==================================================
 $now
 $body
 ==================================================
 
 """.trimIndent() + "\n"
-    )
+
+    val oldLog =
+        if (logFile.exists()) {
+            logFile.readText()
+        } else {
+            ""
+        }
+
+    logFile.writeText(newLog + oldLog)
 }

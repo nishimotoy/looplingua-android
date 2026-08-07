@@ -3,7 +3,6 @@ package com.looplingua.engine.test
 import com.looplingua.engine.model.LoopLinguaProject
 import com.looplingua.engine.translation.LoopLinguaTranslator
 import com.looplingua.engine.translation.OpenAiBatchTranslator
-import com.looplingua.engine.translation.OpenAiTranslator
 import java.io.File
 
 fun main() {
@@ -51,8 +50,8 @@ fun main() {
 
     appendLog(
         mapOf(
-            "Input file" to inputProject.name,
-            "Output file" to outputProject.name,
+            "Input file" to inputProject.path,
+            "Output file" to outputProject.path,
             "Model" to "gpt-4.1-mini",
             "Input Tracks" to project.tracks.size.toString(),
             "Output Tracks" to translatedProject.tracks.size.toString(),
