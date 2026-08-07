@@ -14,14 +14,26 @@ fun main() {
     val projectTranslator =
         LoopLinguaTranslator(translator)
 
-    val projectDirectory = File(
-        "testdata/project/1785819205167-青本ウクライナ語"
-    )
+    val projectRoot = File("testdata/project")
 
-    val inputProject = File(
-        projectDirectory,
-        "青本ウクライナ語.looplingua"
-    )
+    val projectDirectory =
+        projectRoot.listFiles { file ->
+            file.isDirectory
+        }
+            ?.sortedBy { it.name }
+            ?.lastOrNull()
+            ?: error("No project directory found.")
+
+    val inputProject =
+        projectDirectory.listFiles { file ->
+            file.isFile &&
+                    file.extension.equals("looplingua", ignoreCase = true)
+        }
+            ?.singleOrNull()
+            ?: error(
+                "Exactly one .looplingua file is expected in: " +
+                        projectDirectory.path
+            )
 
     val json = parserJson()
 
