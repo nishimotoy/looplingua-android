@@ -1,6 +1,5 @@
 package com.looplingua.engine.translation
 
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -16,11 +15,6 @@ class OpenAiBatchTranslator(
     private val json = Json {
         ignoreUnknownKeys = true
     }
-
-    @Serializable
-    private data class TranslationResponse(
-        val translations: List<String>
-    )
 
     override fun translate(
         texts: List<String>,
@@ -88,11 +82,37 @@ class OpenAiBatchTranslator(
                         "OpenAI API returned an empty response."
                     )
 
-            // Responses APIのoutputから
-            // 実際のJSON文字列を取り出す処理は、
-            // 現在のOpenAiTranslatorの実装に合わせて
-            // 次の段階で整理する。
-            TODO("Parse Responses API output")
+            val parser = Json {
+                ignoreUnknownKeys = true
+            }
+
+            val translationResponse =
+                parser.decodeFromString<TranslationResponse>(
+                    responseBody
+                )
+
+            val outputText =
+                translationResponse
+                    .output
+                    .first()
+                    .content
+                    .first()
+                    .text
+
+            val batchResponse =
+                parser.decodeFromString<BatchTranslationResponse>(
+                    outputText
+                )
+
+            if (batchResponse.translations.size != texts.size) {
+                error(
+                    "Translation count mismatch: " +
+                            "expected=${texts.size}, " +
+                            "actual=${batchResponse.translations.size}"
+                )
+            }
+
+            return batchResponse.translations
         }
     }
 }
