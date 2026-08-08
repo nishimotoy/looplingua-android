@@ -1,21 +1,23 @@
 package com.looplingua.app.ui.mapper
 
-import com.looplingua.app.data.SegmentFile
 import com.looplingua.app.domain.model.SegmentKey
+import com.looplingua.app.domain.model.TrackWithSegments
 import com.looplingua.app.ui.track.TrackListItem
 
 object TrackUiMapper {
 
-    fun buildItems(trackDataList: List<SegmentFile>): List<TrackListItem> {
+    fun buildItems(
+        tracks: List<TrackWithSegments>
+    ): List<TrackListItem> {
 
         val items = mutableListOf<TrackListItem>()
         var index = 0
 
-        trackDataList.forEach { data ->
+        tracks.forEach { data ->
 
             items.add(
                 TrackListItem.TrackHeader(
-                    data.track.title ?: "Track"
+                    data.track.title
                 )
             )
 
