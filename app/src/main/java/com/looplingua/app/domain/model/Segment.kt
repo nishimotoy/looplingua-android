@@ -1,8 +1,7 @@
 package com.looplingua.app.domain.model
 
 data class Segment(
-
-    val id: Long,
+    val id: Int,
 
     val originalStartMs: Long,
     val originalEndMs: Long,
