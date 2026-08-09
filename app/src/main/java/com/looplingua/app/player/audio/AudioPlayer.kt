@@ -10,6 +10,7 @@ import androidx.media3.exoplayer.ExoPlayer
 
 class AudioPlayer(private val context: Context) {
 
+    private val START_OFFSET_MS = 100L  // 再生遅延対策
     private val player = ExoPlayer.Builder(context).build()
     private val handler = Handler(Looper.getMainLooper())
 
@@ -36,7 +37,9 @@ class AudioPlayer(private val context: Context) {
 
                 if (state == Player.STATE_READY) {
 
-                    player.seekTo(startMs)
+                    val playbackStartMs =  // 再生遅延対策
+                        maxOf(0L, startMs - START_OFFSET_MS)
+                    player.seekTo(playbackStartMs)
                     player.play()
 
                     startMonitoring(endMs, onComplete)
