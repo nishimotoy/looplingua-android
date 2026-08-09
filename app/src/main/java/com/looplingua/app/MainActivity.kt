@@ -5,7 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.looplingua.app.data.repository.TrackRepository
 import com.looplingua.app.data.storage.ProjectStorage
-import com.looplingua.app.domain.model.TrackWithSegments
 import com.looplingua.app.domain.playback.Pattern
 import com.looplingua.app.player.factory.PlayerFactory
 import com.looplingua.app.ui.MainScreen
