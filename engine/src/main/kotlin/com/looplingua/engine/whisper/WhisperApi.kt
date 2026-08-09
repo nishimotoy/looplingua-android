@@ -19,9 +19,11 @@ class WhisperApi(
         .writeTimeout(30, TimeUnit.SECONDS)
         .readTimeout(5, TimeUnit.MINUTES)
         .build()
+
     fun transcribe(
         inputMp3: File,
-        outputJson: File
+        outputJson: File,
+        language: String
     ): WhisperResponse {
 
         // multipart
@@ -35,6 +37,10 @@ class WhisperApi(
             .addFormDataPart(
                 "model",
                 "whisper-1"
+            )
+            .addFormDataPart(
+                "language",
+                language
             )
             .addFormDataPart(
                 "response_format",

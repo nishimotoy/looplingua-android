@@ -23,7 +23,17 @@ fun main() {
     val inputDirectory = File("testdata/input/青本ウクライナ語")
 
     val projectName = "青本ウクライナ語"
+    val originalLang = "ukrainian"
     val translationLang = "Japanese"
+
+    fun toWhisperLanguageCode(language: String): String =
+        when (language.lowercase()) {
+            "ukrainian" -> "uk"
+            "english" -> "en"
+            "japanese" -> "ja"
+            "russian" -> "ru"
+            else -> error("Unsupported Whisper language: $language")
+        }
 
     // Project ID = project creation timestamp
     val projectId = LocalDateTime.now()
@@ -100,7 +110,8 @@ fun main() {
 
         val response = whisper.transcribe(
             inputMp3,
-            whisperOutput
+            whisperOutput,
+            language = toWhisperLanguageCode(originalLang)
         )
 
         val duration =
