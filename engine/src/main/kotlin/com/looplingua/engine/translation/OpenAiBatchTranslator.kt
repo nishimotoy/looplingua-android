@@ -1,5 +1,7 @@
 package com.looplingua.engine.translation
 
+import java.net.SocketTimeoutException
+import java.util.concurrent.TimeUnit
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -10,7 +12,15 @@ class OpenAiBatchTranslator(
     private val apiKey: String
 ) : BatchTranslator {
 
-    private val client = OkHttpClient()
+    companion object {
+        private const val MAX_RETRIES = 3   // リトライ導入
+    }
+
+    private val client = OkHttpClient.Builder()
+        .connectTimeout(30, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
+        .readTimeout(5, TimeUnit.MINUTES)
+        .build()
 
     private val json = Json {
         ignoreUnknownKeys = true
@@ -68,51 +78,71 @@ class OpenAiBatchTranslator(
             )
             .build()
 
-        client.newCall(request).execute().use { response ->
+        repeat(MAX_RETRIES + 1) { attempt ->
 
-            if (!response.isSuccessful) {
-                throw RuntimeException(
-                    "OpenAI API error: ${response.code} ${response.message}"
+            try {
+
+                client.newCall(request).execute().use { response ->
+
+                    if (!response.isSuccessful) {
+                        throw RuntimeException(
+                            "OpenAI API error: " +
+                                    "${response.code} ${response.message}"
+                        )
+                    }
+
+                    val responseBody =
+                        response.body?.string()
+                            ?: throw RuntimeException(
+                                "OpenAI API returned an empty response."
+                            )
+
+                    val parser = Json {
+                        ignoreUnknownKeys = true
+                    }
+
+                    val translationResponse =
+                        parser.decodeFromString<TranslationResponse>(
+                            responseBody
+                        )
+
+                    val outputText =
+                        translationResponse
+                            .output
+                            .first()
+                            .content
+                            .first()
+                            .text
+
+                    val batchResponse =
+                        parser.decodeFromString<BatchTranslationResponse>(
+                            outputText
+                        )
+
+                    if (batchResponse.translations.size != texts.size) {
+                        error(
+                            "Translation count mismatch: " +
+                                    "expected=${texts.size}, " +
+                                    "actual=${batchResponse.translations.size}"
+                        )
+                    }
+
+                    return batchResponse.translations
+                }
+
+            } catch (e: SocketTimeoutException) {
+
+                if (attempt >= MAX_RETRIES) {
+                    throw e
+                }
+
+                println(
+                    "Translation request timed out. " +
+                            "Retry ${attempt + 1}/$MAX_RETRIES"
                 )
             }
-
-            val responseBody =
-                response.body?.string()
-                    ?: throw RuntimeException(
-                        "OpenAI API returned an empty response."
-                    )
-
-            val parser = Json {
-                ignoreUnknownKeys = true
-            }
-
-            val translationResponse =
-                parser.decodeFromString<TranslationResponse>(
-                    responseBody
-                )
-
-            val outputText =
-                translationResponse
-                    .output
-                    .first()
-                    .content
-                    .first()
-                    .text
-
-            val batchResponse =
-                parser.decodeFromString<BatchTranslationResponse>(
-                    outputText
-                )
-
-            if (batchResponse.translations.size != texts.size) {
-                error(
-                    "Translation count mismatch: " +
-                            "expected=${texts.size}, " +
-                            "actual=${batchResponse.translations.size}"
-                )
-            }
-
-            return batchResponse.translations
         }
+
+        error("Translation failed unexpectedly.")
     }
 }
