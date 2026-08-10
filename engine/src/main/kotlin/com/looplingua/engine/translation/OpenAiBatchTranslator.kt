@@ -114,9 +114,17 @@ class OpenAiBatchTranslator(
                             .first()
                             .text
 
+                    val cleanOutputText =
+                        outputText
+                            .trim()
+                            .removePrefix("```json")
+                            .removePrefix("```")
+                            .removeSuffix("```")
+                            .trim()
+
                     val batchResponse =
                         parser.decodeFromString<BatchTranslationResponse>(
-                            outputText
+                            cleanOutputText
                         )
 
                     if (batchResponse.translations.size != texts.size) {
