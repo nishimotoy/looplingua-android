@@ -97,12 +97,8 @@ class OpenAiBatchTranslator(
                                 "OpenAI API returned an empty response."
                             )
 
-                    val parser = Json {
-                        ignoreUnknownKeys = true
-                    }
-
                     val translationResponse =
-                        parser.decodeFromString<TranslationResponse>(
+                        json.decodeFromString<TranslationResponse>(
                             responseBody
                         )
 
@@ -123,15 +119,15 @@ class OpenAiBatchTranslator(
                             .trim()
 
                     val batchResponse =
-                        parser.decodeFromString<BatchTranslationResponse>(
+                        json.decodeFromString<BatchTranslationResponse>(
                             cleanOutputText
                         )
 
                     if (batchResponse.translations.size != texts.size) {
-                        error(
-                            "Translation count mismatch: " +
-                                    "expected=${texts.size}, " +
-                                    "actual=${batchResponse.translations.size}"
+                        throw TranslationCountMismatchException(
+                            inputTexts = texts,
+                            outputTranslations =
+                                batchResponse.translations
                         )
                     }
 

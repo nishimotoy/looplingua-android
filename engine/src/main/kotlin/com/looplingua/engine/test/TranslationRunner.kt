@@ -3,6 +3,7 @@ package com.looplingua.engine.test
 import com.looplingua.engine.model.LoopLinguaProject
 import com.looplingua.engine.translation.LoopLinguaTranslator
 import com.looplingua.engine.translation.OpenAiBatchTranslator
+import com.looplingua.engine.translation.TranslationCountMismatchException
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -93,7 +94,36 @@ fun main() {
     //------------------------------------------------------------------
 
     val translatedProject =
-        projectTranslator.translate(project)
+        try {
+
+            projectTranslator.translate(project)
+
+        } catch (e: TranslationCountMismatchException) {
+
+            val track =
+                project.tracks.firstOrNull { track ->
+                    track.segments.any { segment ->
+                        e.inputTexts.contains(segment.originalAuto)
+                    }
+                }
+
+            appendLog(
+                mapOf(
+                    "Track" to
+                            (track?.trackId?.toString() ?: "unknown"),
+
+                    "Input Segments" to
+                            "${e.inputTexts.size} " +
+                            formatSegmentTexts(e.inputTexts),
+
+                    "Output Segments" to
+                            "${e.outputTranslations.size} " +
+                            formatSegmentTexts(e.outputTranslations)
+                )
+            )
+
+            throw e
+        }
 
     //------------------------------------------------------------------
     // Save project
@@ -135,3 +165,13 @@ fun main() {
         )
     )
 }
+
+private fun formatSegmentTexts(
+    texts: List<String>
+): String =
+    texts.joinToString(
+        prefix = "[ ",
+        postfix = " ]"
+    ) { text ->
+        "\"$text\""
+    }
