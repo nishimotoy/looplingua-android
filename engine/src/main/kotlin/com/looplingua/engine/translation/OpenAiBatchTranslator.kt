@@ -13,7 +13,7 @@ class OpenAiBatchTranslator(
 ) : BatchTranslator {
 
     companion object {
-        private const val MAX_RETRIES = 3   // リトライ導入
+        private const val MAX_RETRIES = 3
     }
 
     private val client = OkHttpClient.Builder()
@@ -35,6 +35,51 @@ class OpenAiBatchTranslator(
         if (texts.isEmpty()) {
             return emptyList()
         }
+
+        repeat(MAX_RETRIES + 1) { attempt ->
+
+            try {
+
+                return translateOnce(
+                    texts = texts,
+                    originalLang = originalLang,
+                    translationLang = translationLang
+                )
+
+            } catch (e: SocketTimeoutException) {
+
+                if (attempt >= MAX_RETRIES) {
+                    throw e
+                }
+
+                println(
+                    "Translation request timed out. " +
+                            "Retry ${attempt + 1}/$MAX_RETRIES"
+                )
+
+            } catch (e: TranslationCountMismatchException) {
+
+                if (attempt >= MAX_RETRIES) {
+                    throw e
+                }
+
+                println(
+                    "Translation count mismatch. " +
+                            "expected=${e.inputTexts.size}, " +
+                            "actual=${e.outputTranslations.size}. " +
+                            "Retry ${attempt + 1}/$MAX_RETRIES"
+                )
+            }
+        }
+
+        error("Translation failed unexpectedly.")
+    }
+
+    private fun translateOnce(
+        texts: List<String>,
+        originalLang: String,
+        translationLang: String
+    ): List<String> {
 
         val numberedTexts =
             texts.mapIndexed { index, text ->
@@ -78,75 +123,56 @@ class OpenAiBatchTranslator(
             )
             .build()
 
-        repeat(MAX_RETRIES + 1) { attempt ->
+        client.newCall(request).execute().use { response ->
 
-            try {
-
-                client.newCall(request).execute().use { response ->
-
-                    if (!response.isSuccessful) {
-                        throw RuntimeException(
-                            "OpenAI API error: " +
-                                    "${response.code} ${response.message}"
-                        )
-                    }
-
-                    val responseBody =
-                        response.body?.string()
-                            ?: throw RuntimeException(
-                                "OpenAI API returned an empty response."
-                            )
-
-                    val translationResponse =
-                        json.decodeFromString<TranslationResponse>(
-                            responseBody
-                        )
-
-                    val outputText =
-                        translationResponse
-                            .output
-                            .first()
-                            .content
-                            .first()
-                            .text
-
-                    val cleanOutputText =
-                        outputText
-                            .trim()
-                            .removePrefix("```json")
-                            .removePrefix("```")
-                            .removeSuffix("```")
-                            .trim()
-
-                    val batchResponse =
-                        json.decodeFromString<BatchTranslationResponse>(
-                            cleanOutputText
-                        )
-
-                    if (batchResponse.translations.size != texts.size) {
-                        throw TranslationCountMismatchException(
-                            inputTexts = texts,
-                            outputTranslations =
-                                batchResponse.translations
-                        )
-                    }
-
-                    return batchResponse.translations
-                }
-
-            } catch (e: SocketTimeoutException) {
-
-                if (attempt >= MAX_RETRIES) {
-                    throw e
-                }
-
-                println(
-                    "Translation request timed out. " +
-                            "Retry ${attempt + 1}/$MAX_RETRIES"
+            if (!response.isSuccessful) {
+                throw RuntimeException(
+                    "OpenAI API error: " +
+                            "${response.code} ${response.message}"
                 )
             }
-        }
 
-        error("Translation failed unexpectedly.")
+            val responseBody =
+                response.body?.string()
+                    ?: throw RuntimeException(
+                        "OpenAI API returned an empty response."
+                    )
+
+            val translationResponse =
+                json.decodeFromString<TranslationResponse>(
+                    responseBody
+                )
+
+            val outputText =
+                translationResponse
+                    .output
+                    .first()
+                    .content
+                    .first()
+                    .text
+
+            val cleanOutputText =
+                outputText
+                    .trim()
+                    .removePrefix("```json")
+                    .removePrefix("```")
+                    .removeSuffix("```")
+                    .trim()
+
+            val batchResponse =
+                json.decodeFromString<BatchTranslationResponse>(
+                    cleanOutputText
+                )
+
+            if (batchResponse.translations.size != texts.size) {
+                throw TranslationCountMismatchException(
+                    inputTexts = texts,
+                    outputTranslations =
+                        batchResponse.translations
+                )
+            }
+
+            return batchResponse.translations
+        }
     }
 }
