@@ -22,4 +22,4 @@ dependencyResolutionManagement {
 rootProject.name = "LoopLingua-android"
 include(":app")
 include(":engine")
- 
+include(":tool")
