@@ -1,6 +1,7 @@
 plugins {
     id("java-library")
     alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 java {
@@ -12,4 +13,8 @@ kotlin {
     compilerOptions {
         jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
     }
+}
+
+dependencies {
+    implementation(libs.kotlinx.serialization.json)
 }
