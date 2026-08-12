@@ -69,6 +69,17 @@ class OpenAiBatchTranslator(
                             "actual=${e.outputTranslations.size}. " +
                             "Retry ${attempt + 1}/$MAX_RETRIES"
                 )
+
+            } catch (e: EmptyTranslationResponseException) {
+
+                if (attempt >= MAX_RETRIES) {
+                    throw e
+                }
+
+                println(
+                    "Translation response was empty. " +
+                            "Retry ${attempt + 1}/$MAX_RETRIES"
+                )
             }
         }
 
@@ -150,6 +161,10 @@ class OpenAiBatchTranslator(
                     .content
                     .first()
                     .text
+
+            if (outputText.isBlank()) {
+                throw EmptyTranslationResponseException()
+            }
 
             val cleanOutputText =
                 outputText
