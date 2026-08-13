@@ -31,7 +31,7 @@ class PlayerProjectMapper {
                 loopLinguaTrack.segments.map { loopLinguaSegment ->
 
                     Segment(
-                        id = loopLinguaSegment.segmentId,
+                        id = loopLinguaSegment.segmentId.toLong(),
 
                         originalStartMs =
                             loopLinguaSegment.originalStartMs,
@@ -58,11 +58,14 @@ class PlayerProjectMapper {
                                     loopLinguaSegment.translationAuto
                                 },
 
-                        memoText =
-                            loopLinguaSegment.memoUser
-                                .ifEmpty {
-                                    null
-                                }
+                        memoAuto =
+                            loopLinguaSegment.memoAuto,
+
+                        memoUser =
+                            loopLinguaSegment.memoUser,
+
+                        flagged =
+                            loopLinguaSegment.flagged
                     )
                 }
 
