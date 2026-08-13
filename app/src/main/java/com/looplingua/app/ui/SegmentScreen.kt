@@ -32,7 +32,8 @@ fun SegmentScreen(controller: PlayerController) {
 
             SegmentContent(
                 original = segment?.originalText ?: "",
-                translation = segment?.translationText ?: ""
+                translation = segment?.translationText ?: "",
+                memo = segment?.memoText
             )
         }
 

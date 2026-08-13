@@ -19,7 +19,7 @@ class MainActivity : ComponentActivity() {
 
         val projectDirectory = File(
             ProjectStorage(this).projectsDirectory,
-            "20260807195252-青本ウクライナ語"
+            "20260812010803-青本ウクライナ語"  // 100本テスト
         )
 
         val repository = TrackRepository()

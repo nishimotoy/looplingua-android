@@ -12,7 +12,8 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun SegmentContent(
     original: String,
-    translation: String
+    translation: String,
+    memo: String?
 ) {
 
     Column(
@@ -32,5 +33,16 @@ fun SegmentContent(
             style = MaterialTheme.typography.headlineMedium,
             color = Color.Gray
         )
+
+        if (!memo.isNullOrBlank()) {
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text(
+                text = memo,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.Gray
+            )
+        }
     }
 }
