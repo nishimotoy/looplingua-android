@@ -31,7 +31,7 @@ class PlayerProjectMapper {
                 loopLinguaTrack.segments.map { loopLinguaSegment ->
 
                     Segment(
-                        id = loopLinguaSegment.segmentId.toLong(),
+                        id = loopLinguaSegment.segmentId,
 
                         originalStartMs =
                             loopLinguaSegment.originalStartMs,
