@@ -1,7 +1,8 @@
 package com.looplingua.app.domain.model
 
 data class Segment(
-    val id: Int,
+
+    val id: Long,
 
     val originalStartMs: Long,
     val originalEndMs: Long,
@@ -14,5 +15,25 @@ data class Segment(
 
     val originalText: String,
     val translationText: String? = null,
-    val memoText: String? = null
-)
+
+    val memoAuto: String = "",
+    val memoUser: String = "",
+
+    val flagged: Boolean = false
+) {
+
+    val memoText: String?
+        get() = when {
+            memoUser.isNotBlank() && memoAuto.isNotBlank() ->
+                "$memoUser\n[Auto] $memoAuto"
+
+            memoUser.isNotBlank() ->
+                memoUser
+
+            memoAuto.isNotBlank() ->
+                "[Auto] $memoAuto"
+
+            else ->
+                null
+        }
+}
