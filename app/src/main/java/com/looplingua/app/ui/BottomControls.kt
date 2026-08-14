@@ -21,51 +21,76 @@ fun BottomControls(
         contentColor = Color.White
     )
 
-    Row(
+    val segment by controller.currentSegment.collectAsState()
+    val isFlagged = segment?.flagged ?: false
+
+    Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 16.dp),
-        verticalAlignment = Alignment.CenterVertically
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        // 左エリア
-        Box(
-            modifier = Modifier.weight(1f),
-            contentAlignment = Alignment.Center
+        // ===== 再生コントロール =====
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Button(
-                onClick = { controller.prev() },
-                colors = colors
+
+            // 左エリア
+            Box(
+                modifier = Modifier.weight(1f),
+                contentAlignment = Alignment.Center
             ) {
-                Text("PREV")
+                Button(
+                    onClick = { controller.prev() },
+                    colors = colors
+                ) {
+                    Text("PREV")
+                }
+            }
+
+            // 中央エリア
+            Box(
+                modifier = Modifier.weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                Button(
+                    onClick = { controller.togglePlay() },
+                    colors = colors,
+                    modifier = Modifier.width(140.dp)
+                ) {
+                    Text(if (isPlaying) "STOP" else "PLAY")
+                }
+            }
+
+            // 右エリア
+            Box(
+                modifier = Modifier.weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                Button(
+                    onClick = { controller.next() },
+                    colors = colors
+                ) {
+                    Text("NEXT")
+                }
             }
         }
 
-        // 中央エリア
-        Box(
-            modifier = Modifier.weight(1f),
-            contentAlignment = Alignment.Center
+        // ===== フラグ =====
+        Button(
+            onClick = { controller.toggleFlag() },
+            colors = colors,
+            modifier = Modifier.padding(top = 8.dp)
         ) {
-            Button(
-                onClick = { controller.togglePlay() },
-                colors = colors,
-                modifier = Modifier.width(140.dp)
-            ) {
-                Text(if (isPlaying) "STOP" else "PLAY")
-            }
-        }
-
-        // 右エリア
-        Box(
-            modifier = Modifier.weight(1f),
-            contentAlignment = Alignment.Center
-        ) {
-            Button(
-                onClick = { controller.next() },
-                colors = colors
-            ) {
-                Text("NEXT")
-            }
+            Text(
+                if (isFlagged) {
+                    "FLAGGED"
+                } else {
+                    "FLAG"
+                }
+            )
         }
     }
 }
