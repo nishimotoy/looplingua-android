@@ -18,5 +18,5 @@ data class LoopLinguaSegment(
     val memoAuto: String = "",
     val memoUser: String = "",
 
-    val flagged: Boolean = false
+    val flagged: Boolean = false  // flag
 )
