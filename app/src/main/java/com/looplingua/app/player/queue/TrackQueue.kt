@@ -93,32 +93,42 @@ class TrackQueue {
         key: SegmentKey,
         update: (Segment) -> Segment
     ): Segment? {
-        val trackIndex = tracks.indexOfFirst { it.track.id == key.trackId }
+
+        // 1. 対象トラックを探す
+        val trackIndex = tracks.indexOfFirst {
+            it.track.id == key.trackId
+        }
+
         if (trackIndex == -1) return null
 
         val track = tracks[trackIndex]
 
+        // 2. 対象セグメントを探す
         val segmentIndex = track.segments.indexOfFirst {
             it.id == key.segmentId
         }
+
         if (segmentIndex == -1) return null
 
+        // 3. セグメントを更新
         val currentSegment = track.segments[segmentIndex]
         val updatedSegment = update(currentSegment)
 
-        val updatedSegments =
-            track.segments.toMutableList().apply {
-                this[segmentIndex] = updatedSegment
-            }
+        // 4. セグメントリストを更新
+        val updatedSegments = track.segments.toMutableList().apply {
+            this[segmentIndex] = updatedSegment
+        }
 
-        val updatedTrack =
-            track.copy(segments = updatedSegments)
+        val updatedTrack = track.copy(
+            segments = updatedSegments
+        )
 
-        tracks =
-            tracks.toMutableList().apply {
-                this[trackIndex] = updatedTrack
-            }
+        // 5. トラックリストを更新
+        tracks = tracks.toMutableList().apply {
+            this[trackIndex] = updatedTrack
+        }
 
+        // 6. 現在トラックなら SegmentQueue にも反映
         if (trackIndex == currentTrackIndex) {
             segmentQueue.setSegments(updatedTrack.segments)
             segmentQueue.jumpTo(segmentIndex)
@@ -132,7 +142,6 @@ class TrackQueue {
 
         currentTrackIndex = 0
         loadCurrentTrack()
-
         return segmentQueue.current()
     }
 }

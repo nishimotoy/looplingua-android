@@ -66,7 +66,11 @@ class PlayerController(
     }
 
     fun togglePlay() {
-        if (_isPlaying.value) stop() else play()
+        if (_isPlaying.value) {
+            stop()
+        } else {
+            play()
+        }
     }
 
     fun next() {
@@ -111,6 +115,7 @@ class PlayerController(
             if (pinnedKey != null) {
 
                 val pinned = queue.findByKey(pinnedKey!!)
+
                 if (pinned != null) {
                     playSegment(pinned)
                 }
@@ -137,50 +142,64 @@ class PlayerController(
     }
 
     private fun updateState() {
+
         val track = queue.currentTrack()
         val segment = queue.currentSegment()
 
         _currentTrack.value = track
         _currentSegment.value = segment
 
-        _currentKey.value = if (track != null && segment != null) {
-            SegmentKey(track.track.id, segment.id)
-        } else {
-            null
-        }
+        _currentKey.value =
+            if (track != null && segment != null) {
+                SegmentKey(
+                    track.track.id,
+                    segment.id
+                )
+            } else {
+                null
+            }
     }
 
-    // pin
+    // ============================================================
+    // Flag
+    // ============================================================
+
+    fun toggleFlag() {
+
+        val currentKey = _currentKey.value ?: return
+
+        val updatedSegment = queue.updateSegment(currentKey) {
+            it.copy(
+                flagged = !it.flagged
+            )
+        } ?: return
+
+        _currentSegment.value = updatedSegment
+    }
+
+    fun isFlagged(): Boolean {
+        return _currentSegment.value?.flagged == true
+    }
+
+    // ============================================================
+    // Pin
+    // ============================================================
+
     private var pinnedKey: SegmentKey? = null
 
     fun togglePin() {
+
         val current = _currentKey.value ?: return
 
         pinnedKey = if (pinnedKey == current) {
-            null // 解除
+            null
         } else {
-            current // 設定
+            current
         }
     }
 
     fun isPinned(): Boolean {
-        return pinnedKey != null && pinnedKey == _currentKey.value
-    }
-
-    // flag
-    fun toggleFlag() {
-        val current = _currentKey.value ?: return
-
-        queue.updateSegment(current) {
-            it.copy(
-                flagged = !it.flagged
-            )
-        }
-
-        updateState()
-    }
-
-    fun isFlagged(): Boolean {
-        return _currentSegment.value?.flagged ?: false
+        return pinnedKey != null &&
+                pinnedKey == _currentKey.value
     }
 }
