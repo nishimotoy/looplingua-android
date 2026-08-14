@@ -121,7 +121,9 @@ class PlayerController(
 
                 if (next != null) {
                     playSegment(next)
+
                 } else {
+
                     val restart = queue.rewindToStart()
 
                     if (restart != null) {
@@ -163,5 +165,22 @@ class PlayerController(
 
     fun isPinned(): Boolean {
         return pinnedKey != null && pinnedKey == _currentKey.value
+    }
+
+    // flag
+    fun toggleFlag() {
+        val current = _currentKey.value ?: return
+
+        queue.updateSegment(current) {
+            it.copy(
+                flagged = !it.flagged
+            )
+        }
+
+        updateState()
+    }
+
+    fun isFlagged(): Boolean {
+        return _currentSegment.value?.flagged ?: false
     }
 }

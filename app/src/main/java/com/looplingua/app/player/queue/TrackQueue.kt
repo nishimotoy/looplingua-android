@@ -57,11 +57,11 @@ class TrackQueue {
         return null
     }
 
-        fun currentTrack(): TrackWithSegments? {
+    fun currentTrack(): TrackWithSegments? {
         return tracks.getOrNull(currentTrackIndex)
     }
 
-    // ★ 修正：SegmentKeyベース検索
+    // SegmentKeyベース検索
     fun findByKey(key: SegmentKey): Segment? {
 
         tracks.forEachIndexed { trackIndex, track ->
@@ -78,7 +78,53 @@ class TrackQueue {
                 return segmentQueue.jumpTo(segmentIndex)
             }
         }
+
         return null
+    }
+
+    /**
+     * 指定したSegmentを更新する。
+     *
+     * 今回は主にflaggedの変更に使用する。
+     *
+     * @return 更新後のSegment。対象が見つからなければnull。
+     */
+    fun updateSegment(
+        key: SegmentKey,
+        update: (Segment) -> Segment
+    ): Segment? {
+        val trackIndex = tracks.indexOfFirst { it.track.id == key.trackId }
+        if (trackIndex == -1) return null
+
+        val track = tracks[trackIndex]
+
+        val segmentIndex = track.segments.indexOfFirst {
+            it.id == key.segmentId
+        }
+        if (segmentIndex == -1) return null
+
+        val currentSegment = track.segments[segmentIndex]
+        val updatedSegment = update(currentSegment)
+
+        val updatedSegments =
+            track.segments.toMutableList().apply {
+                this[segmentIndex] = updatedSegment
+            }
+
+        val updatedTrack =
+            track.copy(segments = updatedSegments)
+
+        tracks =
+            tracks.toMutableList().apply {
+                this[trackIndex] = updatedTrack
+            }
+
+        if (trackIndex == currentTrackIndex) {
+            segmentQueue.setSegments(updatedTrack.segments)
+            segmentQueue.jumpTo(segmentIndex)
+        }
+
+        return updatedSegment
     }
 
     fun rewindToStart(): Segment? {
@@ -86,6 +132,7 @@ class TrackQueue {
 
         currentTrackIndex = 0
         loadCurrentTrack()
+
         return segmentQueue.current()
     }
 }
