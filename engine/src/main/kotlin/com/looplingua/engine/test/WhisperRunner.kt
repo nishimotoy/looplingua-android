@@ -20,9 +20,9 @@ fun main() {
     // Project settings
     //------------------------------------------------------------------
 
-    val inputDirectory = File("testdata/input/青本ウクライナ語")
+    val inputDirectory = File("testdata/input/青本ウクライナ語_errors")
 
-    val projectName = "青本ウクライナ語"
+    val projectName = "青本ウクライナ語_errors"  // エラーの多い音源をまとめてテスト
     val originalLang = "ukrainian"
     val translationLang = "Japanese"
 
