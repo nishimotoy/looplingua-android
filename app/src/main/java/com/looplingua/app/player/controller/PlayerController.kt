@@ -26,7 +26,6 @@ class PlayerController(
 
     // 現在トラック
     private val _currentTrack = MutableStateFlow<TrackWithSegments?>(null)
-    val currentTrack: StateFlow<TrackWithSegments?> = _currentTrack.asStateFlow()
 
     // 再生状態
     private val _isPlaying = MutableStateFlow(false)
@@ -179,10 +178,6 @@ class PlayerController(
 
         // フラグ変更直後に永続保存する
         saveFlags(queue.allTracks())
-    }
-
-    fun isFlagged(): Boolean {
-        return _currentSegment.value?.flagged == true
     }
 
     // ============================================================
