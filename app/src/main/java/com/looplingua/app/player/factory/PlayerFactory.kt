@@ -2,6 +2,7 @@ package com.looplingua.app.player.factory
 
 import android.content.Context
 import com.looplingua.app.data.pattern.AssetPatternProvider
+import com.looplingua.app.domain.model.TrackWithSegments
 import com.looplingua.app.player.audio.AudioPlayer
 import com.looplingua.app.player.controller.PlayerController
 import com.looplingua.app.player.queue.TrackQueue
@@ -11,7 +12,8 @@ import com.looplingua.app.player.sequence.SequenceBuilder
 object PlayerFactory {
 
     fun create(
-        context: Context
+        context: Context,
+        saveFlags: (List<TrackWithSegments>) -> Unit
     ): PlayerController {
 
         val audioPlayer = AudioPlayer(context)
@@ -23,7 +25,8 @@ object PlayerFactory {
         return PlayerController(
             queue = queue,
             sequenceBuilder = sequenceBuilder,
-            segmentPlayer = segmentPlayer
+            segmentPlayer = segmentPlayer,
+            saveFlags = saveFlags
         )
     }
 }

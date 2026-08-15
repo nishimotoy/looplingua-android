@@ -28,7 +28,15 @@ class MainActivity : ComponentActivity() {
             projectDirectory
         )
 
-        val controller = PlayerFactory.create(this)
+        val controller = PlayerFactory.create(
+            context = this,
+            saveFlags = { updatedTracks ->
+                repository.saveFlags(
+                    projectDirectory = projectDirectory,
+                    tracks = updatedTracks
+                )
+            }
+        )
 
         controller.setTracks(tracks)
 

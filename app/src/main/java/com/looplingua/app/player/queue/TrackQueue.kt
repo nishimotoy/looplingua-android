@@ -61,6 +61,10 @@ class TrackQueue {
         return tracks.getOrNull(currentTrackIndex)
     }
 
+    fun allTracks(): List<TrackWithSegments> {
+        return tracks
+    }
+
     // SegmentKeyベース検索
     fun findByKey(key: SegmentKey): Segment? {
 

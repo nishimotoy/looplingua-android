@@ -14,7 +14,8 @@ import kotlinx.coroutines.flow.asStateFlow
 class PlayerController(
     private val queue: TrackQueue,
     private val sequenceBuilder: SequenceBuilder,
-    private val segmentPlayer: SegmentPlayer
+    private val segmentPlayer: SegmentPlayer,
+    private val saveFlags: (List<TrackWithSegments>) -> Unit
 ) {
 
     private var pattern: Pattern = Pattern.BASIC
@@ -175,6 +176,9 @@ class PlayerController(
         } ?: return
 
         _currentSegment.value = updatedSegment
+
+        // フラグ変更直後に永続保存する
+        saveFlags(queue.allTracks())
     }
 
     fun isFlagged(): Boolean {
