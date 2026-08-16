@@ -10,6 +10,7 @@ import com.looplingua.app.player.segment.SegmentPlayer
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 class PlayerController(
     private val queue: TrackQueue,
@@ -244,12 +245,9 @@ class PlayerController(
         val current =
             _currentKey.value ?: return
 
-        _pinnedKey.value =
-            if (_pinnedKey.value == current) {
-                null
-            } else {
-                current
-            }
+        _pinnedKey.update {
+            if (it == current) null else current
+        }
     }
 
     fun isPinned(): Boolean {
@@ -267,20 +265,14 @@ class PlayerController(
         val current =
             _currentKey.value ?: return
 
-        val updatedSegment =
-            queue.updateSegment(current) {
-
-                it.copy(
-                    flagged = !it.flagged
-                )
-            } ?: return
-
-        _currentSegment.value =
-            updatedSegment
-
-        // フラグ変更直後に永続保存する。
-        // 実際の保存処理はUIスレッドをブロックしない。
-        saveFlags(queue.allTracks())
+        queue.updateSegment(current) {
+            it.copy(flagged = !it.flagged)
+        }.also {
+            updateState()
+            // フラグ変更直後に永続保存する。
+            // 実際の保存処理はUIスレッドをブロックしない。
+            saveFlags(queue.allTracks())
+        }
     }
 
     fun isFlagged(): Boolean {
