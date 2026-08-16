@@ -20,22 +20,59 @@ class PlayerController(
 
     private var pattern: Pattern = Pattern.BASIC
 
-    // 現在セグメント
-    private val _currentSegment = MutableStateFlow<Segment?>(null)
-    val currentSegment: StateFlow<Segment?> = _currentSegment.asStateFlow()
+    // ============================================================
+    // Current Segment
+    // ============================================================
 
-    // 現在トラック
-    private val _currentTrack = MutableStateFlow<TrackWithSegments?>(null)
+    private val _currentSegment =
+        MutableStateFlow<Segment?>(null)
 
-    // 再生状態
-    private val _isPlaying = MutableStateFlow(false)
-    val isPlaying: StateFlow<Boolean> = _isPlaying.asStateFlow()
+    val currentSegment: StateFlow<Segment?> =
+        _currentSegment.asStateFlow()
 
-    // インデックス
-    private val _currentKey = MutableStateFlow<SegmentKey?>(null)
-    val currentKey: StateFlow<SegmentKey?> = _currentKey.asStateFlow()
+    // ============================================================
+    // Current Track
+    // ============================================================
+
+    private val _currentTrack =
+        MutableStateFlow<TrackWithSegments?>(null)
+
+    // ============================================================
+    // Playing State
+    // ============================================================
+
+    private val _isPlaying =
+        MutableStateFlow(false)
+
+    val isPlaying: StateFlow<Boolean> =
+        _isPlaying.asStateFlow()
+
+    // ============================================================
+    // Current Key
+    // ============================================================
+
+    private val _currentKey =
+        MutableStateFlow<SegmentKey?>(null)
+
+    val currentKey: StateFlow<SegmentKey?> =
+        _currentKey.asStateFlow()
+
+    // ============================================================
+    // Pin
+    // ============================================================
+
+    private val _pinnedKey =
+        MutableStateFlow<SegmentKey?>(null)
+
+    val pinnedKey: StateFlow<SegmentKey?> =
+        _pinnedKey.asStateFlow()
+
+    // ============================================================
+    // Pattern
+    // ============================================================
 
     fun setPattern(newPattern: Pattern) {
+
         pattern = newPattern
 
         if (_isPlaying.value) {
@@ -44,21 +81,35 @@ class PlayerController(
         }
     }
 
-    fun setTracks(tracks: List<TrackWithSegments>) {
+    // ============================================================
+    // Tracks
+    // ============================================================
+
+    fun setTracks(
+        tracks: List<TrackWithSegments>
+    ) {
+
         queue.setTracks(tracks)
         updateState()
     }
 
+    // ============================================================
+    // Playback
+    // ============================================================
+
     fun play() {
+
         if (_isPlaying.value) return
 
-        val segment = queue.currentSegment() ?: return
+        val segment =
+            queue.currentSegment() ?: return
 
         _isPlaying.value = true
         playSegment(segment)
     }
 
     fun stop() {
+
         if (!_isPlaying.value) return
 
         _isPlaying.value = false
@@ -66,6 +117,7 @@ class PlayerController(
     }
 
     fun togglePlay() {
+
         if (_isPlaying.value) {
             stop()
         } else {
@@ -74,22 +126,30 @@ class PlayerController(
     }
 
     fun next() {
-        val next = queue.nextSegment() ?: return
+
+        val next =
+            queue.nextSegment() ?: return
+
         updateState()
         playSegment(next)
     }
 
     fun prev() {
-        val prev = queue.prevSegment() ?: return
+
+        val prev =
+            queue.prevSegment() ?: return
+
         updateState()
         playSegment(prev)
     }
 
     fun playFrom(key: SegmentKey) {
 
-        val found = queue.findByKey(key) ?: return
+        val found =
+            queue.findByKey(key) ?: return
 
         _isPlaying.value = true
+
         updateState()
         playSegment(found)
     }
@@ -100,21 +160,24 @@ class PlayerController(
 
         updateState()
 
-        val currentTrack = queue.currentTrack() ?: return
+        val currentTrack =
+            queue.currentTrack() ?: return
 
-        val steps = sequenceBuilder.build(
-            track = currentTrack.track,
-            segment = segment,
-            pattern = pattern
-        )
+        val steps =
+            sequenceBuilder.build(
+                track = currentTrack.track,
+                segment = segment,
+                pattern = pattern
+            )
 
         segmentPlayer.play(steps) {
 
             if (!_isPlaying.value) return@play
 
-            if (pinnedKey != null) {
+            if (_pinnedKey.value != null) {
 
-                val pinned = queue.findByKey(pinnedKey!!)
+                val pinned =
+                    queue.findByKey(_pinnedKey.value!!)
 
                 if (pinned != null) {
                     playSegment(pinned)
@@ -122,14 +185,17 @@ class PlayerController(
 
             } else {
 
-                val next = queue.nextSegment()
+                val next =
+                    queue.nextSegment()
 
                 if (next != null) {
+
                     playSegment(next)
 
                 } else {
 
-                    val restart = queue.rewindToStart()
+                    val restart =
+                        queue.rewindToStart()
 
                     if (restart != null) {
                         playSegment(restart)
@@ -141,23 +207,55 @@ class PlayerController(
         }
     }
 
+    // ============================================================
+    // State
+    // ============================================================
+
     private fun updateState() {
 
-        val track = queue.currentTrack()
-        val segment = queue.currentSegment()
+        val track =
+            queue.currentTrack()
+
+        val segment =
+            queue.currentSegment()
 
         _currentTrack.value = track
         _currentSegment.value = segment
 
         _currentKey.value =
             if (track != null && segment != null) {
+
                 SegmentKey(
                     track.track.id,
                     segment.id
                 )
+
             } else {
                 null
             }
+    }
+
+    // ============================================================
+    // Pin
+    // ============================================================
+
+    fun togglePin() {
+
+        val current =
+            _currentKey.value ?: return
+
+        _pinnedKey.value =
+            if (_pinnedKey.value == current) {
+                null
+            } else {
+                current
+            }
+    }
+
+    fun isPinned(): Boolean {
+
+        return _pinnedKey.value != null &&
+                _pinnedKey.value == _currentKey.value
     }
 
     // ============================================================
@@ -166,39 +264,27 @@ class PlayerController(
 
     fun toggleFlag() {
 
-        val currentKey = _currentKey.value ?: return
+        val current =
+            _currentKey.value ?: return
 
-        val updatedSegment = queue.updateSegment(currentKey) {
-            it.copy(
-                flagged = !it.flagged
-            )
-        } ?: return
+        val updatedSegment =
+            queue.updateSegment(current) {
 
-        _currentSegment.value = updatedSegment
+                it.copy(
+                    flagged = !it.flagged
+                )
+            } ?: return
 
-        // フラグ変更直後に永続保存する
+        _currentSegment.value =
+            updatedSegment
+
+        // フラグ変更直後に永続保存する。
+        // 実際の保存処理はUIスレッドをブロックしない。
         saveFlags(queue.allTracks())
     }
 
-    // ============================================================
-    // Pin
-    // ============================================================
+    fun isFlagged(): Boolean {
 
-    private var pinnedKey: SegmentKey? = null
-
-    fun togglePin() {
-
-        val current = _currentKey.value ?: return
-
-        pinnedKey = if (pinnedKey == current) {
-            null
-        } else {
-            current
-        }
-    }
-
-    fun isPinned(): Boolean {
-        return pinnedKey != null &&
-                pinnedKey == _currentKey.value
+        return _currentSegment.value?.flagged == true
     }
 }
