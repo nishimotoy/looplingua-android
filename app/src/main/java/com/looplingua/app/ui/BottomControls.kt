@@ -115,7 +115,7 @@ fun BottomControls(
         }
 
         // ========================================================
-        // Flag / Pin
+        // Pin / Flag
         // ========================================================
 
         Row(
@@ -126,45 +126,14 @@ fun BottomControls(
         ) {
 
             // ----------------------------------------------------
-            // Flag
-            // ----------------------------------------------------
-
-            IconButton(
-                onClick = {
-                    controller.toggleFlag()
-                }
-            ) {
-
-                Icon(
-                    imageVector =
-                        if (isFlagged) {
-                            Icons.Filled.Flag
-                        } else {
-                            Icons.Outlined.Flag
-                        },
-                    contentDescription =
-                        if (isFlagged) {
-                            "Unflag"
-                        } else {
-                            "Flag"
-                        },
-                    tint =
-                        if (isFlagged) {
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            MaterialTheme.colorScheme.onSurface
-                        }
-                )
-            }
-
-            // ----------------------------------------------------
             // Pin
             // ----------------------------------------------------
 
             IconButton(
                 onClick = {
                     controller.togglePin()
-                }
+                },
+                modifier = Modifier.size(72.dp)
             ) {
 
                 Icon(
@@ -180,8 +149,43 @@ fun BottomControls(
                         } else {
                             "Pin"
                         },
+                    modifier = Modifier.size(48.dp),
                     tint =
                         if (isPinned) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.onSurface
+                        }
+                )
+            }
+
+            // ----------------------------------------------------
+            // Flag
+            // ----------------------------------------------------
+
+            IconButton(
+                onClick = {
+                    controller.toggleFlag()
+                },
+                modifier = Modifier.size(72.dp)
+            ) {
+
+                Icon(
+                    imageVector =
+                        if (isFlagged) {
+                            Icons.Filled.Flag
+                        } else {
+                            Icons.Outlined.Flag
+                        },
+                    contentDescription =
+                        if (isFlagged) {
+                            "Unflag"
+                        } else {
+                            "Flag"
+                        },
+                    modifier = Modifier.size(48.dp),
+                    tint =
+                        if (isFlagged) {
                             MaterialTheme.colorScheme.primary
                         } else {
                             MaterialTheme.colorScheme.onSurface
