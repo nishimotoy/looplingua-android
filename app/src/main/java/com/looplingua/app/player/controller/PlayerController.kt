@@ -14,6 +14,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class PlayerController(
@@ -25,7 +26,24 @@ class PlayerController(
 ) {
 
     private val scope =
-        CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+        CoroutineScope(
+            SupervisorJob() +
+                    Dispatchers.Main.immediate
+        )
+
+    // ============================================================
+    // Playback Position
+    // ============================================================
+
+    /*
+     * 起動時に保存済みの再生位置を復元するまで、
+     * PLAYを開始しない。
+     *
+     * DataStoreは非同期なので、setTracks()直後に
+     * MainActivityからplay()が呼ばれても、
+     * 保存位置の復元が終わるまで待つ。
+     */
+    private var playbackPositionRestored = false
 
     // ============================================================
     // Pattern
@@ -43,7 +61,8 @@ class PlayerController(
 
             playerPreferences.playbackPattern.collect { pattern ->
 
-                _playbackPattern.value = pattern
+                _playbackPattern.value =
+                    pattern
             }
         }
     }
@@ -65,8 +84,8 @@ class PlayerController(
     private val _currentTrack =
         MutableStateFlow<TrackWithSegments?>(null)
 
-    val currentTrack: StateFlow<TrackWithSegments?> =
-        _currentTrack.asStateFlow()
+//  val currentTrack: StateFlow<TrackWithSegments?> =
+//      _currentTrack.asStateFlow()
 
     // ============================================================
     // Playing State
@@ -131,8 +150,52 @@ class PlayerController(
         tracks: List<TrackWithSegments>
     ) {
 
+        playbackPositionRestored = false
+
         queue.setTracks(tracks)
+
+        /*
+         * まず現在状態をUIへ反映する。
+         *
+         * この時点ではまだ保存位置の復元前なので、
+         * updateState()から再生位置を保存することはない。
+         */
         updateState()
+
+        /*
+         * 保存済みのTrack + Segmentを復元する。
+         */
+        scope.launch {
+
+            val savedPosition =
+                playerPreferences.playbackPosition.first()
+
+            if (savedPosition != null) {
+
+                queue.findByKey(
+                    SegmentKey(
+                        trackId = savedPosition.trackId,
+                        segmentId = savedPosition.segmentId
+                    )
+                )
+            }
+
+            /*
+             * 保存位置が見つからなかった場合は、
+             * TrackQueueがセットした先頭位置のままにする。
+             */
+            updateState()
+
+            playbackPositionRestored = true
+
+            /*
+             * MainActivityなどから復元前にplay()が呼ばれていた
+             * 場合は、ここで再生を開始する。
+             */
+            if (_isPlaying.value) {
+                playCurrentSegment()
+            }
+        }
     }
 
     // ============================================================
@@ -141,6 +204,16 @@ class PlayerController(
 
     fun play() {
 
+        if (!playbackPositionRestored) {
+
+            /*
+             * setTracks()で復元処理が完了した後、
+             * _isPlayingをtrueにしていれば再生される。
+             */
+            _isPlaying.value = true
+            return
+        }
+
         if (_isPlaying.value) return
 
         val segment =
@@ -148,6 +221,17 @@ class PlayerController(
                 ?: return
 
         _isPlaying.value = true
+
+        playSegment(segment)
+    }
+
+    private fun playCurrentSegment() {
+
+        if (!_isPlaying.value) return
+
+        val segment =
+            queue.currentSegment()
+                ?: return
 
         playSegment(segment)
     }
@@ -292,18 +376,57 @@ class PlayerController(
         _currentSegment.value =
             segment
 
-        _currentKey.value =
+        val newKey =
             if (track != null && segment != null) {
 
                 SegmentKey(
-                    track.track.id,
-                    segment.id
+                    trackId = track.track.id,
+                    segmentId = segment.id
                 )
 
             } else {
 
                 null
             }
+
+        val keyChanged =
+            _currentKey.value != newKey
+
+        _currentKey.value =
+            newKey
+
+        /*
+         * 起動時の復元前には保存しない。
+         *
+         * これにより、setTracks()直後に一旦セットされる
+         * 先頭Segmentで保存位置を上書きすることを防ぐ。
+         *
+         * 実際の再生中にSegmentが変わった場合だけ、
+         * 最新のTrack + SegmentをDataStoreへ保存する。
+         */
+        if (
+            playbackPositionRestored &&
+            keyChanged &&
+            newKey != null
+        ) {
+
+            savePlaybackPosition(
+                newKey
+            )
+        }
+    }
+
+    private fun savePlaybackPosition(
+        key: SegmentKey
+    ) {
+
+        scope.launch {
+
+            playerPreferences.savePlaybackPosition(
+                trackId = key.trackId,
+                segmentId = key.segmentId
+            )
+        }
     }
 
     // ============================================================
