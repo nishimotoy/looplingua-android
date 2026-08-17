@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.lifecycle.lifecycleScope
 import com.looplingua.app.data.repository.TrackRepository
 import com.looplingua.app.data.storage.ProjectStorage
-import com.looplingua.app.domain.playback.Pattern
 import com.looplingua.app.player.factory.PlayerFactory
 import com.looplingua.app.ui.MainScreen
 import com.looplingua.app.ui.mapper.TrackUiMapper
@@ -75,7 +74,8 @@ class MainActivity : ComponentActivity() {
 
         controller.setTracks(tracks)
 
-        val items = TrackUiMapper.buildItems(tracks)
+        val items =
+            TrackUiMapper.buildItems(tracks)
 
         setContent {
             LoopLinguaandroidTheme(darkTheme = false) {
@@ -86,7 +86,6 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        controller.setPattern(Pattern.ORIGINAL_ONLY)
         controller.play() // 起動時に再生　デバッグ用
     }
 }
