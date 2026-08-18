@@ -32,6 +32,25 @@ class PlayerController(
         )
 
     // ============================================================
+    // Project
+    // ============================================================
+
+    /*
+     * 現在再生対象になっているProjectのID。
+     *
+     * 再生位置は
+     * Project + Track + Segment
+     * の組み合わせで特定する。
+     */
+    private var projectId: String? = null
+
+    fun setProjectId(
+        projectId: String
+    ) {
+        this.projectId = projectId
+    }
+
+    // ============================================================
     // Playback Position
     // ============================================================
 
@@ -151,23 +170,22 @@ class PlayerController(
 
         queue.setTracks(tracks)
 
-        /*
-         * まず現在状態をUIへ反映する。
-         *
-         * この時点ではまだ保存位置の復元前なので、
-         * updateState()から再生位置を保存することはない。
-         */
         updateState()
 
-        /*
-         * 保存済みのTrack + Segmentを復元する。
-         */
         scope.launch {
 
             val savedPosition =
                 playerPreferences.playbackPosition.first()
 
-            if (savedPosition != null) {
+            /*
+             * 保存されているProjectと、
+             * 現在読み込んでいるProjectが一致する場合だけ
+             * Track + Segmentを復元する。
+             */
+            if (
+                savedPosition != null &&
+                savedPosition.projectId == projectId
+            ) {
 
                 queue.findByKey(
                     SegmentKey(
@@ -177,18 +195,10 @@ class PlayerController(
                 )
             }
 
-            /*
-             * 保存位置が見つからなかった場合は、
-             * TrackQueueがセットした先頭位置のままにする。
-             */
             updateState()
 
             playbackPositionRestored = true
 
-            /*
-             * MainActivityなどから復元前にplay()が呼ばれていた
-             * 場合は、ここで再生を開始する。
-             */
             if (_isPlaying.value) {
                 playCurrentSegment()
             }
@@ -203,10 +213,6 @@ class PlayerController(
 
         if (!playbackPositionRestored) {
 
-            /*
-             * setTracks()で復元処理が完了した後、
-             * _isPlayingをtrueにしていれば再生される。
-             */
             _isPlaying.value = true
             return
         }
@@ -389,8 +395,7 @@ class PlayerController(
         val keyChanged =
             _currentKey.value != newKey
 
-        _currentKey.value =
-            newKey
+        _currentKey.value = newKey
 
         /*
          * 起動時の復元前には保存しない。
@@ -399,7 +404,8 @@ class PlayerController(
          * 先頭Segmentで保存位置を上書きすることを防ぐ。
          *
          * 実際の再生中にSegmentが変わった場合だけ、
-         * 最新のTrack + SegmentをDataStoreへ保存する。
+         * 最新のProject + Track + Segmentを
+         * DataStoreへ保存する。
          */
         if (
             playbackPositionRestored &&
@@ -417,9 +423,14 @@ class PlayerController(
         key: SegmentKey
     ) {
 
+        val currentProjectId =
+            projectId
+                ?: return
+
         scope.launch {
 
             playerPreferences.savePlaybackPosition(
+                projectId = currentProjectId,
                 trackId = key.trackId,
                 segmentId = key.segmentId
             )
