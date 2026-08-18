@@ -1,6 +1,7 @@
 package com.looplingua.app.data
 
 import android.content.Context
+import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -9,7 +10,7 @@ import com.looplingua.app.domain.playback.Pattern
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-private val Context.playerDataStore by preferencesDataStore(
+private val Context.playerPreferencesDataStore by preferencesDataStore(
     name = "player_preferences"
 )
 
@@ -17,53 +18,76 @@ class PlayerPreferences(
     private val context: Context
 ) {
 
+    private object Keys {
+
+        val lastProjectId: Preferences.Key<String> =
+            stringPreferencesKey("last_project_id")
+
+        val lastTrackId: Preferences.Key<Int> =
+            intPreferencesKey("last_track_id")
+
+        val lastSegmentId: Preferences.Key<Int> =
+            intPreferencesKey("last_segment_id")
+
+        val playbackPattern: Preferences.Key<String> =
+            stringPreferencesKey("playback_pattern")
+    }
+
     // ============================================================
     // Playback Position
     // ============================================================
 
     data class PlaybackPosition(
+        val projectId: String,
         val trackId: Int,
         val segmentId: Int
     )
 
-    private val lastTrackIdKey =
-        intPreferencesKey("last_track_id")
-
-    private val lastSegmentIdKey =
-        intPreferencesKey("last_segment_id")
-
     val playbackPosition: Flow<PlaybackPosition?> =
-        context.playerDataStore.data.map { preferences ->
+        context.playerPreferencesDataStore.data.map { preferences ->
+
+            val projectId =
+                preferences[Keys.lastProjectId]
 
             val trackId =
-                preferences[lastTrackIdKey]
+                preferences[Keys.lastTrackId]
 
             val segmentId =
-                preferences[lastSegmentIdKey]
+                preferences[Keys.lastSegmentId]
 
             if (
+                projectId != null &&
                 trackId != null &&
                 segmentId != null
             ) {
+
                 PlaybackPosition(
+                    projectId = projectId,
                     trackId = trackId,
                     segmentId = segmentId
                 )
+
             } else {
+
                 null
             }
         }
 
     suspend fun savePlaybackPosition(
+        projectId: String,
         trackId: Int,
         segmentId: Int
     ) {
-        context.playerDataStore.edit { preferences ->
 
-            preferences[lastTrackIdKey] =
+        context.playerPreferencesDataStore.edit { preferences ->
+
+            preferences[Keys.lastProjectId] =
+                projectId
+
+            preferences[Keys.lastTrackId] =
                 trackId
 
-            preferences[lastSegmentIdKey] =
+            preferences[Keys.lastSegmentId] =
                 segmentId
         }
     }
@@ -72,27 +96,28 @@ class PlayerPreferences(
     // Playback Pattern
     // ============================================================
 
-    private val playbackPatternKey =
-        stringPreferencesKey("playback_pattern")
-
     val playbackPattern: Flow<Pattern> =
-        context.playerDataStore.data.map { preferences ->
+        context.playerPreferencesDataStore.data.map { preferences ->
 
-            preferences[playbackPatternKey]
-                ?.let { value ->
-                    runCatching {
-                        Pattern.valueOf(value)
-                    }.getOrNull()
-                }
-                ?: Pattern.BASIC
+            val name =
+                preferences[Keys.playbackPattern]
+
+            name?.let {
+
+                runCatching {
+                    Pattern.valueOf(it)
+                }.getOrNull()
+
+            } ?: Pattern.BASIC
         }
 
     suspend fun savePlaybackPattern(
         pattern: Pattern
     ) {
-        context.playerDataStore.edit { preferences ->
 
-            preferences[playbackPatternKey] =
+        context.playerPreferencesDataStore.edit { preferences ->
+
+            preferences[Keys.playbackPattern] =
                 pattern.name
         }
     }
