@@ -84,9 +84,6 @@ class PlayerController(
     private val _currentTrack =
         MutableStateFlow<TrackWithSegments?>(null)
 
-//  val currentTrack: StateFlow<TrackWithSegments?> =
-//      _currentTrack.asStateFlow()
-
     // ============================================================
     // Playing State
     // ============================================================
