@@ -35,6 +35,14 @@ class MainActivity : ComponentActivity() {
             "20260812010803-青本ウクライナ語"  // 100本テスト
         )
 
+        /*
+         * Project IDは、
+         * 「プロジェクトID-プロジェクト名」
+         * というディレクトリ名の先頭部分から取得する。
+         */
+        val projectId =
+            projectDirectory.name.substringBefore("-")
+
         val repository = TrackRepository()
 
         val tracks = repository.loadProject(
@@ -72,6 +80,13 @@ class MainActivity : ComponentActivity() {
             }
         )
 
+        /*
+         * PlayerControllerに現在のProject IDを設定する。
+         * 再生位置は
+         * Project + Track + Segment
+         * の組み合わせで特定する。
+         */
+        controller.setProjectId(projectId)
         controller.setTracks(tracks)
 
         val items =
