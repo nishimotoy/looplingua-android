@@ -21,7 +21,11 @@ fun TopBar(
     modifier: Modifier = Modifier
 ) {
 
-    var expanded by remember {
+    var patternExpanded by remember {
+        mutableStateOf(false)
+    }
+
+    var menuExpanded by remember {
         mutableStateOf(false)
     }
 
@@ -35,38 +39,71 @@ fun TopBar(
         horizontalArrangement =
             Arrangement.SpaceBetween,
         verticalAlignment =
-            Alignment.CenterVertically
+            Alignment.Top
     ) {
 
-        Surface(
-            color =
-                MaterialTheme.colorScheme.primary,
-            contentColor =
-                Color.White,
-            shape =
-                RoundedCornerShape(20.dp),
-            tonalElevation = 2.dp,
-            onClick = {
-                expanded = true
-            }
-        ) {
+        // ========================================================
+        // Pattern
+        // ========================================================
 
-            Text(
-                text =
-                    " ${currentPattern.name}",
-                modifier =
-                    Modifier.padding(
-                        horizontal = 16.dp,
-                        vertical = 8.dp
+        Box {
+
+            Surface(
+                color =
+                    MaterialTheme.colorScheme.primary,
+                contentColor =
+                    Color.White,
+                shape =
+                    RoundedCornerShape(20.dp),
+                tonalElevation = 2.dp,
+                onClick = {
+                    patternExpanded = true
+                }
+            ) {
+
+                Text(
+                    text =
+                        " ${currentPattern.name}",
+                    modifier =
+                        Modifier.padding(
+                            horizontal = 16.dp,
+                            vertical = 8.dp
+                        )
+                )
+            }
+
+            DropdownMenu(
+                expanded = patternExpanded,
+                onDismissRequest = {
+                    patternExpanded = false
+                }
+            ) {
+
+                Pattern.entries.forEach { pattern ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(pattern.name)
+                        },
+                        onClick = {
+                            controller.setPattern(
+                                pattern
+                            )
+                            patternExpanded = false
+                        }
                     )
-            )
+                }
+            }
         }
+
+        // ========================================================
+        // Other Menu
+        // ========================================================
 
         Box {
 
             IconButton(
                 onClick = {
-                    expanded = true
+                    menuExpanded = true
                 }
             ) {
 
@@ -79,37 +116,18 @@ fun TopBar(
             }
 
             DropdownMenu(
-                expanded = expanded,
+                expanded = menuExpanded,
                 onDismissRequest = {
-                    expanded = false
+                    menuExpanded = false
                 }
             ) {
-
-                Pattern.entries.forEach { pattern ->
-
-                    DropdownMenuItem(
-                        text = {
-                            Text(pattern.name)
-                        },
-                        onClick = {
-
-                            controller.setPattern(
-                                pattern
-                            )
-
-                            expanded = false
-                        }
-                    )
-                }
-
-                HorizontalDivider()
 
                 DropdownMenuItem(
                     text = {
                         Text("Edit")
                     },
                     onClick = {
-                        expanded = false
+                        menuExpanded = false
                     }
                 )
 
@@ -127,7 +145,7 @@ fun TopBar(
 
                         controller.togglePin()
 
-                        expanded = false
+                        menuExpanded = false
                     }
                 )
 
@@ -136,7 +154,7 @@ fun TopBar(
                         Text("Settings")
                     },
                     onClick = {
-                        expanded = false
+                        menuExpanded = false
                     }
                 )
             }
