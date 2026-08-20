@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 
@@ -15,6 +16,12 @@ class AudioPlayer(private val context: Context) {
     private val handler = Handler(Looper.getMainLooper())
 
     private var isMonitoring = false
+    private var playbackSpeed = 1.0f
+
+    fun setPlaybackSpeed(speed: Float) {
+        playbackSpeed = speed
+        player.playbackParameters = PlaybackParameters(playbackSpeed)
+    }
 
     fun play(
         path: String,
@@ -40,6 +47,8 @@ class AudioPlayer(private val context: Context) {
                     val playbackStartMs =  // 再生遅延対策
                         maxOf(0L, startMs - START_OFFSET_MS)
                     player.seekTo(playbackStartMs)
+                    player.playbackParameters =
+                        PlaybackParameters(playbackSpeed)
                     player.play()
 
                     startMonitoring(endMs, onComplete)
@@ -48,7 +57,6 @@ class AudioPlayer(private val context: Context) {
                 }
             }
         }
-
         player.addListener(listener)
     }
 
@@ -56,29 +64,21 @@ class AudioPlayer(private val context: Context) {
         endMs: Long,
         onComplete: () -> Unit
     ) {
-
         isMonitoring = true
-
         val runnable = object : Runnable {
 
             override fun run() {
-
                 if (!isMonitoring) return
-
                 if (player.currentPosition >= endMs) {
 
                     player.pause()
                     isMonitoring = false
                     onComplete()
-
                 } else {
-
                     handler.postDelayed(this, 10)
-
                 }
             }
         }
-
         handler.post(runnable)
     }
 
