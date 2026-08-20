@@ -1,7 +1,7 @@
 package com.looplingua.app.player.audio
 
 import android.content.Context
-import android.net.Uri
+import androidx.core.net.toUri
 import android.os.Handler
 import android.os.Looper
 import androidx.media3.common.MediaItem
@@ -9,9 +9,9 @@ import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 
-class AudioPlayer(private val context: Context) {
+class AudioPlayer(context: Context) {
 
-    private val START_OFFSET_MS = 100L  // 再生遅延対策
+    private val START_OFFSET_MS = 200L  // 再生遅延対策
     private val player = ExoPlayer.Builder(context).build()
     private val handler = Handler(Looper.getMainLooper())
 
@@ -32,7 +32,7 @@ class AudioPlayer(private val context: Context) {
 
         stop() // to ensure clean ExoPlayer state
 
-        val uri = Uri.parse(path)
+        val uri = path.toUri()
         val mediaItem = MediaItem.fromUri(uri)
 
         player.setMediaItem(mediaItem)
