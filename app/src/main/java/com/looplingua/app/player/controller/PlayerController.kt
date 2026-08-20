@@ -74,6 +74,13 @@ class PlayerController(
                 _playbackPattern.value = pattern
             }
         }
+        scope.launch {
+            playerPreferences.playbackSpeed.collect { speed ->
+                _playbackSpeed.value = speed
+
+                segmentPlayer.setPlaybackSpeed(speed)
+            }
+        }
     }
 
     fun setPattern(newPattern: Pattern) {
@@ -101,6 +108,10 @@ class PlayerController(
     fun setPlaybackSpeed(speed: Float) {
         _playbackSpeed.value = speed
         segmentPlayer.setPlaybackSpeed(speed)
+
+        scope.launch {
+            playerPreferences.savePlaybackSpeed(speed)
+        }
     }
 
     // ============================================================
