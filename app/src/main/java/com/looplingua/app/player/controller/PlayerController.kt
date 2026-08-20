@@ -93,7 +93,13 @@ class PlayerController(
     // Playback Speed
     // ============================================================
 
+    private val _playbackSpeed = MutableStateFlow(1.0f)
+
+    val playbackSpeed: StateFlow<Float> =
+        _playbackSpeed.asStateFlow()
+
     fun setPlaybackSpeed(speed: Float) {
+        _playbackSpeed.value = speed
         segmentPlayer.setPlaybackSpeed(speed)
     }
 
@@ -154,8 +160,7 @@ class PlayerController(
                 playerPreferences.playbackPosition.first()
 
             /*
-             * 保存されているProjectと、
-             * 現在読み込んでいるProjectが一致する場合だけ
+             * 保存Projectと、読込Projectが一致する場合だけ
              * Track + Segmentを復元する。
              */
             if (

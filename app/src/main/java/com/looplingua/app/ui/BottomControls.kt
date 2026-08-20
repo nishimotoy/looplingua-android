@@ -8,6 +8,8 @@ import androidx.compose.material.icons.outlined.Flag
 import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,31 +22,35 @@ fun BottomControls(
     isPlaying: Boolean,
     modifier: Modifier = Modifier
 ) {
-
     val colors = ButtonDefaults.buttonColors(
         containerColor = MaterialTheme.colorScheme.primary,
         contentColor = Color.White
     )
 
     val segment by controller.currentSegment.collectAsState()
-
     val currentKey by controller.currentKey.collectAsState()
     val pinnedKey by controller.pinnedKey.collectAsState()
+    val playbackSpeed by controller.playbackSpeed.collectAsState()
 
-    val isFlagged =
-        segment?.flagged == true
+    val isFlagged = segment?.flagged == true
+    val isPinned = pinnedKey != null && pinnedKey == currentKey
 
-    val isPinned =
-        pinnedKey != null &&
-                pinnedKey == currentKey
+    var speedExpanded by remember {
+        mutableStateOf(false)
+    }
+
+    val playbackSpeeds = listOf(
+        0.25f,
+        0.5f,
+        0.75f,
+        1.0f,
+        2.0f
+    )
 
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(
-                horizontal = 16.dp,
-                vertical = 16.dp
-            ),
+            .padding(horizontal = 16.dp, vertical = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
@@ -56,57 +62,37 @@ fun BottomControls(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-
-            // 左エリア
             Box(
                 modifier = Modifier.weight(1f),
                 contentAlignment = Alignment.Center
             ) {
-
                 Button(
-                    onClick = {
-                        controller.prev()
-                    },
+                    onClick = { controller.prev() },
                     colors = colors
                 ) {
                     Text("PREV")
                 }
             }
 
-            // 中央エリア
             Box(
                 modifier = Modifier.weight(1f),
                 contentAlignment = Alignment.Center
             ) {
-
                 Button(
-                    onClick = {
-                        controller.togglePlay()
-                    },
+                    onClick = { controller.togglePlay() },
                     colors = colors,
                     modifier = Modifier.width(140.dp)
                 ) {
-
-                    Text(
-                        if (isPlaying) {
-                            "STOP"
-                        } else {
-                            "PLAY"
-                        }
-                    )
+                    Text(if (isPlaying) "STOP" else "PLAY")
                 }
             }
 
-            // 右エリア
             Box(
                 modifier = Modifier.weight(1f),
                 contentAlignment = Alignment.Center
             ) {
-
                 Button(
-                    onClick = {
-                        controller.next()
-                    },
+                    onClick = { controller.next() },
                     colors = colors
                 ) {
                     Text("NEXT")
@@ -115,15 +101,48 @@ fun BottomControls(
         }
 
         // ========================================================
-        // Pin / Flag
+        // Playback Speed / Pin / Flag
         // ========================================================
 
         Row(
-            modifier = Modifier
-                .padding(top = 8.dp),
+            modifier = Modifier.padding(top = 8.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
+
+            // ----------------------------------------------------
+            // Playback Speed
+            // ----------------------------------------------------
+
+            Box {
+                Button(
+                    onClick = {
+                        speedExpanded = true
+                    },
+                    colors = colors
+                ) {
+                    Text("${playbackSpeed}x")
+                }
+
+                DropdownMenu(
+                    expanded = speedExpanded,
+                    onDismissRequest = {
+                        speedExpanded = false
+                    }
+                ) {
+                    playbackSpeeds.forEach { speed ->
+                        DropdownMenuItem(
+                            text = {
+                                Text("${speed}x")
+                            },
+                            onClick = {
+                                controller.setPlaybackSpeed(speed)
+                                speedExpanded = false
+                            }
+                        )
+                    }
+                }
+            }
 
             // ----------------------------------------------------
             // Pin
@@ -135,7 +154,6 @@ fun BottomControls(
                 },
                 modifier = Modifier.size(72.dp)
             ) {
-
                 Icon(
                     imageVector =
                         if (isPinned) {
@@ -169,7 +187,6 @@ fun BottomControls(
                 },
                 modifier = Modifier.size(72.dp)
             ) {
-
                 Icon(
                     imageVector =
                         if (isFlagged) {
