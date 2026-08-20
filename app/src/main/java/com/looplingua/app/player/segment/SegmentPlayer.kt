@@ -14,6 +14,10 @@ class SegmentPlayer(
     private val handler = Handler(Looper.getMainLooper())
     private var isStopped = false
 
+    fun setPlaybackSpeed(speed: Float) {
+        audioPlayer.setPlaybackSpeed(speed)
+    }
+
     fun play(
         steps: List<PlaybackStep>,
         onComplete: () -> Unit
@@ -28,7 +32,6 @@ class SegmentPlayer(
         index: Int,
         onComplete: () -> Unit
     ) {
-
         if (isStopped) return
 
         if (index >= steps.size) {
@@ -44,15 +47,16 @@ class SegmentPlayer(
         )
 
         when (step.stepType) {
-
             StepType.ORIGINAL,
             StepType.TRANSLATION,
             StepType.MEMO -> {
-
                 val slice = step.slice
 
                 if (slice == null) {
-                    Log.w("PLAYER_STEP", "Skipping step with null slice: $step")
+                    Log.w(
+                        "PLAYER_STEP",
+                        "Skipping step with null slice: $step"
+                    )
                     playStep(steps, index + 1, onComplete)
                     return
                 }
@@ -70,7 +74,6 @@ class SegmentPlayer(
 
             StepType.PAUSE_SHORT,
             StepType.PAUSE_LONG -> {
-
                 handler.postDelayed(
                     {
                         if (!isStopped) {
