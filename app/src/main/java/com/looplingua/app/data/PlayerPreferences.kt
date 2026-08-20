@@ -3,6 +3,7 @@ package com.looplingua.app.data
 import android.content.Context
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -31,6 +32,9 @@ class PlayerPreferences(
 
         val playbackPattern: Preferences.Key<String> =
             stringPreferencesKey("playback_pattern")
+
+        val playbackSpeed: Preferences.Key<Float> =
+            floatPreferencesKey("playback_speed")
     }
 
     // ============================================================
@@ -46,29 +50,21 @@ class PlayerPreferences(
     val playbackPosition: Flow<PlaybackPosition?> =
         context.playerPreferencesDataStore.data.map { preferences ->
 
-            val projectId =
-                preferences[Keys.lastProjectId]
-
-            val trackId =
-                preferences[Keys.lastTrackId]
-
-            val segmentId =
-                preferences[Keys.lastSegmentId]
+            val projectId = preferences[Keys.lastProjectId]
+            val trackId = preferences[Keys.lastTrackId]
+            val segmentId = preferences[Keys.lastSegmentId]
 
             if (
                 projectId != null &&
                 trackId != null &&
                 segmentId != null
             ) {
-
                 PlaybackPosition(
                     projectId = projectId,
                     trackId = trackId,
                     segmentId = segmentId
                 )
-
             } else {
-
                 null
             }
         }
@@ -81,14 +77,9 @@ class PlayerPreferences(
 
         context.playerPreferencesDataStore.edit { preferences ->
 
-            preferences[Keys.lastProjectId] =
-                projectId
-
-            preferences[Keys.lastTrackId] =
-                trackId
-
-            preferences[Keys.lastSegmentId] =
-                segmentId
+            preferences[Keys.lastProjectId] = projectId
+            preferences[Keys.lastTrackId] = trackId
+            preferences[Keys.lastSegmentId] = segmentId
         }
     }
 
@@ -99,26 +90,37 @@ class PlayerPreferences(
     val playbackPattern: Flow<Pattern> =
         context.playerPreferencesDataStore.data.map { preferences ->
 
-            val name =
-                preferences[Keys.playbackPattern]
+            val name = preferences[Keys.playbackPattern]
 
             name?.let {
-
                 runCatching {
                     Pattern.valueOf(it)
                 }.getOrNull()
-
             } ?: Pattern.BASIC
         }
 
     suspend fun savePlaybackPattern(
         pattern: Pattern
     ) {
-
         context.playerPreferencesDataStore.edit { preferences ->
+            preferences[Keys.playbackPattern] = pattern.name
+        }
+    }
 
-            preferences[Keys.playbackPattern] =
-                pattern.name
+    // ============================================================
+    // Playback Speed
+    // ============================================================
+
+    val playbackSpeed: Flow<Float> =
+        context.playerPreferencesDataStore.data.map { preferences ->
+            preferences[Keys.playbackSpeed] ?: 1.0f
+        }
+
+    suspend fun savePlaybackSpeed(
+        speed: Float
+    ) {
+        context.playerPreferencesDataStore.edit { preferences ->
+            preferences[Keys.playbackSpeed] = speed
         }
     }
 }
