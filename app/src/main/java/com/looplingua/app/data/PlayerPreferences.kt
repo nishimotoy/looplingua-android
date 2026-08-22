@@ -80,7 +80,9 @@ class PlayerPreferences(
         trackId: Int,
         segmentId: Int
     ) {
+
         context.playerPreferencesDataStore.edit { preferences ->
+
             preferences[Keys.lastProjectId] = projectId
             preferences[Keys.lastTrackId] = trackId
             preferences[Keys.lastSegmentId] = segmentId
@@ -137,6 +139,11 @@ class PlayerPreferences(
             preferences[Keys.shortPauseMultiplier]
         }
 
+    val longPauseMultiplier: Flow<Float?> =
+        context.playerPreferencesDataStore.data.map { preferences ->
+            preferences[Keys.longPauseMultiplier]
+        }
+
     suspend fun saveShortPauseMultiplier(
         multiplier: Float
     ) {
@@ -145,22 +152,17 @@ class PlayerPreferences(
         }
     }
 
-    suspend fun clearShortPauseMultiplier() {
-        context.playerPreferencesDataStore.edit { preferences ->
-            preferences.remove(Keys.shortPauseMultiplier)
-        }
-    }
-
-    val longPauseMultiplier: Flow<Float?> =
-        context.playerPreferencesDataStore.data.map { preferences ->
-            preferences[Keys.longPauseMultiplier]
-        }
-
     suspend fun saveLongPauseMultiplier(
         multiplier: Float
     ) {
         context.playerPreferencesDataStore.edit { preferences ->
             preferences[Keys.longPauseMultiplier] = multiplier
+        }
+    }
+
+    suspend fun clearShortPauseMultiplier() {
+        context.playerPreferencesDataStore.edit { preferences ->
+            preferences.remove(Keys.shortPauseMultiplier)
         }
     }
 
