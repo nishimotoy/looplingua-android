@@ -119,6 +119,8 @@ class PlayerController(
 
         scope.launch {
             playerPreferences.savePlaybackPattern(newPattern)
+            playerPreferences.clearShortPauseMultiplier()
+            playerPreferences.clearLongPauseMultiplier()
         }
 
         if (_isPlaying.value) {
