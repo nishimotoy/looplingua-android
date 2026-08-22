@@ -73,15 +73,15 @@ class PlayerController(
     // ============================================================
 
     private val _shortPauseMultiplier =
-        MutableStateFlow(1.0f)
+        MutableStateFlow<Float?>(null)
 
-    val shortPauseMultiplier: StateFlow<Float> =
+    val shortPauseMultiplier: StateFlow<Float?> =
         _shortPauseMultiplier.asStateFlow()
 
     private val _longPauseMultiplier =
-        MutableStateFlow(1.0f)
+        MutableStateFlow<Float?>(null)
 
-    val longPauseMultiplier: StateFlow<Float> =
+    val longPauseMultiplier: StateFlow<Float?> =
         _longPauseMultiplier.asStateFlow()
 
     init {
@@ -113,6 +113,9 @@ class PlayerController(
 
     fun setPattern(newPattern: Pattern) {
         _playbackPattern.value = newPattern
+
+        _shortPauseMultiplier.value = null
+        _longPauseMultiplier.value = null
 
         scope.launch {
             playerPreferences.savePlaybackPattern(newPattern)

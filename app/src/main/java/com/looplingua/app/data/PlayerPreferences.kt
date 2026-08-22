@@ -132,9 +132,9 @@ class PlayerPreferences(
     // Pause Multiplier
     // ============================================================
 
-    val shortPauseMultiplier: Flow<Float> =
+    val shortPauseMultiplier: Flow<Float?> =
         context.playerPreferencesDataStore.data.map { preferences ->
-            preferences[Keys.shortPauseMultiplier] ?: 1.0f
+            preferences[Keys.shortPauseMultiplier]
         }
 
     suspend fun saveShortPauseMultiplier(
@@ -145,9 +145,15 @@ class PlayerPreferences(
         }
     }
 
-    val longPauseMultiplier: Flow<Float> =
+    suspend fun clearShortPauseMultiplier() {
+        context.playerPreferencesDataStore.edit { preferences ->
+            preferences.remove(Keys.shortPauseMultiplier)
+        }
+    }
+
+    val longPauseMultiplier: Flow<Float?> =
         context.playerPreferencesDataStore.data.map { preferences ->
-            preferences[Keys.longPauseMultiplier] ?: 1.0f
+            preferences[Keys.longPauseMultiplier]
         }
 
     suspend fun saveLongPauseMultiplier(
@@ -155,6 +161,12 @@ class PlayerPreferences(
     ) {
         context.playerPreferencesDataStore.edit { preferences ->
             preferences[Keys.longPauseMultiplier] = multiplier
+        }
+    }
+
+    suspend fun clearLongPauseMultiplier() {
+        context.playerPreferencesDataStore.edit { preferences ->
+            preferences.remove(Keys.longPauseMultiplier)
         }
     }
 }
