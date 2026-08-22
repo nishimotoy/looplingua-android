@@ -68,17 +68,45 @@ class PlayerController(
     val playbackPattern: StateFlow<Pattern> =
         _playbackPattern.asStateFlow()
 
+    // ============================================================
+    // Pause Multiplier
+    // ============================================================
+
+    private val _shortPauseMultiplier =
+        MutableStateFlow(1.0f)
+
+    val shortPauseMultiplier: StateFlow<Float> =
+        _shortPauseMultiplier.asStateFlow()
+
+    private val _longPauseMultiplier =
+        MutableStateFlow(1.0f)
+
+    val longPauseMultiplier: StateFlow<Float> =
+        _longPauseMultiplier.asStateFlow()
+
     init {
         scope.launch {
             playerPreferences.playbackPattern.collect { pattern ->
                 _playbackPattern.value = pattern
             }
         }
+
         scope.launch {
             playerPreferences.playbackSpeed.collect { speed ->
                 _playbackSpeed.value = speed
-
                 segmentPlayer.setPlaybackSpeed(speed)
+            }
+        }
+
+        scope.launch {
+            playerPreferences.shortPauseMultiplier.collect { multiplier ->
+                _shortPauseMultiplier.value = multiplier
+            }
+        }
+
+        scope.launch {
+            playerPreferences.longPauseMultiplier.collect { multiplier ->
+                _longPauseMultiplier.value = multiplier
             }
         }
     }
@@ -269,14 +297,19 @@ class PlayerController(
         val steps = sequenceBuilder.build(
             track = currentTrack.track,
             segment = segment,
-            pattern = _playbackPattern.value
+            pattern = _playbackPattern.value,
+            shortPauseMultiplierOverride =
+                _shortPauseMultiplier.value,
+            longPauseMultiplierOverride =
+                _longPauseMultiplier.value
         )
 
         segmentPlayer.play(steps) {
             if (!_isPlaying.value) return@play
 
             if (_pinnedKey.value != null) {
-                val pinned = queue.findByKey(_pinnedKey.value!!)
+                val pinned =
+                    queue.findByKey(_pinnedKey.value!!)
 
                 if (pinned != null) {
                     playSegment(pinned)
