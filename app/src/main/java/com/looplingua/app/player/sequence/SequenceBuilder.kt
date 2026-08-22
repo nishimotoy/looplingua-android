@@ -13,12 +13,13 @@ class SequenceBuilder(
 ) {
 
     private val shortPauseMs = 400L
-    private val longPauseMultiplier = 1.0
 
     fun build(
         track: Track,
         segment: Segment,
-        pattern: Pattern
+        pattern: Pattern,
+        shortPauseMultiplierOverride: Float? = null,
+        longPauseMultiplierOverride: Float? = null
     ): List<PlaybackStep> {
 
         val steps = mutableListOf<PlaybackStep>()
@@ -110,7 +111,8 @@ class SequenceBuilder(
                 StepType.PAUSE_SHORT -> {
 
                     val pauseMultiplier =
-                        patternStep.multiplier
+                        shortPauseMultiplierOverride
+                            ?: patternStep.multiplier
 
                     val pauseMs =
                         (shortPauseMs * pauseMultiplier).toLong()
@@ -128,7 +130,8 @@ class SequenceBuilder(
                 StepType.PAUSE_LONG -> {
 
                     val pauseMultiplier =
-                        (longPauseMultiplier * patternStep.multiplier)
+                        longPauseMultiplierOverride
+                            ?: patternStep.multiplier
 
                     val pauseMs =
                         (originalDuration * pauseMultiplier).toLong()
@@ -138,13 +141,12 @@ class SequenceBuilder(
                             stepType = StepType.PAUSE_LONG,
                             slice = null,
                             pauseMs = pauseMs,
-                            pauseMultiplier = pauseMultiplier.toFloat()
+                            pauseMultiplier = pauseMultiplier
                         )
                     )
                 }
             }
         }
-
         return steps
     }
 
@@ -156,7 +158,6 @@ class SequenceBuilder(
         if (start == null || end == null) {
             return false
         }
-
         return end > start
     }
 }
