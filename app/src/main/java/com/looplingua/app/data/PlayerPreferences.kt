@@ -35,6 +35,12 @@ class PlayerPreferences(
 
         val playbackSpeed: Preferences.Key<Float> =
             floatPreferencesKey("playback_speed")
+
+        val shortPauseMultiplier: Preferences.Key<Float> =
+            floatPreferencesKey("short_pause_multiplier")
+
+        val longPauseMultiplier: Preferences.Key<Float> =
+            floatPreferencesKey("long_pause_multiplier")
     }
 
     // ============================================================
@@ -74,9 +80,7 @@ class PlayerPreferences(
         trackId: Int,
         segmentId: Int
     ) {
-
         context.playerPreferencesDataStore.edit { preferences ->
-
             preferences[Keys.lastProjectId] = projectId
             preferences[Keys.lastTrackId] = trackId
             preferences[Keys.lastSegmentId] = segmentId
@@ -121,6 +125,36 @@ class PlayerPreferences(
     ) {
         context.playerPreferencesDataStore.edit { preferences ->
             preferences[Keys.playbackSpeed] = speed
+        }
+    }
+
+    // ============================================================
+    // Pause Multiplier
+    // ============================================================
+
+    val shortPauseMultiplier: Flow<Float> =
+        context.playerPreferencesDataStore.data.map { preferences ->
+            preferences[Keys.shortPauseMultiplier] ?: 1.0f
+        }
+
+    suspend fun saveShortPauseMultiplier(
+        multiplier: Float
+    ) {
+        context.playerPreferencesDataStore.edit { preferences ->
+            preferences[Keys.shortPauseMultiplier] = multiplier
+        }
+    }
+
+    val longPauseMultiplier: Flow<Float> =
+        context.playerPreferencesDataStore.data.map { preferences ->
+            preferences[Keys.longPauseMultiplier] ?: 1.0f
+        }
+
+    suspend fun saveLongPauseMultiplier(
+        multiplier: Float
+    ) {
+        context.playerPreferencesDataStore.edit { preferences ->
+            preferences[Keys.longPauseMultiplier] = multiplier
         }
     }
 }
