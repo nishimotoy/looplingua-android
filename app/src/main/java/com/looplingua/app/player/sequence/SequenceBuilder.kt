@@ -13,17 +13,7 @@ class SequenceBuilder(
 ) {
 
     private val shortPauseMs = 400L
-
-    private var shortPauseMultiplier = 1.0  // 今回導入
-    private var longPauseMultiplier = 1.0
-
-    fun setPauseMultipliers(
-        shortMultiplier: Float,
-        longMultiplier: Float
-    ) {
-        shortPauseMultiplier = shortMultiplier.toDouble()
-        longPauseMultiplier = longMultiplier.toDouble()
-    }
+    private val longPauseMultiplier = 1.0
 
     fun build(
         track: Track,
@@ -37,9 +27,9 @@ class SequenceBuilder(
         val originalDuration =
             segment.originalEndMs - segment.originalStartMs
 
-        for (type in definition.steps) {
+        for (patternStep in definition.steps) {
 
-            when (type) {
+            when (patternStep.type) {
 
                 StepType.TRANSLATION -> {
 
@@ -52,6 +42,7 @@ class SequenceBuilder(
                             segment.translationEndMs
                         )
                     ) {
+
                         val slice = AudioSlice(
                             audioPath = path,
                             startMs = segment.translationStartMs,
@@ -62,7 +53,8 @@ class SequenceBuilder(
                             PlaybackStep(
                                 stepType = StepType.TRANSLATION,
                                 slice = slice,
-                                pauseMs = 0
+                                pauseMs = 0,
+                                pauseMultiplier = 1.0f
                             )
                         )
                     }
@@ -80,12 +72,14 @@ class SequenceBuilder(
                         PlaybackStep(
                             stepType = StepType.ORIGINAL,
                             slice = slice,
-                            pauseMs = 0
+                            pauseMs = 0,
+                            pauseMultiplier = 1.0f
                         )
                     )
                 }
 
                 StepType.MEMO -> {
+
                     val path = track.memoAudioPath
 
                     if (
@@ -95,6 +89,7 @@ class SequenceBuilder(
                             segment.memoEndMs
                         )
                     ) {
+
                         val slice = AudioSlice(
                             audioPath = path,
                             startMs = segment.memoStartMs,
@@ -105,35 +100,45 @@ class SequenceBuilder(
                             PlaybackStep(
                                 stepType = StepType.MEMO,
                                 slice = slice,
-                                pauseMs = 0
+                                pauseMs = 0,
+                                pauseMultiplier = 1.0f
                             )
                         )
                     }
                 }
 
                 StepType.PAUSE_SHORT -> {
-                    val pause =
-                        (shortPauseMs * shortPauseMultiplier).toLong()
+
+                    val pauseMultiplier =
+                        patternStep.multiplier
+
+                    val pauseMs =
+                        (shortPauseMs * pauseMultiplier).toLong()
 
                     steps.add(
                         PlaybackStep(
                             stepType = StepType.PAUSE_SHORT,
                             slice = null,
-                            pauseMs = pause
+                            pauseMs = pauseMs,
+                            pauseMultiplier = pauseMultiplier
                         )
                     )
                 }
 
                 StepType.PAUSE_LONG -> {
 
-                    val pause =
-                        (originalDuration * longPauseMultiplier).toLong()
+                    val pauseMultiplier =
+                        (longPauseMultiplier * patternStep.multiplier)
+
+                    val pauseMs =
+                        (originalDuration * pauseMultiplier).toLong()
 
                     steps.add(
                         PlaybackStep(
                             stepType = StepType.PAUSE_LONG,
                             slice = null,
-                            pauseMs = pause
+                            pauseMs = pauseMs,
+                            pauseMultiplier = pauseMultiplier.toFloat()
                         )
                     )
                 }
@@ -147,6 +152,7 @@ class SequenceBuilder(
         start: Long?,
         end: Long?
     ): Boolean {
+
         if (start == null || end == null) {
             return false
         }
