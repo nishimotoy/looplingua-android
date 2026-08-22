@@ -132,51 +132,14 @@ fun BottomControls(
         ) {
 
             // ----------------------------------------------------
-            // Playback Speed
-            // ----------------------------------------------------
-
-            Box {
-                Button(
-                    onClick = {
-                        speedExpanded = true
-                    },
-                    colors = colors
-                ) {
-                    Text("${playbackSpeed}x")
-                }
-
-                DropdownMenu(
-                    expanded = speedExpanded,
-                    onDismissRequest = {
-                        speedExpanded = false
-                    }
-                ) {
-                    playbackSpeeds.forEach { speed ->
-                        DropdownMenuItem(
-                            text = {
-                                Text("${speed}x")
-                            },
-                            onClick = {
-                                controller.setPlaybackSpeed(
-                                    speed
-                                )
-                                speedExpanded = false
-                            }
-                        )
-                    }
-                }
-            }
-
-            // ----------------------------------------------------
             // Short Pause
             // ----------------------------------------------------
 
             Box {
-                Button(
+                OutlinedButton(
                     onClick = {
                         shortPauseExpanded = true
-                    },
-                    colors = colors
+                    }
                 ) {
                     Text(
                         "S ${
@@ -207,16 +170,17 @@ fun BottomControls(
                 }
             }
 
+            Spacer(modifier = Modifier.width(4.dp))
+
             // ----------------------------------------------------
             // Long Pause
             // ----------------------------------------------------
 
             Box {
-                Button(
+                OutlinedButton(
                     onClick = {
                         longPauseExpanded = true
-                    },
-                    colors = colors
+                    }
                 ) {
                     Text(
                         "L ${
@@ -241,6 +205,44 @@ fun BottomControls(
                                     multiplier
                                 )
                                 longPauseExpanded = false
+                            }
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.width(4.dp))
+
+            // ----------------------------------------------------
+            // Playback Speed
+            // ----------------------------------------------------
+
+            Box {
+                Button(
+                    onClick = {
+                        speedExpanded = true
+                    },
+                    colors = colors
+                ) {
+                    Text("${playbackSpeed}x")
+                }
+
+                DropdownMenu(
+                    expanded = speedExpanded,
+                    onDismissRequest = {
+                        speedExpanded = false
+                    }
+                ) {
+                    playbackSpeeds.forEach { speed ->
+                        DropdownMenuItem(
+                            text = {
+                                Text("${speed}x")
+                            },
+                            onClick = {
+                                controller.setPlaybackSpeed(
+                                    speed
+                                )
+                                speedExpanded = false
                             }
                         )
                     }
