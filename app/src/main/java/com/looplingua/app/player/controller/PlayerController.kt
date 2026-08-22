@@ -425,4 +425,34 @@ class PlayerController(
 
         return _pinnedKey.value == current
     }
+
+    // ============================================================
+    // Pause Multiplier
+    // ============================================================
+
+    fun setShortPauseMultiplier(
+        multiplier: Float
+    ) {
+        _shortPauseMultiplier.value =
+            multiplier
+
+        scope.launch {
+            playerPreferences.saveShortPauseMultiplier(
+                multiplier
+            )
+        }
+    }
+
+    fun setLongPauseMultiplier(
+        multiplier: Float
+    ) {
+        _longPauseMultiplier.value =
+            multiplier
+
+        scope.launch {
+            playerPreferences.saveLongPauseMultiplier(
+                multiplier
+            )
+        }
+    }
 }

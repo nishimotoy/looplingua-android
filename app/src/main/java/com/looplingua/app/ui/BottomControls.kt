@@ -31,11 +31,21 @@ fun BottomControls(
     val currentKey by controller.currentKey.collectAsState()
     val pinnedKey by controller.pinnedKey.collectAsState()
     val playbackSpeed by controller.playbackSpeed.collectAsState()
+    val shortPauseMultiplier by controller.shortPauseMultiplier.collectAsState()
+    val longPauseMultiplier by controller.longPauseMultiplier.collectAsState()
 
     val isFlagged = segment?.flagged == true
     val isPinned = pinnedKey != null && pinnedKey == currentKey
 
     var speedExpanded by remember {
+        mutableStateOf(false)
+    }
+
+    var shortPauseExpanded by remember {
+        mutableStateOf(false)
+    }
+
+    var longPauseExpanded by remember {
         mutableStateOf(false)
     }
 
@@ -47,10 +57,21 @@ fun BottomControls(
         2.0f
     )
 
+    val pauseMultipliers = listOf(
+        0.5f,
+        0.75f,
+        1.0f,
+        1.5f,
+        2.0f
+    )
+
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 16.dp),
+            .padding(
+                horizontal = 16.dp,
+                vertical = 16.dp
+            ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
@@ -101,7 +122,7 @@ fun BottomControls(
         }
 
         // ========================================================
-        // Playback Speed / Pin / Flag
+        // Playback Speed / Pause / Pin / Flag
         // ========================================================
 
         Row(
@@ -136,8 +157,90 @@ fun BottomControls(
                                 Text("${speed}x")
                             },
                             onClick = {
-                                controller.setPlaybackSpeed(speed)
+                                controller.setPlaybackSpeed(
+                                    speed
+                                )
                                 speedExpanded = false
+                            }
+                        )
+                    }
+                }
+            }
+
+            // ----------------------------------------------------
+            // Short Pause
+            // ----------------------------------------------------
+
+            Box {
+                Button(
+                    onClick = {
+                        shortPauseExpanded = true
+                    },
+                    colors = colors
+                ) {
+                    Text(
+                        "S ${
+                            shortPauseMultiplier ?: 1.0f
+                        }x"
+                    )
+                }
+
+                DropdownMenu(
+                    expanded = shortPauseExpanded,
+                    onDismissRequest = {
+                        shortPauseExpanded = false
+                    }
+                ) {
+                    pauseMultipliers.forEach { multiplier ->
+                        DropdownMenuItem(
+                            text = {
+                                Text("${multiplier}x")
+                            },
+                            onClick = {
+                                controller.setShortPauseMultiplier(
+                                    multiplier
+                                )
+                                shortPauseExpanded = false
+                            }
+                        )
+                    }
+                }
+            }
+
+            // ----------------------------------------------------
+            // Long Pause
+            // ----------------------------------------------------
+
+            Box {
+                Button(
+                    onClick = {
+                        longPauseExpanded = true
+                    },
+                    colors = colors
+                ) {
+                    Text(
+                        "L ${
+                            longPauseMultiplier ?: 1.0f
+                        }x"
+                    )
+                }
+
+                DropdownMenu(
+                    expanded = longPauseExpanded,
+                    onDismissRequest = {
+                        longPauseExpanded = false
+                    }
+                ) {
+                    pauseMultipliers.forEach { multiplier ->
+                        DropdownMenuItem(
+                            text = {
+                                Text("${multiplier}x")
+                            },
+                            onClick = {
+                                controller.setLongPauseMultiplier(
+                                    multiplier
+                                )
+                                longPauseExpanded = false
                             }
                         )
                     }
