@@ -21,6 +21,9 @@ object PatternLoader {
         val json = JSONObject(jsonString)
 
         val name = json.getString("name")
+        val playbackSpeed =
+            json.optDouble("playbackSpeed", 1.0).toFloat()
+
         val stepsJson = json.getJSONArray("steps")
 
         val steps = mutableListOf<PatternStep>()
@@ -63,7 +66,8 @@ object PatternLoader {
 
         return PatternDefinition(
             name = name,
-            steps = steps
+            steps = steps,
+            playbackSpeed = playbackSpeed
         )
     }
 }
