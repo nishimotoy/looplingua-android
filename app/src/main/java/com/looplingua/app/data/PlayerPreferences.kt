@@ -117,9 +117,9 @@ class PlayerPreferences(
     // Playback Speed
     // ============================================================
 
-    val playbackSpeed: Flow<Float> =
+    val playbackSpeed: Flow<Float?> =
         context.playerPreferencesDataStore.data.map { preferences ->
-            preferences[Keys.playbackSpeed] ?: 1.0f
+            preferences[Keys.playbackSpeed]
         }
 
     suspend fun savePlaybackSpeed(

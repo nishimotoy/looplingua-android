@@ -94,7 +94,7 @@ class PlayerController(
         scope.launch {
             playerPreferences.playbackSpeed.collect { speed ->
                 _playbackSpeed.value = speed
-                segmentPlayer.setPlaybackSpeed(speed)
+                segmentPlayer.setPlaybackSpeed(speed ?: 1.0f)
             }
         }
 
@@ -133,9 +133,10 @@ class PlayerController(
     // Playback Speed
     // ============================================================
 
-    private val _playbackSpeed = MutableStateFlow(1.0f)
+    private val _playbackSpeed =
+        MutableStateFlow<Float?>(null)
 
-    val playbackSpeed: StateFlow<Float> =
+    val playbackSpeed: StateFlow<Float?> =
         _playbackSpeed.asStateFlow()
 
     fun setPlaybackSpeed(speed: Float) {
