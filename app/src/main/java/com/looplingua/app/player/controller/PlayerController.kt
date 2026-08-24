@@ -300,6 +300,14 @@ class PlayerController(
 
         val currentTrack = queue.currentTrack() ?: return
 
+        val playbackSpeed =
+            sequenceBuilder.resolvePlaybackSpeed(
+                pattern = _playbackPattern.value,
+                playbackSpeedOverride = _playbackSpeed.value
+            )
+
+        segmentPlayer.setPlaybackSpeed(playbackSpeed)
+
         val steps = sequenceBuilder.build(
             track = currentTrack.track,
             segment = segment,

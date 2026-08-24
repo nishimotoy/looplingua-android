@@ -150,6 +150,16 @@ class SequenceBuilder(
         return steps
     }
 
+    fun resolvePlaybackSpeed(
+        pattern: Pattern,
+        playbackSpeedOverride: Float?
+    ): Float {
+        val definition = patternProvider.get(pattern)
+
+        return playbackSpeedOverride
+            ?: definition.playbackSpeed
+    }
+
     private fun hasAudio(
         start: Long?,
         end: Long?
