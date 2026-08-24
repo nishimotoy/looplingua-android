@@ -114,11 +114,14 @@ class PlayerController(
     fun setPattern(newPattern: Pattern) {
         _playbackPattern.value = newPattern
 
+        _playbackSpeed.value = null
+
         _shortPauseMultiplier.value = null
         _longPauseMultiplier.value = null
 
         scope.launch {
             playerPreferences.savePlaybackPattern(newPattern)
+            playerPreferences.clearPlaybackSpeed()
             playerPreferences.clearShortPauseMultiplier()
             playerPreferences.clearLongPauseMultiplier()
         }

@@ -160,6 +160,12 @@ class PlayerPreferences(
         }
     }
 
+    suspend fun clearPlaybackSpeed() {
+        context.playerPreferencesDataStore.edit { preferences ->
+            preferences.remove(Keys.playbackSpeed)
+        }
+    }
+
     suspend fun clearShortPauseMultiplier() {
         context.playerPreferencesDataStore.edit { preferences ->
             preferences.remove(Keys.shortPauseMultiplier)
