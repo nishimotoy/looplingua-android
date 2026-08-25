@@ -36,11 +36,7 @@ class TrackRepository {
     /**
      * Player上で変更されたflaggedだけを
      * .looplinguaへ保存する。
-     *
-     * 元のProjectを読み直してからflaggedだけを差し替えるため、
-     * originalAuto / originalUser / translationAuto /
-     * translationUser / memoAuto / memoUser など、
-     * Player側が直接扱っていないデータを変更しない。
+     * 元のProjectを読み直してからflaggedだけを差し替える。
      */
     fun saveFlags(
         projectDirectory: File,
@@ -80,7 +76,8 @@ class TrackRepository {
                             projectSegment
                         } else {
                             projectSegment.copy(
-                                flagged = playerSegment.flagged
+                                flagged = playerSegment.flagged,
+                                skipped = playerSegment.skipped
                             )
                         }
                     }
