@@ -4,8 +4,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.PushPin
+import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.outlined.Flag
 import androidx.compose.material.icons.outlined.PushPin
+import androidx.compose.material.icons.outlined.SkipNext
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
@@ -34,6 +36,7 @@ fun BottomControls(
     val shortPauseMultiplier by controller.shortPauseMultiplier.collectAsState()
     val longPauseMultiplier by controller.longPauseMultiplier.collectAsState()
 
+    val isSkipped = segment?.skipped == true
     val isFlagged = segment?.flagged == true
     val isPinned = pinnedKey != null && pinnedKey == currentKey
 
@@ -122,7 +125,7 @@ fun BottomControls(
         }
 
         // ========================================================
-        // Playback Speed / Pause / Pin / Flag
+        // Playback Speed / Pause / Skip / Pin / Flag
         // ========================================================
 
         Row(
@@ -247,6 +250,39 @@ fun BottomControls(
                         )
                     }
                 }
+            }
+
+            // ----------------------------------------------------
+            // Skip
+            // ----------------------------------------------------
+
+            IconButton(
+                onClick = {
+                    controller.toggleSkip()
+                },
+                modifier = Modifier.size(72.dp)
+            ) {
+                Icon(
+                    imageVector =
+                        if (isSkipped) {
+                            Icons.Filled.SkipNext
+                        } else {
+                            Icons.Outlined.SkipNext
+                        },
+                    contentDescription =
+                        if (isSkipped) {
+                            "Unskip"
+                        } else {
+                            "Skip"
+                        },
+                    modifier = Modifier.size(48.dp),
+                    tint =
+                        if (isSkipped) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.onSurface
+                        }
+                )
             }
 
             // ----------------------------------------------------
