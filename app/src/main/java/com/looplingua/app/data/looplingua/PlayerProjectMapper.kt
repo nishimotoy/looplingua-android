@@ -58,14 +58,11 @@ class PlayerProjectMapper {
                                     loopLinguaSegment.translationAuto
                                 },
 
-                        memoAuto =
-                            loopLinguaSegment.memoAuto,
+                        memoAuto = loopLinguaSegment.memoAuto,
+                        memoUser = loopLinguaSegment.memoUser,
 
-                        memoUser =
-                            loopLinguaSegment.memoUser,
-
-                        flagged =
-                            loopLinguaSegment.flagged
+                        flagged = loopLinguaSegment.flagged,
+                        skipped = loopLinguaSegment.skipped
                     )
                 }
 

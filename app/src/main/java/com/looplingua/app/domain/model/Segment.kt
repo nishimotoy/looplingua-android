@@ -19,7 +19,8 @@ data class Segment(
     val memoAuto: String = "",
     val memoUser: String = "",
 
-    val flagged: Boolean = false
+    val flagged: Boolean = false,
+    val skipped: Boolean = false
 ) {
 
     val memoText: String?
