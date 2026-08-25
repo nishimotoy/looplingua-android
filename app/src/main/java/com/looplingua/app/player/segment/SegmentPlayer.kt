@@ -91,4 +91,10 @@ class SegmentPlayer(
         audioPlayer.stop()
         handler.removeCallbacksAndMessages(null)
     }
+
+    fun release() {
+        handler.removeCallbacksAndMessages(null)
+        isStopped = true
+        audioPlayer.release()
+    }
 }
