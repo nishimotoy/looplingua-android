@@ -420,6 +420,21 @@ class PlayerController(
     }
 
     // ============================================================
+    // Skip
+    // ============================================================
+
+    fun toggleSkip() {
+        val current = _currentKey.value ?: return
+
+        queue.updateSegment(current) {
+            it.copy(skipped = !it.skipped)
+        }.also {
+            updateState()
+            saveFlags(queue.allTracks())
+        }
+    }
+
+    // ============================================================
     // Pin
     // ============================================================
 
