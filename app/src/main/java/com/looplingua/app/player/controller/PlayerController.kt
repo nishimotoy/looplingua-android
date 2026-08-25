@@ -332,14 +332,14 @@ class PlayerController(
                     playSegment(pinned)
                 }
             } else {
-                val next = queue.nextSegment()
+                val next = queue.nextPlayableSegment()
 
                 if (next != null) {
                     playSegment(next)
                 } else {
                     val restart = queue.rewindToStart()
 
-                    if (restart != null) {
+                    if (restart != null && !restart.skipped) {
                         playSegment(restart)
                     } else {
                         _isPlaying.value = false

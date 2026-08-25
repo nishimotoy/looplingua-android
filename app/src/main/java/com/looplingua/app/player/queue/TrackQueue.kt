@@ -35,8 +35,17 @@ class TrackQueue {
             loadCurrentTrack()
             return segmentQueue.jumpTo(0)
         }
-
         return null
+    }
+
+    fun nextPlayableSegment(): Segment? {
+
+        while (true) {
+            val next = nextSegment() ?: return null
+            if (!next.skipped) {
+                return next
+            }
+        }
     }
 
     fun prevSegment(): Segment? {
@@ -50,10 +59,8 @@ class TrackQueue {
             while (segmentQueue.next() != null) {
                 // 最後まで移動
             }
-
             return segmentQueue.current()
         }
-
         return null
     }
 
@@ -82,15 +89,12 @@ class TrackQueue {
                 return segmentQueue.jumpTo(segmentIndex)
             }
         }
-
         return null
     }
 
     /**
      * 指定したSegmentを更新する。
-     *
      * 今回は主にflaggedの変更に使用する。
-     *
      * @return 更新後のSegment。対象が見つからなければnull。
      */
     fun updateSegment(
@@ -137,7 +141,6 @@ class TrackQueue {
             segmentQueue.setSegments(updatedTrack.segments)
             segmentQueue.jumpTo(segmentIndex)
         }
-
         return updatedSegment
     }
 
@@ -147,5 +150,17 @@ class TrackQueue {
         currentTrackIndex = 0
         loadCurrentTrack()
         return segmentQueue.current()
+    }
+
+    fun rewindToFirstPlayableSegment(): Segment? {
+
+        val first = rewindToStart()
+            ?: return null
+
+        if (!first.skipped) {
+            return first
+        }
+
+        return nextPlayableSegment()
     }
 }
