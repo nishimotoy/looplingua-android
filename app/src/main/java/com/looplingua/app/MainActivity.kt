@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.lifecycle.lifecycleScope
 import com.looplingua.app.data.repository.TrackRepository
 import com.looplingua.app.data.storage.ProjectStorage
+import com.looplingua.app.player.controller.PlayerController
 import com.looplingua.app.player.factory.PlayerFactory
 import com.looplingua.app.ui.MainScreen
 import com.looplingua.app.ui.mapper.TrackUiMapper
@@ -17,6 +18,8 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 class MainActivity : ComponentActivity() {
+
+    private lateinit var controller: PlayerController
 
     /*
      * FLAG保存はUI操作とは別にバックグラウンドで行う。
@@ -49,7 +52,7 @@ class MainActivity : ComponentActivity() {
             projectDirectory
         )
 
-        val controller = PlayerFactory.create(
+        controller = PlayerFactory.create(
             context = this,
             saveFlags = { updatedTracks ->
 
@@ -102,5 +105,10 @@ class MainActivity : ComponentActivity() {
         }
 
         controller.play() // 起動時に再生　デバッグ用
+    }
+
+    override fun onDestroy() {
+        controller.release()
+        super.onDestroy()
     }
 }
