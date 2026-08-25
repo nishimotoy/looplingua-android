@@ -11,6 +11,7 @@ import com.looplingua.app.player.segment.SegmentPlayer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -483,5 +484,15 @@ class PlayerController(
                 multiplier
             )
         }
+    }
+
+    // ============================================================
+    // Release
+    // ============================================================
+
+    fun release() {
+        _isPlaying.value = false
+        segmentPlayer.release()
+        scope.cancel()
     }
 }
