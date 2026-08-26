@@ -5,6 +5,7 @@ import com.looplingua.app.domain.model.Segment
 import com.looplingua.app.domain.model.SegmentKey
 import com.looplingua.app.domain.model.TrackWithSegments
 import com.looplingua.app.domain.playback.Pattern
+import com.looplingua.app.player.audio.AudioPlayerManager
 import com.looplingua.app.player.queue.TrackQueue
 import com.looplingua.app.player.sequence.SequenceBuilder
 import com.looplingua.app.player.segment.SegmentPlayer
@@ -261,10 +262,9 @@ class PlayerController(
     }
 
     fun stop() {
-        if (!_isPlaying.value) return
-
         _isPlaying.value = false
         segmentPlayer.stop()
+        AudioPlayerManager.stopAll()
     }
 
     fun togglePlay() {
