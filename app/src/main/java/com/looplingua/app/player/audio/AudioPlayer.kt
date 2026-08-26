@@ -18,6 +18,10 @@ class AudioPlayer(context: Context) {
     private var isMonitoring = false
     private var playbackSpeed = 1.0f
 
+    init {
+        AudioPlayerManager.register(this)
+    }
+
     fun setPlaybackSpeed(speed: Float) {
         playbackSpeed = speed
         player.playbackParameters = PlaybackParameters(playbackSpeed)
