@@ -98,5 +98,6 @@ class AudioPlayer(context: Context) {
     fun release() {
         stop() // to ensure clean ExoPlayer state
         player.release()
+        AudioPlayerManager.unregister(this)
     }
 }
