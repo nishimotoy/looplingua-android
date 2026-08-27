@@ -2,92 +2,215 @@
 
 **Your language. On loop.**
 
-LoopLingua is a language learning app focused on **passive listening and structured repetition**.
+> **Learn language like a baby — with adult ears.**
 
-LoopLingua turns any audio into structured listening material.
+LoopLingua is a **sentence player for passive listening**.
 
-The goal is simple:
-**make long-term listening practice effortless.**
+Listening to natural-speed content in a foreign language can be difficult. Words and sentences pass by before you understand them, while reading subtitles at natural speed can be exhausting.
+
+LoopLingua breaks audio into sentences and inserts pauses between them. It can also play translations aloud, allowing you to keep listening without constantly looking at the screen. The screen is there when you want to check the text.
+
+## The Idea
+
+Language can be acquired through massive exposure to meaningful input — much like the way children acquire their native language through continuous exposure.
+
+LoopLingua explores how to make that kind of exposure possible for adults.
+
+You don't need to stop what you are doing.
+You don't need to stare at subtitles.
+You don't need to set aside a dedicated study session.
+
+**Just listen.**
+
+The goal is to **make long-term listening practice effortless**.
+
+## What Makes LoopLingua Different
+
+Users can bring their own content — podcasts, videos, lectures, interviews, and other audio — and turn it into structured listening material.
+
+The focus is simple:
+
+**make it easier to listen more, for longer.**
+
+## Core Concept
+
+```text
+Natural content
+      ↓
+  Sentences
+      ↓
+   Pauses
+      ↓
+ Translation
+      ↓
+ Repetition
+```
+
+**Listen. Repeat. Let the language sink in.**
 
 ---
 
-## Core Ideas
+## Demo
 
-* **Local-first learning**
-  Users provide their own audio files.
+[▶ Watch the LoopLingua demo](demo/looplingua-demo.mp4)
 
-* **Structured repetition playback**
-  Sentences or segments can be repeated automatically.
+The demo shows the current player UI and structured playback features.
 
-* **Original + translation loop**
-  Alternate between original audio and translation.
+---
 
-* **Adjustable pause ratio**
-  Pause timing optimized for shadowing practice.
+## Player
 
-* **Background playback**
-  Designed for long passive listening sessions.
+The current player supports:
+
+* Sentence/segment-based playback
+* Multiple tracks in a project
+* Automatic progression between segments
+* Automatic looping
+* PREV / NEXT navigation
+* Pinning a segment for repeated playback
+* Flagging segments
+* Skipping segments
+* Playback speed adjustment
+* Short and long pauses adjustment
+* Multiple playback patterns
+* Pattern-specific playback settings
+* Persistent playback settings
+* Persistent playback position
+* Safe audio stopping and player release
+
+### Playback Patterns
+
+LoopLingua currently supports built-in playback patterns including:
+
+* **BASIC**
+* **SHADOWING**
+* **ORIGINAL_ONLY**
+
+Patterns determine how original audio, translation, memo, and pauses are combined.
+
+Playback speed and pause multipliers can be adjusted from the player UI. User adjustments override the values defined by the selected pattern and are restored across sessions.
+
+---
+
+## LoopLingua Project Format
+
+LoopLingua uses its own `.looplingua` project format.
+
+A project can contain multiple tracks, with each track divided into timestamped segments.
+
+Segment data includes information such as:
+
+* Original text
+* User-edited original text
+* Automatic translation
+* User-edited translation
+* Automatic memo
+* User-edited memo
+* Segment flags
+* Skip state
+* Audio timestamps
+
+The player loads these projects and maps their data into the playback model.
+
+---
+
+## Translation Engine
+
+LoopLingua includes a translation pipeline for turning source audio into structured learning material.
+
+The basic workflow is:
+
+```text
+Audio
+  ↓
+Whisper transcription
+  ↓
+Timestamped segments
+  ↓
+LoopLingua project
+  ↓
+Translation
+  ↓
+.looplingua
+  ↓
+LoopLingua Player
+```
+
+The translation engine uses OpenAI APIs for speech transcription and translation.
 
 ---
 
 ## Architecture
 
-The app is designed as a modular playback engine for language learning.
+LoopLingua is organized as separate application and engine components.
 
-* MVVM architecture
-* StateFlow-based state management
-* Playback sequence engine
-* ExoPlayer-based audio system
+The Android application uses **Jetpack Compose** for the UI and **StateFlow** for player state management.
 
-```
+The core playback path is:
+
+```text
 UI (Jetpack Compose)
         ↓
 PlayerController
         ↓
-TrackPlayer
+TrackQueue
+        ↓
+SequenceBuilder
         ↓
 SegmentPlayer
         ↓
-AudioPlayer (ExoPlayer)
+AudioPlayer
+        ↓
+ExoPlayer
 ```
+
+The application also contains the project/data layer responsible for loading `.looplingua` projects and mapping them into player models.
 
 ---
 
-## Screenshots
+## Current Status
 
-(coming soon)
+🚧 **Active development**
+
+The playback system has reached a stable milestone and is currently tagged:
+
+**`v1.0-player`**
+
+The current development focus is expanding the LoopLingua data model, translation workflow, and learning-oriented editing features.
 
 ---
 
 ## Planned Features
 
-* Sentence-based audio segmentation
-* Custom repetition patterns
-* Shadowing-friendly timing control
-* Multiple playback modes for listening practice
-
----
-
-## Status
-
-🚧 **Currently in development**
-
-This repository is an early-stage implementation of the playback engine and UI architecture.
+* User-defined playback patterns
+* User-defined segment flags
+* Editing of segment text and timestamps
+* Translation editing
+* Memo editing
+* Text-to-speech generation
+* Additional playback modes
+* More flexible shadowing workflows
+* Improved project management
 
 ---
 
 ## Vision
 
-Most language learning apps focus on **active study**.
+Most language learning apps focus on **active study** — vocabulary drills, exercises, tests, and deliberate practice.
 
 LoopLingua explores another approach:
 
 > **Continuous passive listening with structured repetition.**
 
-The aim is to support **long-term language exposure** through a simple, flexible playback system.
+The aim is to make language exposure something that can happen naturally throughout the day — while walking, commuting, cooking, or doing other activities.
+
+LoopLingua combines the effortless exposure of passive listening with enough structure and repetition to make that exposure useful for language learning.
+
+**Learn language like a baby — with adult ears.**
 
 ---
 
 ## License
 
 MIT License
+
