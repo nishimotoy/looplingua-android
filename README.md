@@ -1,3 +1,7 @@
+
+
+https://github.com/user-attachments/assets/4d81e3c6-c68d-4485-ba8f-99a0382d54bc
+
 # LoopLingua
 
 **Your language. On loop.**
@@ -52,7 +56,10 @@ Natural content
 
 ## Demo
 
-[▶ Watch the LoopLingua demo](demo/looplingua-demo.mp4)
+https://github.com/user-attachments/assets/8e485358-3138-48b6-aaba-c43af231ee33
+[▶ Download the LoopLingua demo](demo/looplingua-demo.mp4)
+
+
 
 The demo shows the current player UI and structured playback features.
 
