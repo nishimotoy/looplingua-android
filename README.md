@@ -1,7 +1,3 @@
-
-
-https://github.com/user-attachments/assets/4d81e3c6-c68d-4485-ba8f-99a0382d54bc
-
 # LoopLingua
 
 **Your language. On loop.**
@@ -20,9 +16,9 @@ Language can be acquired through massive exposure to meaningful input — much l
 
 LoopLingua explores how to make that kind of exposure possible for adults.
 
-You don't need to stop what you are doing.
-You don't need to stare at subtitles.
-You don't need to set aside a dedicated study session.
+You don't need to stop what you are doing. 
+You don't need to stare at subtitles. 
+You don't need to set aside a dedicated study session. 
 
 **Just listen.**
 
@@ -57,9 +53,8 @@ Natural content
 ## Demo
 
 https://github.com/user-attachments/assets/8e485358-3138-48b6-aaba-c43af231ee33
+
 [▶ Download the LoopLingua demo](demo/looplingua-demo.mp4)
-
-
 
 The demo shows the current player UI and structured playback features.
 
@@ -78,7 +73,7 @@ The current player supports:
 * Flagging segments
 * Skipping segments
 * Playback speed adjustment
-* Short and long pauses adjustment
+* Pauses adjustment
 * Multiple playback patterns
 * Pattern-specific playback settings
 * Persistent playback settings
@@ -220,4 +215,3 @@ LoopLingua combines the effortless exposure of passive listening with enough str
 ## License
 
 MIT License
-
