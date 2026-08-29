@@ -97,7 +97,7 @@ fun TrackScreen(
                                 modifier = Modifier.weight(1f)
                             )
 
-                            SegmentIndicators(
+                            SegmentStatusIndicators(
                                 segment = item.segment
                             )
                         }
@@ -117,7 +117,7 @@ fun TrackScreen(
 }
 
 @Composable
-private fun SegmentIndicators(
+private fun SegmentStatusIndicators(
     segment: Segment
 ) {
     Row(
@@ -125,18 +125,25 @@ private fun SegmentIndicators(
         verticalAlignment = Alignment.CenterVertically
     ) {
 
-        if (segment.flagged) {
-            Text(
-                text = "FLAG",
-                style = MaterialTheme.typography.labelSmall
-            )
+        val indicators = buildList {
+
+            if (segment.flagged) {
+                add("FLAG" to false)
+            }
+
+            if (segment.skipped) {
+                add("SKIPPED" to true)
+            }
         }
 
-        if (segment.skipped) {
+        indicators.forEach { (label, isGray) ->
+
             Text(
-                text = "SKIPPED",
+                text = label,
                 style = MaterialTheme.typography.labelSmall,
-                color = Color.Gray
+                color =
+                    if (isGray) Color.Gray
+                    else Color.Unspecified
             )
         }
     }
