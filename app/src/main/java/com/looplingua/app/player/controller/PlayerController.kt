@@ -169,6 +169,16 @@ class PlayerController(
     private val _currentTrack = MutableStateFlow<TrackWithSegments?>(null)
 
     // ============================================================
+    // Tracks
+    // ============================================================
+
+    private val _tracks =
+        MutableStateFlow<List<TrackWithSegments>>(emptyList())
+
+    val tracks: StateFlow<List<TrackWithSegments>> =
+        _tracks.asStateFlow()
+
+    // ============================================================
     // Playing State
     // ============================================================
 
@@ -203,6 +213,7 @@ class PlayerController(
         playbackPositionRestored = false
 
         queue.setTracks(tracks)
+        _tracks.value = queue.allTracks()
         updateState()
 
         scope.launch {
@@ -415,6 +426,7 @@ class PlayerController(
         queue.updateSegment(current) {
             it.copy(flagged = !it.flagged)
         }.also {
+            _tracks.value = queue.allTracks()
             updateState()
             saveFlags(queue.allTracks())
         }
@@ -430,6 +442,7 @@ class PlayerController(
         queue.updateSegment(current) {
             it.copy(skipped = !it.skipped)
         }.also {
+            _tracks.value = queue.allTracks()
             updateState()
             saveFlags(queue.allTracks())
         }
