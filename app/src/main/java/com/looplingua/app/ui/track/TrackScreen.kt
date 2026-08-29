@@ -14,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.ui.Alignment
+import com.looplingua.app.domain.model.Segment
 import com.looplingua.app.player.controller.PlayerController
 
 @Composable
@@ -78,10 +80,22 @@ fun TrackScreen(
                             .padding(12.dp)
                     ) {
 
-                        Text(
-                            text = item.segment.originalText,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
+                        // Original text + status indicators
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.Top
+                        ) {
+
+                            Text(
+                                text = item.segment.originalText,
+                                style = MaterialTheme.typography.bodyLarge,
+                                modifier = Modifier.weight(1f)
+                            )
+
+                            SegmentIndicators(
+                                segment = item.segment
+                            )
+                        }
 
                         Spacer(modifier = Modifier.height(4.dp))
 
@@ -93,6 +107,32 @@ fun TrackScreen(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun SegmentIndicators(
+    segment: Segment
+) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        if (segment.flagged) {
+            Text(
+                text = "FLAG",
+                style = MaterialTheme.typography.labelSmall
+            )
+        }
+
+        if (segment.skipped) {
+            Text(
+                text = "SKIPPED",
+                style = MaterialTheme.typography.labelSmall,
+                color = Color.Gray
+            )
         }
     }
 }
