@@ -17,14 +17,19 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.ui.Alignment
 import com.looplingua.app.domain.model.Segment
 import com.looplingua.app.player.controller.PlayerController
+import com.looplingua.app.ui.mapper.TrackUiMapper
 
 @Composable
 fun TrackScreen(
-    controller: PlayerController,
-    items: List<TrackListItem>
+    controller: PlayerController
 ) {
 
     val currentKey by controller.currentKey.collectAsState()
+    val tracks by controller.tracks.collectAsState()
+
+    val items = remember(tracks) {
+        TrackUiMapper.buildItems(tracks)
+    }
 
     val listState = rememberLazyListState()
 

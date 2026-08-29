@@ -9,7 +9,6 @@ import com.looplingua.app.data.storage.ProjectStorage
 import com.looplingua.app.player.controller.PlayerController
 import com.looplingua.app.player.factory.PlayerFactory
 import com.looplingua.app.ui.MainScreen
-import com.looplingua.app.ui.mapper.TrackUiMapper
 import com.looplingua.app.ui.theme.LoopLinguaandroidTheme
 import java.io.File
 import kotlinx.coroutines.Dispatchers
@@ -92,14 +91,10 @@ class MainActivity : ComponentActivity() {
         controller.setProjectId(projectId)
         controller.setTracks(tracks)
 
-        val items =
-            TrackUiMapper.buildItems(tracks)
-
         setContent {
             LoopLinguaandroidTheme(darkTheme = false) {
                 MainScreen(
-                    controller = controller,
-                    items = items
+                    controller = controller
                 )
             }
         }

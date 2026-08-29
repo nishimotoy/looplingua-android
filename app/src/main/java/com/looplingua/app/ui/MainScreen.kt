@@ -6,13 +6,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.looplingua.app.player.controller.PlayerController
-import com.looplingua.app.ui.track.TrackListItem
 import com.looplingua.app.ui.track.TrackScreen
 
 @Composable
 fun MainScreen(
-    controller: PlayerController,
-    items: List<TrackListItem>   // ← ここ変更
+    controller: PlayerController
 ) {
 
     Column(
@@ -37,8 +35,7 @@ fun MainScreen(
                 .weight(0.6f)
         ) {
             TrackScreen(
-                controller = controller,
-                items = items   // ← ここ変更
+                controller = controller
             )
         }
     }
