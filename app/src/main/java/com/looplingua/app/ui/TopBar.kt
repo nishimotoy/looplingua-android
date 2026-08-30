@@ -3,6 +3,7 @@ package com.looplingua.app.ui
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -18,7 +19,8 @@ import com.looplingua.app.player.controller.PlayerController
 @Composable
 fun TopBar(
     controller: PlayerController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onProjectSelected: () -> Unit
 ) {
 
     var patternExpanded by remember {
@@ -36,11 +38,26 @@ fun TopBar(
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp),
-        horizontalArrangement =
-            Arrangement.SpaceBetween,
         verticalAlignment =
-            Alignment.Top
+            Alignment.CenterVertically
     ) {
+
+        // ========================================================
+        // Project
+        // ========================================================
+
+        IconButton(
+            onClick = onProjectSelected,
+            modifier = Modifier.size(48.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Select Project",
+                modifier = Modifier.size(28.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.width(10.dp))
 
         // ========================================================
         // Pattern
@@ -98,6 +115,10 @@ fun TopBar(
         // ========================================================
         // Other Menu
         // ========================================================
+
+        Spacer(
+            modifier = Modifier.weight(1f)
+        )
 
         Box {
 

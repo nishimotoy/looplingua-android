@@ -10,7 +10,10 @@ import androidx.compose.ui.unit.dp
 import com.looplingua.app.player.controller.PlayerController
 
 @Composable
-fun SegmentScreen(controller: PlayerController) {
+fun SegmentScreen(
+    controller: PlayerController,
+    onProjectSelected: () -> Unit
+) {
 
     val segment by controller.currentSegment.collectAsState()
     val isPlaying by controller.isPlaying.collectAsState()
@@ -40,7 +43,8 @@ fun SegmentScreen(controller: PlayerController) {
         // ===== 上部バー =====
         TopBar(
             controller = controller,
-            modifier = Modifier.align(Alignment.TopCenter)
+            modifier = Modifier.fillMaxWidth(),
+            onProjectSelected = onProjectSelected
         )
 
         // ===== 下部コントロール =====
