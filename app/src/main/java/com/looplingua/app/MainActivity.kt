@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.lifecycle.lifecycleScope
+import com.looplingua.app.data.repository.ProjectRepository
 import com.looplingua.app.data.repository.TrackRepository
 import com.looplingua.app.data.storage.ProjectStorage
 import com.looplingua.app.player.controller.PlayerController
@@ -51,6 +52,13 @@ class MainActivity : ComponentActivity() {
             projectDirectory
         )
 
+        val projectRepository = ProjectRepository(
+            ProjectStorage(this)
+        )
+
+        val projects =
+            projectRepository.listProjectItems()
+
         controller = PlayerFactory.create(
             context = this,
             saveFlags = { updatedTracks ->
@@ -94,16 +102,15 @@ class MainActivity : ComponentActivity() {
         setContent {
             LoopLinguaandroidTheme(darkTheme = false) {
                 MainScreen(
-                    controller = controller
+                    controller = controller,
+                    projects = projects,
+                    onProjectSelected = {
+                        // 次のStepで実装
+                    }
                 )
             }
         }
 
         controller.play() // 起動時に再生　デバッグ用
-    }
-
-    override fun onDestroy() {
-        controller.release()
-        super.onDestroy()
     }
 }
