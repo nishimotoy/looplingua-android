@@ -6,37 +6,63 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.looplingua.app.player.controller.PlayerController
+import com.looplingua.app.ui.project.ProjectItem
+import com.looplingua.app.ui.project.ProjectScreen
 import com.looplingua.app.ui.track.TrackScreen
 
 @Composable
 fun MainScreen(
-    controller: PlayerController
+    controller: PlayerController,
+    projects: List<ProjectItem>,
+    onProjectSelected: (ProjectItem) -> Unit
 ) {
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFF5F5F5))
-    ) {
+    var showProjectScreen by remember {
+        mutableStateOf(false)
+    }
 
-        // 上
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(0.4f)
-        ) {
-            SegmentScreen(controller = controller)
-        }
+    if (showProjectScreen) {
 
-        // 下
-        Box(
+        ProjectScreen(
+            projects = projects,
+            onProjectSelected = {
+                showProjectScreen = false
+                onProjectSelected(it)
+            }
+        )
+
+    } else {
+
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .weight(0.6f)
+                .fillMaxSize()
+                .background(Color(0xFFF5F5F5))
         ) {
-            TrackScreen(
-                controller = controller
-            )
+
+            // 上
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(0.4f)
+            ) {
+                SegmentScreen(
+                    controller = controller,
+                    onProjectSelected = {
+                        showProjectScreen = true
+                    }
+                )
+            }
+
+            // 下
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(0.6f)
+            ) {
+                TrackScreen(
+                    controller = controller
+                )
+            }
         }
     }
 }
