@@ -28,6 +28,9 @@ fun MainScreen(
             onProjectSelected = {
                 showProjectScreen = false
                 onProjectSelected(it)
+            },
+            onCancel = {
+                showProjectScreen = false
             }
         )
 

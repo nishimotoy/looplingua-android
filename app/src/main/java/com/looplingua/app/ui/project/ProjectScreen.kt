@@ -15,37 +15,58 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun ProjectScreen(
     projects: List<ProjectItem>,
-    onProjectSelected: (ProjectItem) -> Unit
+    onProjectSelected: (ProjectItem) -> Unit,
+    onCancel: () -> Unit
 ) {
-    LazyColumn(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF5F5F5))
     ) {
-        items(projects) { project ->
 
-            Column(
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ) {
+            Text(
+                text = "Cancel",
+                style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier
-                    .fillMaxWidth()
                     .clickable {
-                        onProjectSelected(project)
+                        onCancel()
                     }
                     .padding(16.dp)
-            ) {
+            )
+        }
 
-                Text(
-                    text = project.projectName,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Color.Black
-                )
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            items(projects) { project ->
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            onProjectSelected(project)
+                        }
+                        .padding(16.dp)
+                ) {
 
-                Text(
-                    text = project.projectId,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.DarkGray
-                )
+                    Text(
+                        text = project.projectName,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color.Black
+                    )
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Text(
+                        text = project.projectId,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.DarkGray
+                    )
+                }
             }
         }
     }
