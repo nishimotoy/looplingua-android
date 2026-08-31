@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val projectDirectory = File(
+        var projectDirectory = File(
             ProjectStorage(this).projectsDirectory,
             "20260812010803-青本ウクライナ語"  // 100本テスト
         )
@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
          * 「プロジェクトID-プロジェクト名」
          * というディレクトリ名の先頭部分から取得する。
          */
-        val projectId =
+        var projectId =
             projectDirectory.name.substringBefore("-")
 
         val repository = TrackRepository()
@@ -104,13 +104,36 @@ class MainActivity : ComponentActivity() {
                 MainScreen(
                     controller = controller,
                     projects = projects,
-                    onProjectSelected = {
-                        // 次のStepで実装
+                    onProjectSelected = { project ->
+
+                        projectDirectory =
+                            File(project.directoryPath)
+
+                        projectId =
+                            project.projectId
+
+                        val selectedTracks =
+                            repository.loadProject(
+                                projectDirectory
+                            )
+
+                        controller.setProjectId(
+                            projectId
+                        )
+
+                        controller.setTracks(
+                            selectedTracks
+                        )
                     }
                 )
             }
         }
 
         controller.play() // 起動時に再生　デバッグ用
+    }
+
+    override fun onDestroy() {
+        controller.release()
+        super.onDestroy()
     }
 }
