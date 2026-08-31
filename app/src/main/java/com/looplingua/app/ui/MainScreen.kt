@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.looplingua.app.domain.model.TrackWithSegments
 import com.looplingua.app.player.controller.PlayerController
 import com.looplingua.app.ui.project.ProjectItem
 import com.looplingua.app.ui.project.ProjectScreen
@@ -14,6 +15,7 @@ import com.looplingua.app.ui.track.TrackScreen
 fun MainScreen(
     controller: PlayerController,
     projects: List<ProjectItem>,
+    tracksByProject: Map<String, List<TrackWithSegments>>,
     onProjectSelected: (ProjectItem) -> Unit
 ) {
 
@@ -25,9 +27,13 @@ fun MainScreen(
 
         ProjectScreen(
             projects = projects,
-            onProjectSelected = {
+            tracksByProject = tracksByProject,
+            onProjectPlay = {
                 showProjectScreen = false
                 onProjectSelected(it)
+            },
+            onTrackSelected = { project, track ->
+                showProjectScreen = false
             },
             onCancel = {
                 showProjectScreen = false
