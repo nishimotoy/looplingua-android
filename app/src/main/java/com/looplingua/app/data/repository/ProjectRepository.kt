@@ -1,11 +1,13 @@
 package com.looplingua.app.data.repository
 
 import com.looplingua.app.data.storage.ProjectStorage
+import com.looplingua.app.domain.model.TrackWithSegments
 import com.looplingua.app.ui.project.ProjectItem
 import java.io.File
 
 class ProjectRepository(
-    private val projectStorage: ProjectStorage
+    private val projectStorage: ProjectStorage,
+    private val trackRepository: TrackRepository
 ) {
 
     fun listProjects(): List<File> {
@@ -29,5 +31,13 @@ class ProjectRepository(
                 directoryPath = directory.absolutePath
             )
         }
+    }
+
+    fun listTracks(
+        project: ProjectItem
+    ): List<TrackWithSegments> {
+        return trackRepository.loadProject(
+            File(project.directoryPath)
+        )
     }
 }
