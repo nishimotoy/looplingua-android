@@ -206,7 +206,7 @@ class PlayerController(
         _pinnedKey.asStateFlow()
 
     // ============================================================
-    // Tracks
+    // Tracks from saved position
     // ============================================================
 
     fun setTracks(tracks: List<TrackWithSegments>) {
@@ -244,6 +244,22 @@ class PlayerController(
                 playCurrentSegment()
             }
         }
+    }
+
+    // ============================================================
+    // Tracks without saved position
+    // ============================================================
+
+    fun setTracksAndPlayFrom(
+        tracks: List<TrackWithSegments>,
+        key: SegmentKey
+    ) {
+        playbackPositionRestored = true
+        queue.setTracks(tracks)
+        queue.findByKey(key)
+        updateState()
+        _isPlaying.value = true
+        playCurrentSegment()
     }
 
     // ============================================================

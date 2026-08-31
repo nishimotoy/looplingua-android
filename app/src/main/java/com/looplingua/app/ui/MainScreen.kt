@@ -16,7 +16,8 @@ fun MainScreen(
     controller: PlayerController,
     projects: List<ProjectItem>,
     tracksByProject: Map<String, List<TrackWithSegments>>,
-    onProjectSelected: (ProjectItem) -> Unit
+    onProjectSelected: (ProjectItem) -> Unit,
+    onTrackSelected: (ProjectItem, TrackWithSegments) -> Unit
 ) {
 
     var showProjectScreen by remember {
@@ -34,6 +35,7 @@ fun MainScreen(
             },
             onTrackSelected = { project, track ->
                 showProjectScreen = false
+                onTrackSelected(project, track)
             },
             onCancel = {
                 showProjectScreen = false

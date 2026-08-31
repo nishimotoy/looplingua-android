@@ -7,6 +7,7 @@ import androidx.lifecycle.lifecycleScope
 import com.looplingua.app.data.repository.ProjectRepository
 import com.looplingua.app.data.repository.TrackRepository
 import com.looplingua.app.data.storage.ProjectStorage
+import com.looplingua.app.domain.model.SegmentKey
 import com.looplingua.app.player.controller.PlayerController
 import com.looplingua.app.player.factory.PlayerFactory
 import com.looplingua.app.ui.MainScreen
@@ -112,7 +113,38 @@ class MainActivity : ComponentActivity() {
                     controller = controller,
                     projects = projects,
                     tracksByProject = tracksByProject,
-                    onProjectSelected = {
+                    onProjectSelected = { project ->
+                        projectDirectory = File(project.directoryPath)
+                        projectId = project.projectId
+
+                        val selectedTracks =
+                            projectRepository.listTracks(project)
+
+                        controller.setProjectId(projectId)
+                        controller.setTracks(selectedTracks)
+                        controller.play()
+                    },
+                    onTrackSelected = { project, track ->
+                        projectDirectory = File(project.directoryPath)
+                        projectId = project.projectId
+
+                        val selectedTracks =
+                            projectRepository.listTracks(project)
+
+                        val firstSegment =
+                            track.segments.firstOrNull()
+
+                        if (firstSegment != null) {
+                            controller.setProjectId(projectId)
+
+                            controller.setTracksAndPlayFrom(
+                                tracks = selectedTracks,
+                                key = SegmentKey(
+                                    trackId = track.track.id,
+                                    segmentId = firstSegment.id
+                                )
+                            )
+                        }
                     }
                 )
             }
