@@ -53,11 +53,18 @@ class MainActivity : ComponentActivity() {
         )
 
         val projectRepository = ProjectRepository(
-            ProjectStorage(this)
+            ProjectStorage(this),
+            repository
         )
 
         val projects =
             projectRepository.listProjectItems()
+
+        val tracksByProject =
+            projects.associate { project ->
+                project.projectId to
+                        projectRepository.listTracks(project)
+            }
 
         controller = PlayerFactory.create(
             context = this,
@@ -104,26 +111,8 @@ class MainActivity : ComponentActivity() {
                 MainScreen(
                     controller = controller,
                     projects = projects,
-                    onProjectSelected = { project ->
-
-                        projectDirectory =
-                            File(project.directoryPath)
-
-                        projectId =
-                            project.projectId
-
-                        val selectedTracks =
-                            repository.loadProject(
-                                projectDirectory
-                            )
-
-                        controller.setProjectId(
-                            projectId
-                        )
-
-                        controller.setTracks(
-                            selectedTracks
-                        )
+                    tracksByProject = tracksByProject,
+                    onProjectSelected = {
                     }
                 )
             }
