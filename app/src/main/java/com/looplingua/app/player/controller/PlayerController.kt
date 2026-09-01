@@ -35,30 +35,20 @@ class PlayerController(
     // Project
     // ============================================================
 
-    /*
-     * 現在再生対象になっているProjectのID。
-     *
-     * 再生位置は
-     * Project + Track + Segment
-     * の組み合わせで特定する。
-     */
     private var projectId: String? = null
 
     fun setProjectId(projectId: String) {
         this.projectId = projectId
     }
 
+    suspend fun getLastProjectId(): String? {
+        return playerPreferences.getLastProjectId()
+    }
+
     // ============================================================
-    // Playback Position
+    // Playback Position    起動時の復元完了を判別するフラグ
     // ============================================================
 
-    /*
-     * 起動時の復元が完了するまでPLAYを開始しない。
-     *
-     * DataStoreは非同期なので、setTracks()直後に
-     * MainActivityからplay()が呼ばれても、
-     * 保存位置の復元が終わるまで待つ。
-     */
     private var playbackPositionRestored = false
 
     // ============================================================
@@ -220,10 +210,6 @@ class PlayerController(
             val savedPosition =
                 playerPreferences.playbackPosition.first()
 
-            /*
-             * 保存Projectと、読込Projectが一致する場合だけ
-             * Track + Segmentを復元する。
-             */
             if (
                 savedPosition != null &&
                 savedPosition.projectId == projectId
@@ -256,6 +242,7 @@ class PlayerController(
     ) {
         playbackPositionRestored = true
         queue.setTracks(tracks)
+        _tracks.value = queue.allTracks()
         queue.findByKey(key)
         updateState()
         _isPlaying.value = true
