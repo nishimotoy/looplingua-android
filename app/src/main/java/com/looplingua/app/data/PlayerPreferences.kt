@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.looplingua.app.domain.playback.Pattern
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 private val Context.playerPreferencesDataStore by preferencesDataStore(
@@ -41,6 +42,18 @@ class PlayerPreferences(
 
         val longPauseMultiplier: Preferences.Key<Float> =
             floatPreferencesKey("long_pause_multiplier")
+    }
+
+    // ============================================================
+    // ProjectId
+    // ============================================================
+
+    suspend fun getLastProjectId(): String? {
+        return context.playerPreferencesDataStore.data
+            .map { preferences ->
+                preferences[Keys.lastProjectId]
+            }
+            .first()
     }
 
     // ============================================================
