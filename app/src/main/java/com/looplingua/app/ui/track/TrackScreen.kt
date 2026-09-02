@@ -41,10 +41,19 @@ fun TrackScreen(
         }
     }
 
+    var initialPositionRestored by remember {
+        mutableStateOf(false)
+    }
+
     //  自動スクロール
     LaunchedEffect(currentIndex) {
         if (currentIndex >= 0) {
-            listState.animateScrollToItem(currentIndex)
+            if (!initialPositionRestored) {
+                listState.scrollToItem(currentIndex)
+                initialPositionRestored = true
+            } else {
+                listState.animateScrollToItem(currentIndex)
+            }
         }
     }
 
