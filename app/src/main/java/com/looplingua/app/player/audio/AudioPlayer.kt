@@ -19,6 +19,8 @@ class AudioPlayer(context: Context) {
     private var isMonitoring = false
     private var playbackSpeed = 1.0f
 
+    private var playbackListener: Player.Listener? = null
+
     init {
         AudioPlayerManager.register(this)
     }
@@ -45,9 +47,6 @@ class AudioPlayer(context: Context) {
         val uri = path.toUri()
         val mediaItem = MediaItem.fromUri(uri)
 
-        player.setMediaItem(mediaItem)
-        player.prepare()
-
         val listener = object : Player.Listener {
 
             override fun onPlaybackStateChanged(state: Int) {
@@ -72,10 +71,16 @@ class AudioPlayer(context: Context) {
                     startMonitoring(endMs, onComplete)
 
                     player.removeListener(this)
+                    playbackListener = null
                 }
             }
         }
+
+        playbackListener = listener
         player.addListener(listener)
+
+        player.setMediaItem(mediaItem)
+        player.prepare()
     }
 
     private fun startMonitoring(
@@ -104,6 +109,11 @@ class AudioPlayer(context: Context) {
 
         isMonitoring = false
         handler.removeCallbacksAndMessages(null)
+
+        playbackListener?.let {
+            player.removeListener(it)
+        }
+        playbackListener = null
 
         player.stop()
         player.clearMediaItems()
