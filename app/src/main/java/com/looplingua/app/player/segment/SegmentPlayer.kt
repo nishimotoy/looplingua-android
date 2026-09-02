@@ -22,6 +22,11 @@ class SegmentPlayer(
         steps: List<PlaybackStep>,
         onComplete: () -> Unit
     ) {
+        Log.d(
+            "PLAYER_TRACE",
+            "SegmentPlayer.play() steps=${steps.size}"
+        )
+
         handler.removeCallbacksAndMessages(null)
         isStopped = false
         playStep(steps, 0, onComplete)

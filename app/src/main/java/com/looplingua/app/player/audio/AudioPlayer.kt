@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.core.net.toUri
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
@@ -33,6 +34,11 @@ class AudioPlayer(context: Context) {
         endMs: Long,
         onComplete: () -> Unit
     ) {
+        Log.d(
+            "PLAYER_TRACE",
+            "AudioPlayer.play() " +
+                    "path=$path startMs=$startMs endMs=$endMs"
+        )
 
         stop() // to ensure clean ExoPlayer state
 
@@ -50,6 +56,14 @@ class AudioPlayer(context: Context) {
 
                     val playbackStartMs =  // 再生遅延対策
                         maxOf(0L, startMs - START_OFFSET_MS)
+
+                    Log.d(
+                        "PLAYER_TRACE",
+                        "AudioPlayer STATE_READY -> player.play() " +
+                                "startMs=$startMs " +
+                                "playbackStartMs=$playbackStartMs"
+                    )
+
                     player.seekTo(playbackStartMs)
                     player.playbackParameters =
                         PlaybackParameters(playbackSpeed)

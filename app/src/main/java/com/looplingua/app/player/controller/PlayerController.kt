@@ -1,5 +1,6 @@
 package com.looplingua.app.player.controller
 
+import android.util.Log
 import com.looplingua.app.data.PlayerPreferences
 import com.looplingua.app.domain.model.Segment
 import com.looplingua.app.domain.model.SegmentKey
@@ -254,6 +255,13 @@ class PlayerController(
     // ============================================================
 
     fun play() {
+        Log.d(
+            "PLAYER_TRACE",
+            "PlayerController.play() " +
+                    "restored=$playbackPositionRestored " +
+                    "isPlaying=${_isPlaying.value}"
+        )
+
         if (!playbackPositionRestored) {
             _isPlaying.value = true
             return
@@ -268,6 +276,12 @@ class PlayerController(
     }
 
     private fun playCurrentSegment() {
+        Log.d(
+            "PLAYER_TRACE",
+            "PlayerController.playCurrentSegment() " +
+                    "isPlaying=${_isPlaying.value}"
+        )
+
         if (!_isPlaying.value) return
 
         val segment = queue.currentSegment() ?: return
@@ -312,6 +326,13 @@ class PlayerController(
     }
 
     private fun playSegment(segment: Segment) {
+        Log.d(
+            "PLAYER_TRACE",
+            "PlayerController.playSegment() " +
+                    "track=${queue.currentTrack()?.track?.id} " +
+                    "segment=${segment.id}"
+        )
+
         segmentPlayer.stop()
 
         updateState()
