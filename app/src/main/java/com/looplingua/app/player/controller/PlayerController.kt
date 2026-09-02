@@ -45,6 +45,11 @@ class PlayerController(
         return playerPreferences.getLastProjectId()
     }
 
+    suspend fun getLastPlaybackPosition():
+            PlayerPreferences.PlaybackPosition? {
+        return playerPreferences.playbackPosition.first()
+    }
+
     // ============================================================
     // Playback Position    起動時の復元完了を判別するフラグ
     // ============================================================
