@@ -69,12 +69,13 @@ class MainActivity : ComponentActivity() {
         )
 
         lifecycleScope.launch {
-            val lastProjectId =
-                controller.getLastProjectId()
+            val lastPlaybackPosition =
+                controller.getLastPlaybackPosition()
 
             val project =
                 projects.firstOrNull {
-                    it.projectId == lastProjectId
+                    it.projectId ==
+                            lastPlaybackPosition?.projectId
                 } ?: projects.firstOrNull()
                 ?: return@launch
 
