@@ -41,10 +41,6 @@ class PlayerController(
         this.projectId = projectId
     }
 
-    suspend fun getLastProjectId(): String? {
-        return playerPreferences.getLastProjectId()
-    }
-
     suspend fun getLastPlaybackPosition():
             PlayerPreferences.PlaybackPosition? {
         return playerPreferences.playbackPosition.first()
