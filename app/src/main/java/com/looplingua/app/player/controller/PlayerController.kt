@@ -204,7 +204,6 @@ class PlayerController(
 
         queue.setTracks(tracks)
         _tracks.value = queue.allTracks()
-        updateState()
 
         scope.launch {
             val savedPosition =
