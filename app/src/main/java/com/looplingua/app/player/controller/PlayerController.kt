@@ -411,13 +411,8 @@ class PlayerController(
 
         /*
          * 起動時の復元前には保存しない。
-         *
          * これにより、setTracks()直後に一旦セットされる
          * 先頭Segmentで保存位置を上書きすることを防ぐ。
-         *
-         * 実際の再生中にSegmentが変わった場合だけ、
-         * 最新のProject + Track + Segmentを
-         * DataStoreへ保存する。
          */
         if (
             playbackPositionRestored &&
