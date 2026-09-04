@@ -247,6 +247,8 @@ class PlayerController(
         tracks: List<TrackWithSegments>,
         key: SegmentKey
     ) {
+        stop()
+        
         playbackPositionRestored = true
         queue.setTracks(tracks)
         _tracks.value = queue.allTracks()
