@@ -12,6 +12,12 @@ import androidx.media3.exoplayer.ExoPlayer
 
 class AudioPlayer(context: Context) {
 
+    companion object {
+        private var nextPlayerId = 0L
+    }
+
+    private val playerId = ++nextPlayerId
+
     private val START_OFFSET_MS = 200L  // 再生遅延対策
     private val player = ExoPlayer.Builder(context).build()
     private val handler = Handler(Looper.getMainLooper())
@@ -22,6 +28,10 @@ class AudioPlayer(context: Context) {
     private var playbackListener: Player.Listener? = null
 
     init {
+        Log.d(
+            "PLAYER_TRACE",
+            "AudioPlayer created player=$playerId"
+        )
         AudioPlayerManager.register(this)
     }
 
@@ -40,6 +50,7 @@ class AudioPlayer(context: Context) {
         Log.d(
             "PLAYER_TRACE",
             "AudioPlayer.play() " +
+                    "player=$playerId " +
                     "request=$playRequestId " +
                     "path=$path startMs=$startMs endMs=$endMs"
         )
@@ -61,6 +72,7 @@ class AudioPlayer(context: Context) {
                     Log.d(
                         "PLAYER_TRACE",
                         "AudioPlayer STATE_READY -> player.play() " +
+                                "player=$playerId " +
                                 "request=$playRequestId " +
                                 "startMs=$startMs " +
                                 "playbackStartMs=$playbackStartMs"
@@ -105,6 +117,7 @@ class AudioPlayer(context: Context) {
                     Log.d(
                         "PLAYER_TRACE",
                         "AudioPlayer complete " +
+                                "player=$playerId " +
                                 "request=$playRequestId " +
                                 "position=${player.currentPosition}"
                     )
@@ -122,6 +135,11 @@ class AudioPlayer(context: Context) {
 
     fun stop() {
 
+        Log.d(
+            "PLAYER_TRACE",
+            "AudioPlayer.stop() player=$playerId"
+        )
+
         isMonitoring = false
         handler.removeCallbacksAndMessages(null)
 
@@ -135,6 +153,11 @@ class AudioPlayer(context: Context) {
     }
 
     fun release() {
+        Log.d(
+            "PLAYER_TRACE",
+            "AudioPlayer.release() player=$playerId"
+        )
+
         stop() // to ensure clean ExoPlayer state
         player.release()
         AudioPlayerManager.unregister(this)
