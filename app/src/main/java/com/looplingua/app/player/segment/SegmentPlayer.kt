@@ -20,21 +20,25 @@ class SegmentPlayer(
 
     fun play(
         steps: List<PlaybackStep>,
+        playRequestId: Long,
         onComplete: () -> Unit
     ) {
         Log.d(
             "PLAYER_TRACE",
-            "SegmentPlayer.play() steps=${steps.size}"
+            "SegmentPlayer.play() " +
+                    "request=$playRequestId " +
+                    "steps=${steps.size}"
         )
 
         handler.removeCallbacksAndMessages(null)
         isStopped = false
-        playStep(steps, 0, onComplete)
+        playStep(steps, 0, playRequestId, onComplete)
     }
 
     private fun playStep(
         steps: List<PlaybackStep>,
         index: Int,
+        playRequestId: Long,
         onComplete: () -> Unit
     ) {
         if (isStopped) return
@@ -48,7 +52,8 @@ class SegmentPlayer(
 
         Log.d(
             "PLAYER_STEP",
-            "Step $index type=${step.stepType} pause=${step.pauseMs}"
+            "request=$playRequestId " +
+                    "Step $index type=${step.stepType} pause=${step.pauseMs}"
         )
 
         when (step.stepType) {
@@ -60,19 +65,38 @@ class SegmentPlayer(
                 if (slice == null) {
                     Log.w(
                         "PLAYER_STEP",
-                        "Skipping step with null slice: $step"
+                        "request=$playRequestId " +
+                                "Skipping step with null slice: $step"
                     )
-                    playStep(steps, index + 1, onComplete)
+                    playStep(
+                        steps,
+                        index + 1,
+                        playRequestId,
+                        onComplete
+                    )
                     return
                 }
 
                 audioPlayer.play(
                     slice.audioPath,
                     slice.startMs,
-                    slice.endMs
+                    slice.endMs,
+                    playRequestId
                 ) {
+                    Log.d(
+                        "PLAYER_TRACE",
+                        "SegmentPlayer audio complete " +
+                                "request=$playRequestId " +
+                                "step=$index"
+                    )
+
                     if (!isStopped) {
-                        playStep(steps, index + 1, onComplete)
+                        playStep(
+                            steps,
+                            index + 1,
+                            playRequestId,
+                            onComplete
+                        )
                     }
                 }
             }
@@ -82,7 +106,12 @@ class SegmentPlayer(
                 handler.postDelayed(
                     {
                         if (!isStopped) {
-                            playStep(steps, index + 1, onComplete)
+                            playStep(
+                                steps,
+                                index + 1,
+                                playRequestId,
+                                onComplete
+                            )
                         }
                     },
                     step.pauseMs
