@@ -34,11 +34,13 @@ class AudioPlayer(context: Context) {
         path: String,
         startMs: Long,
         endMs: Long,
+        playRequestId: Long,
         onComplete: () -> Unit
     ) {
         Log.d(
             "PLAYER_TRACE",
             "AudioPlayer.play() " +
+                    "request=$playRequestId " +
                     "path=$path startMs=$startMs endMs=$endMs"
         )
 
@@ -59,6 +61,7 @@ class AudioPlayer(context: Context) {
                     Log.d(
                         "PLAYER_TRACE",
                         "AudioPlayer STATE_READY -> player.play() " +
+                                "request=$playRequestId " +
                                 "startMs=$startMs " +
                                 "playbackStartMs=$playbackStartMs"
                     )
@@ -68,7 +71,11 @@ class AudioPlayer(context: Context) {
                         PlaybackParameters(playbackSpeed)
                     player.play()
 
-                    startMonitoring(endMs, onComplete)
+                    startMonitoring(
+                        endMs,
+                        playRequestId,
+                        onComplete
+                    )
 
                     player.removeListener(this)
                     playbackListener = null
@@ -85,6 +92,7 @@ class AudioPlayer(context: Context) {
 
     private fun startMonitoring(
         endMs: Long,
+        playRequestId: Long,
         onComplete: () -> Unit
     ) {
         isMonitoring = true
@@ -93,6 +101,13 @@ class AudioPlayer(context: Context) {
             override fun run() {
                 if (!isMonitoring) return
                 if (player.currentPosition >= endMs) {
+
+                    Log.d(
+                        "PLAYER_TRACE",
+                        "AudioPlayer complete " +
+                                "request=$playRequestId " +
+                                "position=${player.currentPosition}"
+                    )
 
                     player.pause()
                     isMonitoring = false
