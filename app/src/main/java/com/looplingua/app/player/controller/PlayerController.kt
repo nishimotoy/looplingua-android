@@ -54,6 +54,12 @@ class PlayerController(
     private var playbackPositionRestored = false
 
     // ============================================================
+    // Debug    再生要求を識別するID
+    // ============================================================
+
+    private var nextPlayRequestId = 0L
+
+    // ============================================================
     // Pattern
     // ============================================================
 
@@ -326,9 +332,12 @@ class PlayerController(
     }
 
     private fun playSegment(segment: Segment) {
+        val playRequestId = ++nextPlayRequestId
+
         Log.d(
             "PLAYER_TRACE",
             "PlayerController.playSegment() " +
+                    "request=$playRequestId " +
                     "track=${queue.currentTrack()?.track?.id} " +
                     "segment=${segment.id}"
         )
@@ -357,7 +366,13 @@ class PlayerController(
                 _longPauseMultiplier.value
         )
 
-        segmentPlayer.play(steps) {
+        segmentPlayer.play(steps, playRequestId) {
+            Log.d(
+                "PLAYER_TRACE",
+                "PlayerController segment complete " +
+                        "request=$playRequestId"
+            )
+
             if (!_isPlaying.value) return@play
 
             if (_pinnedKey.value != null) {
