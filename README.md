@@ -6,19 +6,23 @@
 
 LoopLingua is a **sentence player for passive listening**.
 
-Listening to natural-speed content in a foreign language can be difficult. Words and sentences pass by before you understand them, while reading subtitles at natural speed can be exhausting.
+Listening to natural-speed content in a foreign language can be difficult. Words and sentences pass
+by before you understand them, while reading subtitles at natural speed can be exhausting.
 
-LoopLingua breaks audio into sentences and inserts pauses between them. It can also play translations aloud, allowing you to keep listening without constantly looking at the screen. The screen is there when you want to check the text.
+LoopLingua breaks audio into sentences and inserts pauses between them. It can also play
+translations aloud, allowing you to keep listening without constantly looking at the screen. The
+screen is there when you want to check the text.
 
 ## The Idea
 
-Language can be acquired through massive exposure to meaningful input — much like the way children acquire their native language through continuous exposure.
+Language can be acquired through massive exposure to meaningful input — much like the way children
+acquire their native language through continuous exposure.
 
 LoopLingua explores how to make that kind of exposure possible for adults.
 
-You don't need to stop what you are doing. 
-You don't need to stare at subtitles. 
-You don't need to set aside a dedicated study session. 
+You don't need to stop what you are doing.
+You don't need to stare at subtitles.
+You don't need to set aside a dedicated study session.
 
 **Just listen.**
 
@@ -26,7 +30,8 @@ The goal is to **make long-term listening practice effortless**.
 
 ## What Makes LoopLingua Different
 
-Users can bring their own content — podcasts, videos, lectures, interviews, and other audio — and turn it into structured listening material.
+Users can bring their own content — podcasts, videos, lectures, interviews, and other audio — and
+turn it into structured listening material.
 
 The focus is simple:
 
@@ -90,7 +95,8 @@ LoopLingua currently supports built-in playback patterns including:
 
 Patterns determine how original audio, translation, memo, and pauses are combined.
 
-Playback speed and pause multipliers can be adjusted from the player UI. User adjustments override the values defined by the selected pattern and are restored across sessions.
+Playback speed and pause multipliers can be adjusted from the player UI. User adjustments override
+the values defined by the selected pattern and are restored across sessions.
 
 ---
 
@@ -118,7 +124,8 @@ The player loads these projects and maps their data into the playback model.
 
 ## Translation Engine
 
-LoopLingua includes a translation pipeline for turning source audio into structured learning material.
+LoopLingua includes a translation pipeline for turning source audio into structured learning
+material.
 
 The basic workflow is:
 
@@ -146,7 +153,8 @@ The translation engine uses OpenAI APIs for speech transcription and translation
 
 LoopLingua is organized as separate application and engine components.
 
-The Android application uses **Jetpack Compose** for the UI and **StateFlow** for player state management.
+The Android application uses **Jetpack Compose** for the UI and **StateFlow** for player state
+management.
 
 The core playback path is:
 
@@ -166,7 +174,8 @@ AudioPlayer
 ExoPlayer
 ```
 
-The application also contains the project/data layer responsible for loading `.looplingua` projects and mapping them into player models.
+The application also contains the project/data layer responsible for loading `.looplingua` projects
+and mapping them into player models.
 
 ---
 
@@ -178,7 +187,8 @@ The playback system has reached a stable milestone and is currently tagged:
 
 **`v1.0-player`**
 
-The current development focus is expanding the LoopLingua data model, translation workflow, and learning-oriented editing features.
+The current development focus is expanding the LoopLingua data model, translation workflow, and
+learning-oriented editing features.
 
 ---
 
@@ -198,15 +208,18 @@ The current development focus is expanding the LoopLingua data model, translatio
 
 ## Vision
 
-Most language learning apps focus on **active study** — vocabulary drills, exercises, tests, and deliberate practice.
+Most language learning apps focus on **active study** — vocabulary drills, exercises, tests, and
+deliberate practice.
 
 LoopLingua explores another approach:
 
 > **Continuous passive listening with structured repetition.**
 
-The aim is to make language exposure something that can happen naturally throughout the day — while walking, commuting, cooking, or doing other activities.
+The aim is to make language exposure something that can happen naturally throughout the day — while
+walking, commuting, cooking, or doing other activities.
 
-LoopLingua combines the effortless exposure of passive listening with enough structure and repetition to make that exposure useful for language learning.
+LoopLingua combines the effortless exposure of passive listening with enough structure and
+repetition to make that exposure useful for language learning.
 
 **Learn language like a baby — with adult ears.**
 
@@ -214,4 +227,14 @@ LoopLingua combines the effortless exposure of passive listening with enough str
 
 ## License
 
-MIT License
+LoopLingua is source-available software licensed under the
+PolyForm Perimeter License 1.0.1.
+
+You are welcome to study, use, and modify LoopLingua for
+personal, educational, and research purposes.
+
+You may not use LoopLingua to provide a product that competes
+with LoopLingua.
+
+See the [PolyForm Perimeter License 1.0.1](https://polyformproject.org/licenses/perimeter/1.0.1)
+for the complete license terms.
