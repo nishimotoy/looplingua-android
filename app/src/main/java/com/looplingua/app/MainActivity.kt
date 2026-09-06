@@ -51,6 +51,7 @@ class MainActivity : ComponentActivity() {
                         projectRepository.listTracks(project)
             }
 
+        // フラグ反映・更新処理
         controller = PlayerFactory.create(
             context = this,
             saveFlags = { updatedTracks ->
@@ -68,6 +69,7 @@ class MainActivity : ComponentActivity() {
             }
         )
 
+        // 前回再生位置を復元して再生
         lifecycleScope.launch {
             val lastPlaybackPosition =
                 controller.getLastPlaybackPosition()
@@ -90,6 +92,7 @@ class MainActivity : ComponentActivity() {
 
             controller.setProjectId(projectId)
             controller.setTracks(tracks)
+            controller.restorePlaybackPosition()
             controller.play()
         }
 
@@ -108,7 +111,11 @@ class MainActivity : ComponentActivity() {
 
                         controller.setProjectId(projectId)
                         controller.setTracks(selectedTracks)
-                        controller.play()
+
+                        lifecycleScope.launch {
+                            controller.restorePlaybackPosition()
+                            controller.play()
+                        }
                     },
                     onTrackSelected = { project, track ->
                         projectDirectory = File(project.directoryPath)
@@ -122,10 +129,9 @@ class MainActivity : ComponentActivity() {
 
                         if (firstSegment != null) {
                             controller.setProjectId(projectId)
-
-                            controller.setTracksAndPlayFrom(
-                                tracks = selectedTracks,
-                                key = SegmentKey(
+                            controller.setTracks(selectedTracks)
+                            controller.playFrom(
+                                SegmentKey(
                                     trackId = track.track.id,
                                     segmentId = firstSegment.id
                                 )
@@ -135,8 +141,6 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
-
-        // controller.play() // 起動時に再生　デバッグ用
     }
 
     override fun onDestroy() {
