@@ -48,12 +48,6 @@ class PlayerController(
     }
 
     // ============================================================
-    // Playback Position    起動時の復元完了を判別するフラグ
-    // ============================================================
-
-    private var playbackPositionRestored = false
-
-    // ============================================================
     // Debug    再生要求を識別するID
     // ============================================================
 
@@ -204,39 +198,36 @@ class PlayerController(
         _pinnedKey.asStateFlow()
 
     // ============================================================
-    // Tracks from saved position
+    // Tracks
     // ============================================================
 
     fun setTracks(tracks: List<TrackWithSegments>) {
-        playbackPositionRestored = false
-
         queue.setTracks(tracks)
         _tracks.value = queue.allTracks()
+        updateState()
+    }
 
-        scope.launch {
-            val savedPosition =
-                playerPreferences.playbackPosition.first()
+    // ============================================================
+    // Playback Position
+    // ============================================================
 
-            if (
-                savedPosition != null &&
-                savedPosition.projectId == projectId
-            ) {
-                queue.findByKey(
-                    SegmentKey(
-                        trackId = savedPosition.trackId,
-                        segmentId = savedPosition.segmentId
-                    )
+    suspend fun restorePlaybackPosition() {
+        val savedPosition =
+            playerPreferences.playbackPosition.first()
+
+        if (
+            savedPosition != null &&
+            savedPosition.projectId == projectId
+        ) {
+            queue.findByKey(
+                SegmentKey(
+                    trackId = savedPosition.trackId,
+                    segmentId = savedPosition.segmentId
                 )
-            }
-
-            updateState()
-
-            playbackPositionRestored = true
-
-            if (_isPlaying.value) {
-                playCurrentSegment()
-            }
+            )
         }
+
+        updateState()
     }
 
     // ============================================================
@@ -248,14 +239,13 @@ class PlayerController(
         key: SegmentKey
     ) {
         stop()
-        
-        playbackPositionRestored = true
+
         queue.setTracks(tracks)
         _tracks.value = queue.allTracks()
         queue.findByKey(key)
         updateState()
         _isPlaying.value = true
-        playCurrentSegment()
+        playSegment(queue.currentSegment() ?: return)
     }
 
     // ============================================================
@@ -266,34 +256,14 @@ class PlayerController(
         Log.d(
             "PLAYER_TRACE",
             "PlayerController.play() " +
-                    "restored=$playbackPositionRestored " +
                     "isPlaying=${_isPlaying.value}"
         )
-
-        if (!playbackPositionRestored) {
-            _isPlaying.value = true
-            return
-        }
 
         if (_isPlaying.value) return
 
         val segment = queue.currentSegment() ?: return
 
         _isPlaying.value = true
-        playSegment(segment)
-    }
-
-    private fun playCurrentSegment() {
-        Log.d(
-            "PLAYER_TRACE",
-            "PlayerController.playCurrentSegment() " +
-                    "isPlaying=${_isPlaying.value}"
-        )
-
-        if (!_isPlaying.value) return
-
-        val segment = queue.currentSegment() ?: return
-
         playSegment(segment)
     }
 
@@ -347,6 +317,7 @@ class PlayerController(
         segmentPlayer.stop()
 
         updateState()
+        savePlaybackPosition()
 
         val currentTrack = queue.currentTrack() ?: return
 
@@ -423,24 +394,11 @@ class PlayerController(
                 null
             }
 
-        val keyChanged = _currentKey.value != newKey
         _currentKey.value = newKey
-
-        /*
-         * 起動時の復元前には保存しない。
-         * これにより、setTracks()直後に一旦セットされる
-         * 先頭Segmentで保存位置を上書きすることを防ぐ。
-         */
-        if (
-            playbackPositionRestored &&
-            keyChanged &&
-            newKey != null
-        ) {
-            savePlaybackPosition(newKey)
-        }
     }
 
-    private fun savePlaybackPosition(key: SegmentKey) {
+    private fun savePlaybackPosition() {
+        val key = _currentKey.value ?: return
         val currentProjectId = projectId ?: return
 
         scope.launch {
