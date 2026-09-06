@@ -231,24 +231,6 @@ class PlayerController(
     }
 
     // ============================================================
-    // Tracks without saved position
-    // ============================================================
-
-    fun setTracksAndPlayFrom(
-        tracks: List<TrackWithSegments>,
-        key: SegmentKey
-    ) {
-        stop()
-
-        queue.setTracks(tracks)
-        _tracks.value = queue.allTracks()
-        queue.findByKey(key)
-        updateState()
-        _isPlaying.value = true
-        playSegment(queue.currentSegment() ?: return)
-    }
-
-    // ============================================================
     // Playback
     // ============================================================
 
