@@ -3,6 +3,7 @@ package com.looplingua.app
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.lifecycleScope
 import com.looplingua.app.data.repository.ProjectRepository
 import com.looplingua.app.data.repository.TrackRepository
@@ -51,6 +52,9 @@ class MainActivity : ComponentActivity() {
                         projectRepository.listTracks(project)
             }
 
+        val isInitialized =
+            mutableStateOf(false)
+
         // フラグ反映・更新処理
         controller = PlayerFactory.create(
             context = this,
@@ -93,55 +97,60 @@ class MainActivity : ComponentActivity() {
             controller.setProjectId(projectId)
             controller.setTracks(tracks)
             controller.restorePlaybackPosition()
+
+            isInitialized.value = true
+
             controller.play()
         }
 
         setContent {
             LoopLinguaandroidTheme(darkTheme = false) {
-                MainScreen(
-                    controller = controller,
-                    projects = projects,
-                    tracksByProject = tracksByProject,
-                    onProjectSelected = { project ->
-                        if (project.projectId != projectId) {
-                            controller.stop()
+                if (isInitialized.value) {
+                    MainScreen(
+                        controller = controller,
+                        projects = projects,
+                        tracksByProject = tracksByProject,
+                        onProjectSelected = { project ->
+                            if (project.projectId != projectId) {
+                                controller.stop()
 
-                            projectDirectory =
-                                File(project.directoryPath)
+                                projectDirectory =
+                                    File(project.directoryPath)
 
-                            projectId =
-                                project.projectId
+                                projectId =
+                                    project.projectId
+
+                                val selectedTracks =
+                                    projectRepository.listTracks(project)
+
+                                controller.setProjectId(projectId)
+                                controller.setTracks(selectedTracks)
+                                controller.play()
+                            }
+                        },
+                        onTrackSelected = { project, track ->
+                            projectDirectory = File(project.directoryPath)
+                            projectId = project.projectId
 
                             val selectedTracks =
                                 projectRepository.listTracks(project)
 
-                            controller.setProjectId(projectId)
-                            controller.setTracks(selectedTracks)
-                            controller.play()
-                        }
-                    },
-                    onTrackSelected = { project, track ->
-                        projectDirectory = File(project.directoryPath)
-                        projectId = project.projectId
+                            val firstSegment =
+                                track.segments.firstOrNull()
 
-                        val selectedTracks =
-                            projectRepository.listTracks(project)
-
-                        val firstSegment =
-                            track.segments.firstOrNull()
-
-                        if (firstSegment != null) {
-                            controller.setProjectId(projectId)
-                            controller.setTracks(selectedTracks)
-                            controller.playFrom(
-                                SegmentKey(
-                                    trackId = track.track.id,
-                                    segmentId = firstSegment.id
+                            if (firstSegment != null) {
+                                controller.setProjectId(projectId)
+                                controller.setTracks(selectedTracks)
+                                controller.playFrom(
+                                    SegmentKey(
+                                        trackId = track.track.id,
+                                        segmentId = firstSegment.id
+                                    )
                                 )
-                            )
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
         }
     }
