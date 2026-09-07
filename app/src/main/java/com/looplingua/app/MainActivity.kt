@@ -103,17 +103,20 @@ class MainActivity : ComponentActivity() {
                     projects = projects,
                     tracksByProject = tracksByProject,
                     onProjectSelected = { project ->
-                        projectDirectory = File(project.directoryPath)
-                        projectId = project.projectId
+                        if (project.projectId != projectId) {
+                            controller.stop()
 
-                        val selectedTracks =
-                            projectRepository.listTracks(project)
+                            projectDirectory =
+                                File(project.directoryPath)
 
-                        controller.setProjectId(projectId)
-                        controller.setTracks(selectedTracks)
+                            projectId =
+                                project.projectId
 
-                        lifecycleScope.launch {
-                            controller.restorePlaybackPosition()
+                            val selectedTracks =
+                                projectRepository.listTracks(project)
+
+                            controller.setProjectId(projectId)
+                            controller.setTracks(selectedTracks)
                             controller.play()
                         }
                     },
