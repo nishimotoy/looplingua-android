@@ -3,15 +3,19 @@ package com.looplingua.app
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.lifecycleScope
 import com.looplingua.app.data.repository.ProjectRepository
 import com.looplingua.app.data.repository.TrackRepository
 import com.looplingua.app.data.storage.ProjectStorage
 import com.looplingua.app.domain.model.SegmentKey
+import com.looplingua.app.domain.model.TrackWithSegments
 import com.looplingua.app.player.controller.PlayerController
 import com.looplingua.app.player.factory.PlayerFactory
 import com.looplingua.app.ui.MainScreen
+import com.looplingua.app.ui.project.ProjectItem
 import com.looplingua.app.ui.theme.LoopLinguaandroidTheme
 import java.io.File
 import kotlinx.coroutines.Dispatchers
@@ -22,8 +26,9 @@ import kotlinx.coroutines.sync.withLock
 class MainActivity : ComponentActivity() {
 
     private lateinit var controller: PlayerController
-
     private val flagSaveMutex = Mutex()
+
+    private var isInitialized by mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,38 +37,32 @@ class MainActivity : ComponentActivity() {
             ProjectStorage(this).projectsDirectory,
             "20260812010803-青本ウクライナ語"  // 将来は Welcome Projectを置く
         )
-
         var projectId =
             projectDirectory.name.substringBefore("-")
 
         val repository = TrackRepository()
-
         val projectRepository = ProjectRepository(
             ProjectStorage(this),
             repository
         )
 
-        val projects =
-            projectRepository.listProjectItems()
+        // 起動時のデータ読み込みを非同期で行うための、一時的な保持変数
+        var projects = emptyList<ProjectItem>()
+        var tracksByProject =
+            emptyMap<String, List<TrackWithSegments>>()
 
-        val tracksByProject =
-            projects.associate { project ->
-                project.projectId to
-                        projectRepository.listTracks(project)
-            }
+        fun setCurrentProject(project: ProjectItem): List<TrackWithSegments> {
+            projectDirectory = File(project.directoryPath)
+            projectId = project.projectId
+            return projectRepository.listTracks(project)
+        }
 
-        val isInitialized =
-            mutableStateOf(false)
-
-        // フラグ反映・更新処理
+        // フラグ反映・更新処理の初期化
         controller = PlayerFactory.create(
             context = this,
             saveFlags = { updatedTracks ->
-
                 lifecycleScope.launch(Dispatchers.IO) {
-
                     flagSaveMutex.withLock {
-
                         repository.saveFlags(
                             projectDirectory = projectDirectory,
                             tracks = updatedTracks
@@ -73,39 +72,36 @@ class MainActivity : ComponentActivity() {
             }
         )
 
-        // 前回再生位置を復元して再生
+        // 起動時のデータ読み込み ＆ 前回再生位置の復元
         lifecycleScope.launch {
-            val lastPlaybackPosition =
-                controller.getLastPlaybackPosition()
+            // 1. まず裏でプロジェクト一覧とマップを生成
+            projects = projectRepository.listProjectItems()
+            tracksByProject = projects.associate { project ->
+                project.projectId to projectRepository.listTracks(project)
+            }
 
-            val project =
-                projects.firstOrNull {
-                    it.projectId ==
-                            lastPlaybackPosition?.projectId
-                } ?: projects.firstOrNull()
-                ?: return@launch
+            // 2. 前回位置の復元
+            val lastPlaybackPosition = controller.getLastPlaybackPosition()
+            val project = projects.firstOrNull {
+                it.projectId == lastPlaybackPosition?.projectId
+            } ?: projects.firstOrNull()
 
-            projectDirectory =
-                File(project.directoryPath)
+            if (project != null) {
+                val tracks = setCurrentProject(project)
+                controller.setProjectId(projectId)
+                controller.setTracks(tracks)
+                controller.restorePlaybackPosition()
+            }
 
-            projectId =
-                project.projectId
-
-            val tracks =
-                projectRepository.listTracks(project)
-
-            controller.setProjectId(projectId)
-            controller.setTracks(tracks)
-            controller.restorePlaybackPosition()
-
-            isInitialized.value = true
-
+            // 3. データ準備完了を通知（画面を描画させる）
+            isInitialized = true
             controller.play()
         }
 
+        // UI 描画
         setContent {
             LoopLinguaandroidTheme(darkTheme = false) {
-                if (isInitialized.value) {
+                if (isInitialized) {
                     MainScreen(
                         controller = controller,
                         projects = projects,
@@ -113,30 +109,15 @@ class MainActivity : ComponentActivity() {
                         onProjectSelected = { project ->
                             if (project.projectId != projectId) {
                                 controller.stop()
-
-                                projectDirectory =
-                                    File(project.directoryPath)
-
-                                projectId =
-                                    project.projectId
-
-                                val selectedTracks =
-                                    projectRepository.listTracks(project)
-
+                                val selectedTracks = setCurrentProject(project)
                                 controller.setProjectId(projectId)
                                 controller.setTracks(selectedTracks)
                                 controller.play()
                             }
                         },
                         onTrackSelected = { project, track ->
-                            projectDirectory = File(project.directoryPath)
-                            projectId = project.projectId
-
-                            val selectedTracks =
-                                projectRepository.listTracks(project)
-
-                            val firstSegment =
-                                track.segments.firstOrNull()
+                            val selectedTracks = setCurrentProject(project)
+                            val firstSegment = track.segments.firstOrNull()
 
                             if (firstSegment != null) {
                                 controller.setProjectId(projectId)
