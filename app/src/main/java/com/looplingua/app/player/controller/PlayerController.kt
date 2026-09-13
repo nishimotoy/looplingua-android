@@ -63,6 +63,16 @@ class PlayerController(
         _playbackPattern.asStateFlow()
 
     // ============================================================
+    // Playback Speed
+    // ============================================================
+
+    private val _playbackSpeed =
+        MutableStateFlow<Float?>(null)
+
+    val playbackSpeed: StateFlow<Float?> =
+        _playbackSpeed.asStateFlow()
+
+    // ============================================================
     // Pause Multiplier
     // ============================================================
 
@@ -77,6 +87,46 @@ class PlayerController(
 
     val longPauseMultiplier: StateFlow<Float?> =
         _longPauseMultiplier.asStateFlow()
+
+    // ============================================================
+    // Current Playback State
+    // ============================================================
+
+    private val _currentTrack = MutableStateFlow<TrackWithSegments?>(null)
+
+    private val _currentSegment = MutableStateFlow<Segment?>(null)
+
+    val currentSegment: StateFlow<Segment?> =
+        _currentSegment.asStateFlow()
+
+    private val _currentKey = MutableStateFlow<SegmentKey?>(null)
+
+    val currentKey: StateFlow<SegmentKey?> =
+        _currentKey.asStateFlow()
+
+    private val _isPlaying = MutableStateFlow(false)
+
+    val isPlaying: StateFlow<Boolean> =
+        _isPlaying.asStateFlow()
+
+    // ============================================================
+    // Tracks
+    // ============================================================
+
+    private val _tracks =
+        MutableStateFlow<List<TrackWithSegments>>(emptyList())
+
+    val tracks: StateFlow<List<TrackWithSegments>> =
+        _tracks.asStateFlow()
+
+    // ============================================================
+    // Pin
+    // ============================================================
+
+    private val _pinnedKey = MutableStateFlow<SegmentKey?>(null)
+
+    val pinnedKey: StateFlow<SegmentKey?> =
+        _pinnedKey.asStateFlow()
 
     init {
         scope.launch {
@@ -126,16 +176,6 @@ class PlayerController(
         }
     }
 
-    // ============================================================
-    // Playback Speed
-    // ============================================================
-
-    private val _playbackSpeed =
-        MutableStateFlow<Float?>(null)
-
-    val playbackSpeed: StateFlow<Float?> =
-        _playbackSpeed.asStateFlow()
-
     fun setPlaybackSpeed(speed: Float) {
         _playbackSpeed.value = speed
         segmentPlayer.setPlaybackSpeed(speed)
@@ -144,62 +184,6 @@ class PlayerController(
             playerPreferences.savePlaybackSpeed(speed)
         }
     }
-
-    // ============================================================
-    // Current Segment
-    // ============================================================
-
-    private val _currentSegment = MutableStateFlow<Segment?>(null)
-
-    val currentSegment: StateFlow<Segment?> =
-        _currentSegment.asStateFlow()
-
-    // ============================================================
-    // Current Track
-    // ============================================================
-
-    private val _currentTrack = MutableStateFlow<TrackWithSegments?>(null)
-
-    // ============================================================
-    // Tracks
-    // ============================================================
-
-    private val _tracks =
-        MutableStateFlow<List<TrackWithSegments>>(emptyList())
-
-    val tracks: StateFlow<List<TrackWithSegments>> =
-        _tracks.asStateFlow()
-
-    // ============================================================
-    // Playing State
-    // ============================================================
-
-    private val _isPlaying = MutableStateFlow(false)
-
-    val isPlaying: StateFlow<Boolean> =
-        _isPlaying.asStateFlow()
-
-    // ============================================================
-    // Current Key
-    // ============================================================
-
-    private val _currentKey = MutableStateFlow<SegmentKey?>(null)
-
-    val currentKey: StateFlow<SegmentKey?> =
-        _currentKey.asStateFlow()
-
-    // ============================================================
-    // Pin
-    // ============================================================
-
-    private val _pinnedKey = MutableStateFlow<SegmentKey?>(null)
-
-    val pinnedKey: StateFlow<SegmentKey?> =
-        _pinnedKey.asStateFlow()
-
-    // ============================================================
-    // Tracks
-    // ============================================================
 
     fun setTracks(tracks: List<TrackWithSegments>) {
         queue.setTracks(tracks)
