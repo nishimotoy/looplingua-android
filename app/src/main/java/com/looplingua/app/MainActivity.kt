@@ -33,12 +33,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        var projectDirectory = File(
-            ProjectStorage(this).projectsDirectory,
-            "20260812010803-青本ウクライナ語"  // 将来は Welcome Projectを置く
-        )
-        var projectId =
-            projectDirectory.name.substringBefore("-")
+        lateinit var projectDirectory: File
+        lateinit var projectId: String
 
         val repository = TrackRepository()
         val projectRepository = ProjectRepository(
@@ -74,7 +70,7 @@ class MainActivity : ComponentActivity() {
 
         // 起動時のデータ読み込み ＆ 前回再生位置の復元
         lifecycleScope.launch {
-            // 1. まず裏でプロジェクト一覧とマップを生成
+            // 1. プロジェクト一覧とマップを生成
             projects = projectRepository.listProjectItems()
             tracksByProject = projects.associate { project ->
                 project.projectId to projectRepository.listTracks(project)
@@ -82,16 +78,17 @@ class MainActivity : ComponentActivity() {
 
             // 2. 前回位置の復元
             val lastPlaybackPosition = controller.getLastPlaybackPosition()
+            val welcomeProject = projects.firstOrNull {
+                it.projectName.equals("Welcome", ignoreCase = true)
+            }
             val project = projects.firstOrNull {
                 it.projectId == lastPlaybackPosition?.projectId
-            } ?: projects.firstOrNull()
+            } ?: welcomeProject ?: return@launch
 
-            if (project != null) {
-                val tracks = setCurrentProject(project)
-                controller.setProjectId(projectId)
-                controller.setTracks(tracks)
-                controller.restorePlaybackPosition()
-            }
+            val tracks = setCurrentProject(project)
+            controller.setProjectId(projectId)
+            controller.setTracks(tracks)
+            controller.restorePlaybackPosition()
 
             // 3. データ準備完了を通知（画面を描画させる）
             isInitialized = true
