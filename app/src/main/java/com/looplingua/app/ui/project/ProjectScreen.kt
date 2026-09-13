@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -64,27 +65,30 @@ fun ProjectScreen(
                 ) {
 
                     Row(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 8.dp)
                     ) {
 
-                        Text(
-                            text = if (isExpanded) {
-                                "▼"
-                            } else {
-                                "▶"
-                            },
-                            style = MaterialTheme.typography.headlineSmall,
-                            color = TealPrimary,
+                        Box(
                             modifier = Modifier
+                                .width(64.dp)
+                                .align(Alignment.CenterVertically)
                                 .clickable {
                                     onProjectPlay(project)
-                                }
-                                .padding(
-                                    start = 16.dp,
-                                    top = 16.dp,
-                                    bottom = 16.dp
-                                )
-                        )
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = if (isExpanded) {
+                                    "▼"
+                                } else {
+                                    "▶"
+                                },
+                                style = MaterialTheme.typography.headlineSmall,
+                                color = TealPrimary
+                            )
+                        }
 
                         Column(
                             modifier = Modifier
