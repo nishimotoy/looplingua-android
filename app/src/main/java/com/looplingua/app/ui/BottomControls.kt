@@ -227,7 +227,7 @@ fun BottomControls(
                     },
                     colors = colors
                 ) {
-                    Text("${playbackSpeed}x")
+                    Text("${playbackSpeed ?: 1.0f}x")
                 }
 
                 DropdownMenu(
