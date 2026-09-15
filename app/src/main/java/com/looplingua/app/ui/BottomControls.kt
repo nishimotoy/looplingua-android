@@ -76,10 +76,6 @@ fun BottomControls(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        // ========================================================
-        // Playback Controls
-        // ========================================================
-
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -122,19 +118,11 @@ fun BottomControls(
             }
         }
 
-        // ========================================================
-        // Playback Speed / Pause / Skip / Pin / Flag
-        // ========================================================
-
         Row(
             modifier = Modifier.padding(top = 8.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-
-            // ----------------------------------------------------
-            // Short Pause
-            // ----------------------------------------------------
 
             Box {
                 OutlinedButton(
@@ -173,10 +161,6 @@ fun BottomControls(
 
             Spacer(modifier = Modifier.width(4.dp))
 
-            // ----------------------------------------------------
-            // Long Pause
-            // ----------------------------------------------------
-
             Box {
                 OutlinedButton(
                     onClick = {
@@ -214,10 +198,6 @@ fun BottomControls(
 
             Spacer(modifier = Modifier.width(4.dp))
 
-            // ----------------------------------------------------
-            // Playback Speed
-            // ----------------------------------------------------
-
             Box {
                 Button(
                     onClick = {
@@ -250,10 +230,6 @@ fun BottomControls(
                 }
             }
 
-            // ----------------------------------------------------
-            // Skip
-            // ----------------------------------------------------
-
             IconButton(
                 onClick = {
                     controller.toggleSkip()
@@ -283,10 +259,6 @@ fun BottomControls(
                 )
             }
 
-            // ----------------------------------------------------
-            // Pin
-            // ----------------------------------------------------
-
             IconButton(
                 onClick = {
                     controller.togglePin()
@@ -315,10 +287,6 @@ fun BottomControls(
                         }
                 )
             }
-
-            // ----------------------------------------------------
-            // Flag
-            // ----------------------------------------------------
 
             IconButton(
                 onClick = {

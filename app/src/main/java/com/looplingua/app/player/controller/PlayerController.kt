@@ -32,9 +32,6 @@ class PlayerController(
         SupervisorJob() + Dispatchers.Main.immediate
     )
 
-    // ============================================================
-    // Project
-    // ============================================================
 
     private var projectId: String? = null
 
@@ -47,34 +44,18 @@ class PlayerController(
         return playerPreferences.playbackPosition.first()
     }
 
-    // ============================================================
-    // Debug    再生要求を識別するID
-    // ============================================================
-
     private var nextPlayRequestId = 0L
-
-    // ============================================================
-    // Pattern
-    // ============================================================
 
     private val _playbackPattern = MutableStateFlow(Pattern.BASIC)
 
     val playbackPattern: StateFlow<Pattern> =
         _playbackPattern.asStateFlow()
 
-    // ============================================================
-    // Playback Speed
-    // ============================================================
-
     private val _playbackSpeed =
         MutableStateFlow<Float?>(null)
 
     val playbackSpeed: StateFlow<Float?> =
         _playbackSpeed.asStateFlow()
-
-    // ============================================================
-    // Pause Multiplier
-    // ============================================================
 
     private val _shortPauseMultiplier =
         MutableStateFlow<Float?>(null)
@@ -87,10 +68,6 @@ class PlayerController(
 
     val longPauseMultiplier: StateFlow<Float?> =
         _longPauseMultiplier.asStateFlow()
-
-    // ============================================================
-    // Current Playback State
-    // ============================================================
 
     private val _currentTrack = MutableStateFlow<TrackWithSegments?>(null)
 
@@ -109,19 +86,11 @@ class PlayerController(
     val isPlaying: StateFlow<Boolean> =
         _isPlaying.asStateFlow()
 
-    // ============================================================
-    // Tracks
-    // ============================================================
-
     private val _tracks =
         MutableStateFlow<List<TrackWithSegments>>(emptyList())
 
     val tracks: StateFlow<List<TrackWithSegments>> =
         _tracks.asStateFlow()
-
-    // ============================================================
-    // Pin
-    // ============================================================
 
     private val _pinnedKey = MutableStateFlow<SegmentKey?>(null)
 
@@ -191,10 +160,6 @@ class PlayerController(
         updateState()
     }
 
-    // ============================================================
-    // Playback Position
-    // ============================================================
-
     suspend fun restorePlaybackPosition() {
         val savedPosition =
             playerPreferences.playbackPosition.first()
@@ -213,10 +178,6 @@ class PlayerController(
 
         updateState()
     }
-
-    // ============================================================
-    // Playback
-    // ============================================================
 
     fun play() {
         Log.d(
@@ -339,10 +300,6 @@ class PlayerController(
         }
     }
 
-    // ============================================================
-    // State
-    // ============================================================
-
     private fun updateState() {
         val track = queue.currentTrack()
         val segment = queue.currentSegment()
@@ -376,10 +333,6 @@ class PlayerController(
         }
     }
 
-    // ============================================================
-    // Flag
-    // ============================================================
-
     fun toggleFlag() {
         val current = _currentKey.value ?: return
 
@@ -392,10 +345,6 @@ class PlayerController(
         }
     }
 
-    // ============================================================
-    // Skip
-    // ============================================================
-
     fun toggleSkip() {
         val current = _currentKey.value ?: return
 
@@ -407,10 +356,6 @@ class PlayerController(
             saveFlags(queue.allTracks())
         }
     }
-
-    // ============================================================
-    // Pin
-    // ============================================================
 
     fun togglePin() {
         val current = _currentKey.value ?: return
@@ -428,10 +373,6 @@ class PlayerController(
 
         return _pinnedKey.value == current
     }
-
-    // ============================================================
-    // Pause Multiplier
-    // ============================================================
 
     fun setShortPauseMultiplier(
         multiplier: Float
@@ -458,10 +399,6 @@ class PlayerController(
             )
         }
     }
-
-    // ============================================================
-    // Release
-    // ============================================================
 
     fun release() {
         _isPlaying.value = false
