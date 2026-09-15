@@ -18,7 +18,7 @@ class AudioPlayer(context: Context) {
 
     private val playerId = ++nextPlayerId
 
-    private val START_OFFSET_MS = 200L  // 再生遅延対策
+    private val startOffsetMs = 100L
     private val player = ExoPlayer.Builder(context).build()
     private val handler = Handler(Looper.getMainLooper())
 
@@ -67,7 +67,7 @@ class AudioPlayer(context: Context) {
                 if (state == Player.STATE_READY) {
 
                     val playbackStartMs =  // 再生遅延対策
-                        maxOf(0L, startMs - START_OFFSET_MS)
+                        maxOf(0L, startMs - startOffsetMs)
 
                     Log.d(
                         "PLAYER_TRACE",
