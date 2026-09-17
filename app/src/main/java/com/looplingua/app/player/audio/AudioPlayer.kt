@@ -126,7 +126,7 @@ class AudioPlayer(context: Context) {
                     isMonitoring = false
                     onComplete()
                 } else {
-                    handler.postDelayed(this, 10)
+                    handler.postDelayed(this, 50)
                 }
             }
         }
