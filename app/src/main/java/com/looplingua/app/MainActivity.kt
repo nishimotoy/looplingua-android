@@ -107,9 +107,19 @@ class MainActivity : ComponentActivity() {
                             if (project.projectId != projectId) {
                                 controller.stop()
                                 val selectedTracks = setCurrentProject(project)
-                                controller.setProjectId(projectId)
-                                controller.setTracks(selectedTracks)
-                                controller.play()
+                                val firstTrack = selectedTracks.firstOrNull()
+                                val firstSegment = firstTrack?.segments?.firstOrNull()
+
+                                if (firstSegment != null) {
+                                    controller.setProjectId(projectId)
+                                    controller.setTracks(selectedTracks)
+                                    controller.playFrom(
+                                        SegmentKey(
+                                            trackId = firstTrack.track.id,
+                                            segmentId = firstSegment.id
+                                        )
+                                    )
+                                }
                             }
                         },
                         onTrackSelected = { project, track ->
