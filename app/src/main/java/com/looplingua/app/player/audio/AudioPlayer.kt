@@ -78,7 +78,10 @@ class AudioPlayer(context: Context) {
                                 "playbackStartMs=$playbackStartMs"
                     )
 
-                    player.seekTo(playbackStartMs)
+                    if (startMs != 0L) {
+                        player.seekTo(playbackStartMs)
+                    }
+                    player.play()
                     player.playbackParameters =
                         PlaybackParameters(playbackSpeed)
                     player.play()
